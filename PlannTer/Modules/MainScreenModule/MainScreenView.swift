@@ -5,7 +5,7 @@ struct MainScreenView: View {
     
     var body: some View {
         ZStack {
-            Image("corkBackgorund")
+            Image("CorkBackground").resizable()
                 .scaledToFill()
                 .edgesIgnoringSafeArea(.all)
             VStack {
@@ -15,4 +15,9 @@ struct MainScreenView: View {
             } 
         }
     }
+}
+
+
+#Preview {
+    MainScreenView()
 }

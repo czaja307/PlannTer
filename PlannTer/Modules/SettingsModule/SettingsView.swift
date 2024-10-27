@@ -5,8 +5,10 @@ struct SettingsView: View {
     
     var body: some View {
          ZStack {
-            Color(.primaryBackground)
-                .edgesIgnoringSafeArea(.all)
+             Rectangle().fill(Color.customPrimaryBackground)
+                 .edgesIgnoringSafeArea(.all)
+//            Color(.customPrimaryBackground)
+//                .edgesIgnoringSafeArea(.all)
             VStack {
                 ScreenTitle(title: "Settings")
                     .padding(.top, 20)
@@ -14,4 +16,8 @@ struct SettingsView: View {
             } 
         }
     }
+}
+
+#Preview{
+    SettingsView()
 }

@@ -9,13 +9,17 @@ struct ScreenTitle: View {
         HStack{
             Image(systemName: "chevron.left")
                 .font(.screenTitle)
-                .foregroundColor(.primaryText)
-                .padding(.leading, 20)
+                .foregroundColor(.customPrimaryText)
+                .padding(.trailing, 50)
             Text(title)
                 .font(.screenTitle)
-                .foregroundColor(.primaryText)
+                .foregroundColor(.customPrimaryText)
                 .multilineTextAlignment(.center)
-
-        }          
+            Spacer()
+        }.padding(40)
     }
+}
+
+#Preview {
+    ScreenTitle(title: "Screen Title")
 }

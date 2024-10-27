@@ -6,21 +6,24 @@ struct AppTitle: View {
             VStack {
                 HStack{
                     Spacer()
-                    Image("AppIcon")
+                    Image("AppLogo")
                         .resizable()
                         .frame(width: 50, height: 50)
-                        .padding(.leading, 20)
                     Text("PlannTer")
                         .font(.title)
-                        .foregroundColor(.primaryText)
+                        .foregroundColor(.customPrimaryText)
                         .multilineTextAlignment(.center)
                     Spacer()
                 }
                 Text("Your plant planner")
                     .font(.subtitle)
-                    .foregroundColor(.primaryText)
+                    .foregroundColor(.customPrimaryText)
                     .multilineTextAlignment(.center)
                     .frame(alignment: .center)
             }
     }
+}
+
+#Preview{
+    AppTitle()
 }
