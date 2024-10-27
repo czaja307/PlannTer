@@ -20,7 +20,7 @@ struct AppTitle: View {
                     .font(.subtitle)
                     .foregroundColor(.primaryText)
                     .multilineTextAlignment(.center)
-                    .frame(alignmet: .center)
+                    .frame(alignment: .center)
             }
     }
 }

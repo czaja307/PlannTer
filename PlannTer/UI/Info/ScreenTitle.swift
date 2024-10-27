@@ -1,13 +1,13 @@
 
 import SwiftUI
 
-struct AppTitle: View {
+struct ScreenTitle: View {
     let title: String
 
     var body: some View {
             
         HStack{
-            Text(.chevronLeft)
+            Image(systemName: "chevron.left")
                 .font(.screenTitle)
                 .foregroundColor(.primaryText)
                 .padding(.leading, 20)

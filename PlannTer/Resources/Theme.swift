@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Colors
 extension Color {
-    static let primaryBackground = Color("PrimaryBackground")
+//  static let primaryBackground = Color("PrimaryBackground")
     static let secondaryBackground = Color("SecondaryBackground")
     static let primaryText = Color("PrimaryText")
     static let secondaryText = Color("SecondaryText")

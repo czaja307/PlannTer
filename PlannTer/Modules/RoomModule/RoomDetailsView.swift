@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct RoomDetailsView: View {
-    @StateObject private var controller = RoomDetailsView()
+    @StateObject private var controller = RoomDetailsController()
     
     var body: some View {
          ZStack {
