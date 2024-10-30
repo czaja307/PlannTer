@@ -8,15 +8,16 @@ struct ScreenTitle: View {
             
         HStack{
             Image(systemName: "chevron.left")
-                .font(.screenTitle)
+                .font(.mainText)
                 .foregroundColor(.customPrimaryText)
                 .padding(.trailing, 50)
             Text(title)
-                .font(.screenTitle)
+                .font(.mainText)
                 .foregroundColor(.customPrimaryText)
                 .multilineTextAlignment(.center)
             Spacer()
-        }.padding(40)
+        }
+        .padding(40)
     }
 }
 

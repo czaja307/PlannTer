@@ -16,7 +16,7 @@ struct AppTitle: View {
                     Spacer()
                 }
                 Text("Your plant planner")
-                    .font(.subtitle)
+                    .font(.secondaryText)
                     .foregroundColor(.customPrimaryText)
                     .multilineTextAlignment(.center)
                     .frame(alignment: .center)
