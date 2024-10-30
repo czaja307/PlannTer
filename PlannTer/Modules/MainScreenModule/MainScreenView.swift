@@ -15,7 +15,7 @@ struct MainScreenView: View {
                     .padding(.top, 20)
                 Spacer()
             } 
-        }.background(white)
+        }.background(.white)
     }
 }
 
