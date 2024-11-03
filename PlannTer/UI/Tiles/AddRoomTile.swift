@@ -1,7 +1,6 @@
-
 import SwiftUI
 
-struct RoomTile: View {
+struct AddRoomTile: View {
     let listPosition : Int
     
     private let size : CGFloat = 2 * UIScreen.main.bounds.width/3
@@ -25,7 +24,7 @@ struct RoomTile: View {
                     Spacer()
                     AddBubble(color: fgColor, size: (size - 3 * mainPadding)/3)
                     Spacer()
-                    }
+                }
                 .padding(mainPadding/2)
             }
             .padding(mainPadding)
@@ -38,18 +37,13 @@ struct RoomTile: View {
                 Image("PinImage")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: size/2, height: auto)
-                    .offset(x: 20, y: -size / 2)
+                    .frame(width: size/2)
+                    .offset(x: 20, y: -size / 4)
                 Spacer()
             }
         }
     }
 }
-
-#Preview {
-    RoomTile()
-}
-
 
 struct AddBubble: View{
     let color : Color
@@ -63,4 +57,8 @@ struct AddBubble: View{
             .background(color)
             .cornerRadius(size/2)
     }
+}
+
+#Preview {
+    AddRoomTile(listPosition: 0)
 }

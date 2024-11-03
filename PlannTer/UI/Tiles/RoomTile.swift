@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 struct RoomTile: View {
@@ -40,22 +39,17 @@ struct RoomTile: View {
             .cornerRadius(15)
             .shadow(color: Color(.brown), radius: 5, x: 2, y: 4)
             HStack{
-                    Spacer()
-                    Image("PinImage")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: size/2, height: auto)
-                        .offset(x: 20, y: -size / 2)
-                    Spacer()
+                Spacer()
+                Image("PinImage")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: size/2)
+                    .offset(x: 20, y: -size / 4)
+                Spacer()
             }
         }
     }
 }
-
-#Preview {
-    RoomTile(roomName: "osdfijldf", roomWarnings: 3, numPlants: 3)
-}
-
 
 struct InfoBubble: View{
     let color : Color
@@ -69,12 +63,21 @@ struct InfoBubble: View{
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: size/2, height: auto)
+                    .frame(width: size/2)
                 Text("\(value)")
+                    .font(.note)
+                    .foregroundColor(.primaryText)
+                    
             }
+            .font(.note)
         }
         .frame(width:size, height:size)
         .background(color)
         .cornerRadius(size/2)
     }
+}
+
+#Preview {
+    RoomTile(roomName: "osdfijldf", roomWarnings: 3, numPlants: 3, listPosition: 0)
+    RoomTile(roomName: "osdfijldf", roomWarnings: 3, numPlants: 3, listPosition: 1)
 }
