@@ -19,15 +19,15 @@ struct DropdownPicker: View {
                         .rotationEffect(.degrees(isExpanded ? 90 : 0))
                 }
                 .frame(height: 50)
+                .padding(.horizontal, 20)
                 .background(Color.white.opacity(0.3))
-                .padding(.horizontal, 30)
                 .overlay(
                     Rectangle()
                         .frame(height: 1)
                         .foregroundColor(.primaryText),
                     alignment: .bottom
                 )
-                .cornerRadius(10)
+                .cornerRadius(3)
                 .font(.subtitle)
                 .onTapGesture (withAnimation: .snappy) {
                     isExpande.toggle()
@@ -45,7 +45,7 @@ struct DropdownPicker: View {
                                 }
                             }
                             .frame(height: 50)
-                            .padding(.horizontal, 40)
+                            .padding(.horizontal, 20)
                             .font(.subtitle)
                             .onTapGesture (withAnimation: .snappy) {
                                 selectedOption = option
@@ -62,7 +62,6 @@ struct DropdownPicker: View {
         .foregroundColor(.additionalText)
     }
 }
-
 
 #Preview {
     DropdownPicker(title: "Units", options: ["metric", "imperial"])
