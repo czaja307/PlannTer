@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @StateObject private var controller = SettingsController()
+    @State private var userName: String = ""
     
     var body: some View {
          ZStack {
@@ -13,7 +14,7 @@ struct SettingsView: View {
                     .padding(.top, 20)
                 Spacer()
                 VStack(spacing: 20) {
-                    TextInput(title: "What should we call you?", prompt: "Mary Jane")
+                    TextField("What should we call you?", text: $userName)
                     DropdownPicker(title: "NotificationsFrequency:", options: ["Insistent", "Moderate", "Sparing"])
                     DropdownPicker(title: "Measurements unit system:", options: ["Metric", "Imperial"])
                     DropdownPicker(title: "Temperature units:", options: ["Celsius", "Fahrenheit"])

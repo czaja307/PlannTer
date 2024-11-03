@@ -1,3 +1,5 @@
+import SwiftUI
+
 struct TextInput: View {
     let title: String
     let prompt: String
@@ -19,7 +21,7 @@ struct TextInput: View {
                     alignment: .bottom
                 )
                 .cornerRadius(3)
-                .font(.subtitle)
+                .font(.subheadline)
                
         }
         .foregroundColor(.additionalText)
