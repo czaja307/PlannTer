@@ -21,7 +21,7 @@ struct TextInput: View {
                     alignment: .bottom
                 )
                 .cornerRadius(3)
-                .font(.subheadline)
+                .font(.secondaryText)
                
         }
         .foregroundColor(.additionalText)
