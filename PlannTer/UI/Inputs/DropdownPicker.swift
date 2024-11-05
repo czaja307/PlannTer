@@ -4,19 +4,20 @@ struct DropdownPicker: View {
     let title: String
     let options: [String]
     
-    @State private var isExpanded = false
+    @Binding var isExpanded = false
     @State private var selectedOption: String
     
     init(title: String, options: [String]) {
         self.title = title
         self.options = options
+        self._isExpanded = isExpanded
         self._selectedOption = State(initialValue: options.first ?? "")
     }
     
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
-                .font(.caption)
+                .font(.note)
             
             VStack(spacing: 0) {
                 dropdownHeader
