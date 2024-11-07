@@ -5,5 +5,5 @@ class SettingsController: ObservableObject {
         // Save settings
     }
 
-    var userName: String = ""
+    @Published  var userName: String = ""
 }

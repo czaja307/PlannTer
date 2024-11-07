@@ -21,7 +21,10 @@ struct SettingsView: View {
                     .padding(.top, 20)
                 Spacer()
                 VStack(spacing: 20) {
-                    TextInput(title: "What should we call you?", prompt: $controller.userName)
+                    TextInput(title: "What should we call you?", prompt: "Enter your name", isActive: Binding(
+                        get: { expandedDropdown == "Name" },
+                        set: { expandedDropdown = $0 ? "Name" : nil }
+                    ))
                     DropdownPicker(title: "NotificationsFrequency:", options: ["Insistent", "Moderate", "Sparing"], isExpanded: Binding(
                         get: { expandedDropdown == "NotificationsFrequency" },
                         set: { expandedDropdown = $0 ? "NotificationsFrequency" : nil }

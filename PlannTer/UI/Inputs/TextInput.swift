@@ -3,8 +3,10 @@ import SwiftUI
 struct TextInput: View {
     let title: String
     let prompt: String
+    
+    @Binding var isActive: Bool
 
-     @State private var inputText: String = ""
+    @State private var inputText: String = ""
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -22,12 +24,13 @@ struct TextInput: View {
                 )
                 .cornerRadius(3)
                 .font(.secondaryText)
+                .focused($isActive)
                
         }
         .foregroundColor(.additionalText)
     }
 }
-
-#Preview {
-    TextInput(title: "Your name", prompt: "Mary Jane")
-}
+//
+//#Preview {
+//    TextInput(title: "Your name", prompt: "Mary Jane")
+//}

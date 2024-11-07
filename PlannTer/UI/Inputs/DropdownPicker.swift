@@ -4,10 +4,10 @@ struct DropdownPicker: View {
     let title: String
     let options: [String]
     
-    @Binding var isExpanded = false
+    @Binding private var isExpanded: Bool
     @State private var selectedOption: String
     
-    init(title: String, options: [String]) {
+    init(title: String, options: [String], isExpanded: Binding<Bool>) {
         self.title = title
         self.options = options
         self._isExpanded = isExpanded
@@ -83,7 +83,7 @@ struct DropdownPicker: View {
         toggleExpanded()
     }
 }
-
-#Preview {
-    DropdownPicker(title: "Units", options: ["metric", "imperial"])
-}
+//
+//#Preview {
+//    DropdownPicker(title: "Units", options: ["metric", "imperial"], isExpanded: Binding(get: false, set: false))
+//}
