@@ -1,4 +1,3 @@
-import PlantModel
 import SwiftUI
 
 struct PlantTile: View {
