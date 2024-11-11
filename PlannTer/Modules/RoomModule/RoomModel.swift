@@ -24,3 +24,7 @@ struct MockRoom {
     static let otherRoom = RoomModel(name: "Other Room", plants: MockPlant.plants, windows: [.north], numWarnings: 0)
     static let rooms = [sampleRoom, otherRoom, otherRoom, sampleRoom]
 }
+
+extension RoomModel {
+    static let placeholder = RoomModel(id: UUID(), name: "Add Room", plants: [], windows:[], numWarnings: 0)
+}
