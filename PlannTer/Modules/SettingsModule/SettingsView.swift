@@ -5,7 +5,7 @@ struct SettingsView: View {
     
     var body: some View {
          ZStack {
-             Rectangle().fill(Color.customPrimaryBackground)
+             Rectangle().fill(Color.primaryBackground)
                  .edgesIgnoringSafeArea(.all)
 //            Color(.customPrimaryBackground)
 //                .edgesIgnoringSafeArea(.all)

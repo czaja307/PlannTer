@@ -1,4 +1,3 @@
-import PlantModel
 import SwiftUI
 
 struct PlantTile: View {
@@ -6,7 +5,7 @@ struct PlantTile: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 16) {
-            Image(systemName: plant.imgUrl)
+            Image(systemName: "checkmark.circle.fill")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 80, height: 80)
@@ -57,6 +56,7 @@ struct PlantTile: View {
 }
 
 #Preview {
-    var examplePlant = PlantModel(name: "Edyta", imgUrl: "AddSymbol", waterLevel: 200, waterPortionSize: 20)
+    var examplePlant = PlantModel(id: UUID(), name: "Edytka", imageUrl: "AddSymbol", waterRequirement: 500, waterPortionSize: 500)
     PlantTile(plant: examplePlant)
+    CreatePlantTile()
 }

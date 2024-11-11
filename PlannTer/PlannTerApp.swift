@@ -11,7 +11,8 @@ import SwiftUI
 struct PlannTerApp: App {
     var body: some Scene {
         WindowGroup {
-            MainScreenView()
+            RoomTile(roomName: "osdfijldf", roomWarnings: 3, numPlants: 3, listPosition: 0)
+                .preferredColorScheme(.light)
         }
     }
 }

@@ -11,13 +11,13 @@ struct AppTitle: View {
                         .frame(width: 50, height: 50)
                     Text("PlannTer")
                         .font(.title)
-                        .foregroundColor(.customPrimaryText)
+                        .foregroundColor(.primaryText)
                         .multilineTextAlignment(.center)
                     Spacer()
                 }
                 Text("Your plant planner")
-                    .font(.subtitle)
-                    .foregroundColor(.customPrimaryText)
+                    .font(.secondaryText)
+                    .foregroundColor(.primaryText)
                     .multilineTextAlignment(.center)
                     .frame(alignment: .center)
             }
