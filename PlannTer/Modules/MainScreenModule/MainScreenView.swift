@@ -22,13 +22,11 @@ struct MainScreenView: View {
                         NavigationLink(destination: SettingsView()) {
                             Image(systemName: "gear")
                                 .foregroundColor(.primaryText)
-                                .font(.imageScale(.large))
+//                                .font(.imageScale(.large))
                         }
                         .frame(width: 70, height: 70)
                         .background(Color(.primaryBackground))
                         .cornerRadius(45)
-
-                        Spacer()
                     }
                     .padding(.horizontal, 20)
                 }

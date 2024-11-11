@@ -4,7 +4,7 @@ struct TextInput: View {
     let title: String
     let prompt: String
     
-    @FocusState.Binding private var isActive: Bool
+    @FocusState.Binding var isActive: Bool
 
     @State private var inputText: String = ""
     
