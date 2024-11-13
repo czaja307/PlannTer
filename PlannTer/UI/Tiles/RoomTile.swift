@@ -62,7 +62,7 @@ struct InfoBubble: View{
             HStack() {
                 image
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
+                    .aspectRatio(contentMode: .fill)
                     .frame(width: size/2)
                 Text("\(value)")
                     .font(.note)
