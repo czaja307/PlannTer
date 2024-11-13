@@ -20,9 +20,13 @@ struct PlannTerApp: App {
 struct ContentView: View {
     var body: some View {
         NavigationView {
-            CreatePlantTile()
-            //zawodev
-            //main scene goes there, reszte trzeba opakowac w ten navigation view zeby ladnie przechodzilo miedzy scenami
+            VStack{
+                PlantTile(plant: PlantModel.examplePlant)
+                PlantTile(plant: PlantModel.examplePlant)
+                CreatePlantTile()
+                //zawodev
+                //main scene goes there, reszte trzeba opakowac w ten navigation view zeby ladnie przechodzilo miedzy scenami
+            }
         }
     }
 }

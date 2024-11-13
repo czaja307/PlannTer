@@ -25,14 +25,20 @@ struct CreatePlantTile: View {
                 }
                 .buttonStyle(PlainButtonStyle()) // Usuwa domyślny styl przycisku
             }
-            .padding(.bottom, 16)
 
             Spacer()
         }
+        .padding(15)
         .frame(width: 350, height: 130)
         .background(Color.primaryBackground)
         .cornerRadius(15)
         .shadow(color: Color.secondaryText.opacity(0.5), radius: 3.3, x: 2, y: 4)
-        .padding(15)
     }
+}
+
+#Preview {
+    PlantTile(plant: PlantModel.examplePlant)
+    PlantTile(plant: PlantModel.examplePlant)
+    CreatePlantTile()
+    CreatePlantTile()
 }
