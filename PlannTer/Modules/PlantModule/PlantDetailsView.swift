@@ -2,7 +2,7 @@ import SwiftUI
 
 struct PlantDetailsView: View {
     //CZA: idk why it work like this but it builds
-    @StateObject private var controller = PlantDetailsController(plant: PlantModel(id: UUID(), name: "Edytka", imageUrl: "AddSymbol", waterRequirement: 500, waterPortionSize: 500))
+    @StateObject private var controller = PlantDetailsController(plant: PlantModel.examplePlant)
 
 
     var body: some View {

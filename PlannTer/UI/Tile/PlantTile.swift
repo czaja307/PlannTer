@@ -18,7 +18,7 @@ struct PlantTile: View {
                     .frame(width: 180, height: 35, alignment: .leading)
 
                 HStack {
-                    Text("Add: \(plant.waterPortionSize) ml")
+                    Text("Add: \(plant.waterAmountInML) ml")
                         .font(.subheadline)
                         .foregroundColor(Color.secondaryText)
                     Spacer()
@@ -56,7 +56,6 @@ struct PlantTile: View {
 }
 
 #Preview {
-    var examplePlant = PlantModel(id: UUID(), name: "Edytka", imageUrl: "AddSymbol", waterRequirement: 500, waterPortionSize: 500)
-    PlantTile(plant: examplePlant)
+    PlantTile(plant: PlantModel.examplePlant)
     CreatePlantTile()
 }
