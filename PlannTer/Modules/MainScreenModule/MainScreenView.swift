@@ -41,7 +41,7 @@ struct MainScreenView: View {
     }
 }
 
-struct Tiles: View{
+struct Tiles: View {
     var roomsList : [RoomModel]
     private var appendTop: Bool
     
@@ -50,11 +50,10 @@ struct Tiles: View{
         appendTop = roomsList.count % 2 == 0 ? true : false
     }
     
-    var body: some View{
-        //        NavigationView{
-        VStack{
-            //                RoomHorizontalScrollView(roomsList: roomsList, appendTop: appendTop, even: true)
-            
+    var body: some View {
+        VStack {
+            // to gowno nie dziala nie wiem kto to pisal ale sie nie kompiluje
+            /*
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 100) {
                     ForEach(Array(roomsList.enumerated()).filter { $0.offset % 2 == 0 }, id: \.1.id) { i, room in
@@ -80,8 +79,8 @@ struct Tiles: View{
                 .padding(.leading, 200)
             }
             .frame(width: 500)
-           }
-        //        }
+             */
+        }
     }
 }
 

@@ -14,35 +14,17 @@ enum PlantCategory: String, Codable {
 // enum do gatunków roślin
 enum PlantSpecies: String, Codable {
     case climbing = "Climbing"
-    case red = "Red"
-    case green = "Green"
+    case smelly = "Smelly"
     case dwarf = "Dwarf"
     case flowering = "Flowering"
     // inne z api
 }
-
 // model rośliny
-struct PlantModel: Codable, Identifiable {
-    //nextWateringDate: Date().addingTimeInterval(86400),  // Następne podlewanie za 24 godziny
+struct PlantModel: Identifiable, Codable {
     //    room: livingRoom,
-    //category: .cactus,
-    //species: .green
     
-    // ------------ BASE VALUES -----------------
-    var id: UUID = UUID() // id moze byc brany z api? albo nie nwm
-    var name: String // nazwakwiata
-    var imageUrl: String  // URL zdjęcia rośliny
-    // ------------ BASE VALUES -----------------
-    
-    
-    // ------------ USER VALUES -----------------
+    var id = UUID() // id moze byc brany z api? albo nie nwm
     var temp_is_watered: Bool = false
-    
-    var nextWateringDate: Date  // data następnego podlewania
-    var waterAmountInML: Int  // ilość wody w ml, do nastepnego podlewania
-    var dailySunExposure: Int  // wymagane dzienne nasłonecznienie podane w godzinach od 0 do 24h
-    var nextConditioningDate: Date  // data następnego kondycjonowania
-    // ------------ USER VALUES -----------------
     
     
     // ------------ MAX USER VALUES -----------------
@@ -50,17 +32,28 @@ struct PlantModel: Codable, Identifiable {
     var maxWaterAmountInML: Int = 1000 //ml
     var maxDailySunExposure: Int = 24 //hours
     var maxConditioningDays: Int = 90 //days
-    //var maxConditioningDate: Date //should have some default value = today + 90 days
     // ------------ MAX USER VALUES -----------------
     
-    // pokoj, do którego należy roślina
+    
+    // ------------ BASE VALUES -----------------
+    var name: String // nazwakwiata
+    var imageUrl: String  // URL zdjęcia rośliny
+    // ------------ BASE VALUES -----------------
+    
+    
+    // ------------ USER VALUES -----------------
+    var nextWateringDate: Date  // data następnego podlewania
+    var waterAmountInML: Int  // ilość wody w ml, do nastepnego podlewania
+    var dailySunExposure: Int  // wymagane dzienne nasłonecznienie podane w godzinach od 0 do 24h
+    var nextConditioningDate: Date  // data następnego kondycjonowania
+    // ------------ USER VALUES -----------------
+    
+    var category: PlantCategory
+    var species: PlantSpecies
+
     //var room: RoomModel  // zakladamy ze room model zostal wczesniej zdefiniowny (pytanie czy room zawiera kwiata czy kwiat rooma???)
     
-    // kategoria rośliny
-    var category: PlantCategory
     
-    // gatunek rośliny
-    var species: PlantSpecies
     
     // funkcja obliczająca postęp podlewania (proporcję wodowania do wymaganego poziomu)
     var progress: Double {
@@ -84,7 +77,7 @@ struct PlantModel: Codable, Identifiable {
     // funkcja, która probouje podlewac roślinę i aktualizuje datę podlewania
     mutating func tryToWater() {
         // logika podlewania (np. zaktualizowanie daty następnego podlewania, zmniejszenie zapasu wody)
-        nextWateringDate = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
+        //nextWateringDate = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
         
         if !temp_is_watered {
             temp_is_watered = true
@@ -99,20 +92,22 @@ struct PlantModel: Codable, Identifiable {
 
     // funkcja do zmiany daty następnego kondycjonowania
     mutating func updateNextConditioningDate(to newDate: Date) {
-        nextConditioningDate = newDate
+        //nextConditioningDate = newDate
     }
     
-    static var examplePlant: PlantModel {
-        return PlantModel(
-            name: "Edyta",
-            imageUrl: "ExamplePlant",
-            nextWateringDate: Date().addingTimeInterval(86400),  // Następne podlewanie za 24 godziny
-            waterAmountInML: 50,
-            dailySunExposure: 8,
-            nextConditioningDate: Date().addingTimeInterval(604800),  // Następne kondycjonowanie za tydzień
-            //room: exampleRoom,
-            category: .cactus,
-            species: .green
-        )
-    }
+    static var examplePlant = PlantModel(
+        name: "Edyta",
+        imageUrl: "ExamplePlant",
+        nextWateringDate: Date().addingTimeInterval(86400),  // Następne podlewanie za 24 godziny
+        waterAmountInML: 50,
+        dailySunExposure: 8,
+        nextConditioningDate: Date().addingTimeInterval(604800),  // Następne kondycjonowanie za tydzień
+        //room: exampleRoom,
+        category: .cactus,
+        species: .climbing
+    )
+    static var examplePlants = [
+        examplePlant,
+        examplePlant
+    ]
 }

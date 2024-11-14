@@ -19,29 +19,41 @@ enum Direction: String, Codable, CaseIterable {
     case northWest = "North-West"
 }
 
+
 struct RoomModel: Codable, Identifiable {
-    var id: UUID = UUID()  // jakieś unikalne id (nie wiem czy potrzebne tbh)
+    var id: UUID = UUID()  // unikalne id
     var name: String  // nazwa pokoju
-    var direction: Direction  // kierunek geograficzny oświetlenia
+    var directions: [Direction]  // tablica kierunków oświetlenia
     var plants: [PlantModel]  // lista roślin w pokoju
 
-    // funkcja do dodawania rośliny do pokoju
+    // Funkcja do dodawania rośliny do pokoju
     mutating func addPlant(_ plant: PlantModel) {
         plants.append(plant)
     }
 
-    //funkcja do usuwania rośliny z pokoju po ID
+    // Funkcja do usuwania rośliny z pokoju po ID
     mutating func removePlant(byId plantId: UUID) {
         plants.removeAll { $0.id == plantId }
     }
 
-    // funkcja do zaktualizowania nazwy pokoju
+    // Funkcja do zaktualizowania nazwy pokoju
     mutating func updateRoomName(to newName: String) {
         name = newName
     }
 
-    // funkcja do zaktualizowania kierunku oświetlenia
-    mutating func updateDirection(to newDirection: Direction) {
-        direction = newDirection
+    // Funkcja do zaktualizowania kierunków oświetlenia
+    mutating func updateDirections(to newDirections: [Direction]) {
+        directions = newDirections
+    }
+    
+    static var exampleRoom: RoomModel {
+        return RoomModel(
+            name: "Example Room",
+            directions: [.north, .east],
+            plants: [
+                PlantModel.examplePlant,
+                PlantModel.examplePlant
+            ]
+        )
     }
 }
