@@ -11,8 +11,8 @@ struct LargeButton : View {
                 .font(.buttonText)
                 .foregroundColor(.primaryText)
                 .background(.secondaryBackground)
-                .padding()
                 .cornerRadius(15)
+                .padding()
                 .shadow(color: Color(.brown), radius: 5, x: 2, y: 4)
         }
         .frame(height: 80)
