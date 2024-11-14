@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PlantEditView: View {
-    @StateObject private var controller = PlantDetailsController(plant: PlantModel(id: UUID(), name: "Edytka"))
+    @StateObject private var controller = PlantDetailsController(plant: MockPlant.samplePlant)
     @State private var waterDate = Date()
     @State private var waterDays: Int = 7
     @State private var waterAmount: Int = 200

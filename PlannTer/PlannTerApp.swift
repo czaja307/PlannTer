@@ -11,7 +11,7 @@ import SwiftUI
 struct PlannTerApp: App {
     var body: some Scene {
         WindowGroup {
-            PlantDetailsView()
+            MainScreenView()
         }
     }
 }
