@@ -16,6 +16,7 @@ struct RoomDetailsView: View {
                 }
             }
         }
+        .frame(width: UIScreen.main.bounds.width)
     }
 }
 
