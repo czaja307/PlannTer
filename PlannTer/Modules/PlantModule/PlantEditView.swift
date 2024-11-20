@@ -8,15 +8,24 @@ struct PlantEditView: View {
     @State private var sunExposure: Int = 8
     @State private var conditioningDate = Date()
     @State private var conditioningDays: Int = 30
+    @FocusState private var isActive: Bool
     
     
     var body: some View {
         ZStack {
             Color(.primaryBackground)
                 .edgesIgnoringSafeArea(.all)
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    // Set expandedDropdown to false to close any open dropdown
+                    isActive = false
+                }
             VStack {
                 TopBarView(title: controller.plant.name)
                 PlantImageSection()
+                TextInput(title: "Name your plant", prompt: "Edytka", isActive: $isActive)
+                    .frame(width: 0.9 * UIScreen.main.bounds.width)
                 SliderSection(
                     value: $waterDays, title: "Watering interval", unit: "days", range: 1...30, step: 1
                 )
@@ -30,6 +39,11 @@ struct PlantEditView: View {
                     value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 1...90, step: 1
                 )
                 Spacer()
+                HStack{
+                    MiniButton(title: "Reset", action:{})
+                    MiniButton(title: "Save", action:{})
+                }
+                .frame(width: 0.9 * UIScreen.main.bounds.width)
             }
         }
     }
@@ -53,7 +67,7 @@ private struct PlantImageSection: View {
             VStack {
                 Button(action: {}) {
                     Label("Green room", systemImage: "chevron.down")
-                        .font(.note)
+                        .font(.secondaryText)
                         .frame(width: 180, height: 30)
                 }
                 .buttonBorderShape(.capsule)
@@ -61,15 +75,15 @@ private struct PlantImageSection: View {
                 
                 Button(action: {}) {
                     Label("Green room", systemImage: "chevron.down")
-                        .font(.note)
+                        .font(.secondaryText)
                         .frame(width: 180, height: 30)
                 }
                 .buttonBorderShape(.capsule)
                 .tint(.additionalBackground)
                 
                 Button(action: {}) {
-                    Text("Climbing")
-                        .font(.note)
+                    Label("Green room", systemImage: "chevron.down")
+                        .font(.secondaryText)
                         .frame(width: 180, height: 30)
                 }
                 .buttonBorderShape(.capsule)
@@ -117,6 +131,25 @@ private struct SliderSection: View {
             )
             .frame(width: 0.9 * UIScreen.main.bounds.width)
         }
+    }
+}
+
+private struct MiniButton : View {
+    var title: String
+    var action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .frame(maxWidth: .infinity)
+                .font(.buttonText)
+                .foregroundColor(.secondaryText)
+                .background(.additionalBackground)
+                .cornerRadius(10)
+                .padding()
+                .shadow(color: Color(.brown), radius: 3, x: 2, y: 4)
+        }
+        .frame(height: 80)
     }
 }
 
