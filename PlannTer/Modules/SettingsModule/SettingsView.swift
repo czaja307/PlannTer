@@ -4,6 +4,7 @@ struct SettingsView: View {
     @StateObject private var controller = SettingsController()
     @State private var expandedDropdown: String?=nil
     @FocusState private var isFocused: Bool
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         ZStack {
@@ -36,11 +37,13 @@ struct SettingsView: View {
                     ))
                 }
                 Spacer()
-                LargeButton(title: "SaveSettings", action: controller.saveSettings)
+                LargeButton(title: "Save Settings", action: controller.saveSettings)
                 Spacer()
             }
             .padding(.horizontal, 20)
         }
+        .navigationBarBackButtonHidden(true)
+        .customToolbar(title: "Settings", presentationMode: presentationMode)
         .onChange(of: expandedDropdown) { newValue in
             // Add animation to dropdown state change
             if newValue != nil {

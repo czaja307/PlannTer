@@ -9,17 +9,18 @@ struct PlannterToolbar: ViewModifier {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
-                        presentationMode.wrappedValue.dismiss() // Custom back action
+                        presentationMode.wrappedValue.dismiss()
                     }) {
                         Image(systemName: "chevron.left")
-                            .font(.headline)
+                            .padding(30)
+                            .font(.mainText)
                             .foregroundColor(.primary)
-                            .padding(.trailing, 50)
                     }
                 }
                 ToolbarItem(placement: .principal) {
                     Text(title)
-                        .font(.headline)
+                        .font(.mainText)
+
                         .foregroundColor(.primary)
                         .multilineTextAlignment(.center)
                 }

@@ -25,7 +25,6 @@ struct MainScreenView: View {
                         NavigationLink(destination: SettingsView()) {
                             Image(systemName: "gear")
                                 .foregroundColor(.primaryText)
-//                                .font(.imageScale(.large))
                         }
                         .frame(width: 70, height: 70)
                         .background(Color(.primaryBackground))
@@ -40,6 +39,7 @@ struct MainScreenView: View {
 
             }.background(.white)
         }
+        
     }
 }
 
@@ -53,43 +53,54 @@ struct Tiles: View{
     }
     
     var body: some View{
-        //        NavigationView{
-        VStack{
-            //                RoomHorizontalScrollView(roomsList: roomsList, appendTop: appendTop, even: true)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 100) {
-                    ForEach(Array(roomsList.enumerated()).filter { $0.offset % 2 == 0 }, id: \.1.id) { i, room in
-                        NavigationLink(destination: RoomDetailsView()) {
-                            RoomTile(roomName: room.name, roomWarnings: room.numWarnings, numPlants: room.plants.count, listPosition: i)
-                        }
-                    }
-                    if (appendTop) {
-                        NavigationLink(destination: RoomEditView()) {
-                            AddRoomTile(listPosition: 0)
-                                .padding(.leading, 20)
-                        }
-                    }
-                }
-                .padding(.top, 50)
-                HStack(spacing: 100) {
-                    ForEach(Array(roomsList.enumerated()).filter { $0.offset % 2 == 1 }, id: \.1.id) { i, room in
-                        NavigationLink(destination: RoomDetailsView()) {
-                            RoomTile(roomName: room.name, roomWarnings: room.numWarnings, numPlants: room.plants.count, listPosition: i)
-                        }
-                    }
-                    if (!appendTop) {
-                        NavigationLink(destination: RoomEditView()) {
-                            AddRoomTile(listPosition: 1)
-                                .padding(.leading, 20)
-                        }
-                    }
-                }
-                .padding(.leading, 200)
-                .padding(.top, 20)
+        ScrollView(.horizontal, showsIndicators: false) {
+            VStack{
+                RoomScrollView(rooms: evenIndexedRooms, appendTile: appendTop, isTop: true)
+                RoomScrollView(rooms: oddIndexedRooms, appendTile: !appendTop, isTop: false)
+                
             }
-            .frame(width: 500)
-           }
+        }.frame(width: 400)
+    }
+    private var evenIndexedRooms: [RoomModel] {
+           roomsList.enumerated().filter { $0.offset % 2 == 0 }.map { $0.element }
+       }
+       
+    private var oddIndexedRooms: [RoomModel] {
+           roomsList.enumerated().filter { $0.offset % 2 == 1 }.map { $0.element }
+       }
+}
+
+
+struct RoomScrollView: View {
+    let rooms: [RoomModel]
+    let appendTile: Bool
+    let tilePosition: Int
+    
+    init(rooms: [RoomModel], appendTile: Bool, isTop: Bool) {
+        self.rooms = rooms
+        self.appendTile = appendTile
+        self.tilePosition = isTop ? 0 : 1
+    }
+    
+    
+    var body: some View {
+        
+            HStack(spacing: 100) {
+                ForEach(rooms) { room in
+                    NavigationLink(destination: RoomDetailsView(title: room.name)) {
+                        RoomTile(roomName: room.name, roomWarnings: room.numWarnings, numPlants: room.plants.count, listPosition: tilePosition)
+                    }
+                }
+                if appendTile {
+                    NavigationLink(destination: RoomEditView()) {
+                        AddRoomTile(listPosition: tilePosition)
+                            .padding(.leading, 20)
+                    }
+                }
+            }
+            .padding(.top, 50)
+            .padding(.leading, CGFloat(tilePosition * 100))
+            .padding(.bottom, 2)
         
     }
 }
