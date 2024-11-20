@@ -26,7 +26,6 @@ struct MainScreenView: View {
                         NavigationLink(destination: SettingsView()) {
                             Image(systemName: "gear")
                                 .foregroundColor(.primaryText)
-//                                .font(.imageScale(.large))
                         }
                         .frame(width: 70, height: 70)
                         .background(Color(.primaryBackground))
@@ -52,19 +51,18 @@ struct Tiles: View{
     }
     
     var body: some View{
-      
-        VStack{
-            RoomScrollView(rooms: evenIndexedRooms, appendTile: appendTop, isTop: true)
-            RoomScrollView(rooms: oddIndexedRooms, appendTile: !appendTop, isTop: false)
+        ScrollView(.horizontal, showsIndicators: false) {
+            VStack{
+                RoomScrollView(rooms: evenIndexedRooms, appendTile: appendTop, isTop: true)
+                RoomScrollView(rooms: oddIndexedRooms, appendTile: !appendTop, isTop: false)
                 
-           }
-        //        }
+            }
+        }.frame(width: 400)
     }
     private var evenIndexedRooms: [RoomModel] {
            roomsList.enumerated().filter { $0.offset % 2 == 0 }.map { $0.element }
        }
        
-       // Helper to get rooms with odd indices
        private var oddIndexedRooms: [RoomModel] {
            roomsList.enumerated().filter { $0.offset % 2 == 1 }.map { $0.element }
        }
@@ -84,7 +82,7 @@ struct RoomScrollView: View {
     
     
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
+        
             HStack(spacing: 100) {
                 ForEach(rooms) { room in
                     NavigationLink(destination: RoomDetailsView(title: room.name)) {
@@ -99,10 +97,10 @@ struct RoomScrollView: View {
                 }
             }
             .padding(.top, 50)
-            .padding(.leading, CGFloat(tilePosition * 120))
+            .padding(.leading, CGFloat(tilePosition * 100))
             .padding(.bottom, 2)
             
-        }.frame(width: 400)
+        
     }
 }
 

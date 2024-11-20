@@ -22,7 +22,7 @@ struct RoomModel: Identifiable, Codable {
 struct MockRoom {
     static let sampleRoom = RoomModel(name: "Test Room", plants: MockPlant.plants, windows: [.southEast, .south], numWarnings: 3)
     static let otherRoom = RoomModel(name: "Other Room", plants: MockPlant.plants, windows: [.north], numWarnings: 0)
-    static let rooms = [sampleRoom, otherRoom, otherRoom, sampleRoom]
+    static let rooms = [sampleRoom, otherRoom, otherRoom, sampleRoom, otherRoom, otherRoom, sampleRoom]
 }
 
 extension RoomModel {
