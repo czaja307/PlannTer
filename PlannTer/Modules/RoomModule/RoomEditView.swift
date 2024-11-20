@@ -20,6 +20,7 @@ struct RoomEditView: View {
                     .padding(20)
                 Spacer()
                 LargeButton(title: "Save room", action: controller.saveRoom)
+                    .padding(20)
             }
         }
          .navigationBarBackButtonHidden(true)
