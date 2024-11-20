@@ -15,8 +15,7 @@ struct MainScreenView: View {
                 VStack {
                     AppTitle()
                         .padding(.top, 20)
-                    Spacer()
-
+                   
                         Tiles(roomsList: controller.rooms)
 
                 } 
@@ -30,10 +29,13 @@ struct MainScreenView: View {
                         .frame(width: 70, height: 70)
                         .background(Color(.primaryBackground))
                         .cornerRadius(45)
+                        Spacer()
                     }
                     .padding(.horizontal, 20)
+                    
                 }
-                .padding(.bottom, 20)   
+                .frame(width: UIScreen.main.bounds.width)
+                .padding(.bottom, 20)
 
             }.background(.white)
         }
@@ -63,7 +65,7 @@ struct Tiles: View{
            roomsList.enumerated().filter { $0.offset % 2 == 0 }.map { $0.element }
        }
        
-       private var oddIndexedRooms: [RoomModel] {
+    private var oddIndexedRooms: [RoomModel] {
            roomsList.enumerated().filter { $0.offset % 2 == 1 }.map { $0.element }
        }
 }
@@ -99,7 +101,6 @@ struct RoomScrollView: View {
             .padding(.top, 50)
             .padding(.leading, CGFloat(tilePosition * 100))
             .padding(.bottom, 2)
-            
         
     }
 }

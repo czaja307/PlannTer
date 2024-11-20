@@ -16,11 +16,11 @@ struct PlannterToolbar: ViewModifier {
                             .font(.mainText)
                             .foregroundColor(.primary)
                     }
-                    
                 }
                 ToolbarItem(placement: .principal) {
                     Text(title)
                         .font(.mainText)
+
                         .foregroundColor(.primary)
                         .multilineTextAlignment(.center)
                 }

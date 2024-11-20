@@ -16,6 +16,7 @@ struct SettingsView: View {
                 .onTapGesture {
                     // Set expandedDropdown to nil to close any open dropdown
                     expandedDropdown = nil
+                    isFocused = false
                 }
             VStack {
                 Spacer()
