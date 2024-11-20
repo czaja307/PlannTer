@@ -7,14 +7,22 @@ struct LargeButton : View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .font(.buttonText)
                 .foregroundColor(.primaryText)
                 .background(.secondaryBackground)
-                .padding()
+                .padding(.vertical, 40)
                 .cornerRadius(15)
                 .shadow(color: Color(.brown), radius: 5, x: 2, y: 4)
         }
-        .frame(height: 80)
+        .frame( height: 160)
     }
 }
+
+
+#Preview {
+    LargeButton(title: "String") {
+        ()
+    }
+}
+

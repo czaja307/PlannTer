@@ -3,6 +3,7 @@ import SwiftUI
 struct RoomEditView: View {
     @StateObject private var controller = RoomEditController()
     @FocusState private var isFocused: Bool
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
          ZStack {
@@ -14,8 +15,6 @@ struct RoomEditView: View {
                      isFocused = false
                  }
             VStack {
-                ScreenTitle(title: "Room Settings")
-                    .padding(.top, 20)
                 
                 TextInput(title: "Give your room a memorable name", prompt: "Green Sanctuary", isActive: $isFocused)
                     .padding(20)
@@ -23,6 +22,8 @@ struct RoomEditView: View {
                 LargeButton(title: "Save room", action: controller.saveRoom)
             }
         }
+         .navigationBarBackButtonHidden(true)
+         .customToolbar(title: "Edit Room", presentationMode: presentationMode)
     }
 }
 
