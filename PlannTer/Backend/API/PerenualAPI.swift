@@ -1,40 +1,56 @@
 import Foundation
 
 class PerenualAPI {
-    private let apiKey = "YOUR_API_KEY"  // Wstaw swój API Key
-    private let baseUrl = "https://api.perenual.com/v1/plants"  // Przykładowa baza URL
+    private let apiKey = "sk-YqpL6732699b779497556"
+    private let baseURL = "https://perenual.com/api"
 
-    // Wyszukiwanie roślin po nazwie
-    func fetchPlants(completion: @escaping ([PlantModel]?, Error?) -> Void) {
-        guard let url = URL(string: baseUrl) else {
-            completion(nil, NSError(domain: "Invalid URL", code: 0, userInfo: nil))
-            return
-        }
+    func fetchPlantList(completion: @escaping (Result<[PlantData], Error>) -> Void) {
+        let urlString = "\(baseURL)/species-list?key=\(apiKey)"
+        guard let url = URL(string: urlString) else { return }
 
-        var request = URLRequest(url: url)
-        request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "GET"
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                completion(nil, error)
+                completion(.failure(error))
                 return
             }
 
             guard let data = data else {
-                completion(nil, NSError(domain: "No Data", code: 0, userInfo: nil))
+                completion(.failure(NSError(domain: "No data", code: -1, userInfo: nil)))
                 return
             }
 
             do {
                 let decoder = JSONDecoder()
-                let plantData = try decoder.decode([PlantModel].self, from: data)
-                completion(plantData, nil)
+                let plantList = try decoder.decode([PlantData].self, from: data)
+                completion(.success(plantList))
             } catch {
-                completion(nil, error)
+                completion(.failure(error))
             }
-        }
+        }.resume()
+    }
 
-        task.resume()
+    func fetchPlantDetails(plantID: Int, completion: @escaping (Result<PlantDetails, Error>) -> Void) {
+        let urlString = "\(baseURL)/species/details/\(plantID)?key=\(apiKey)"
+        guard let url = URL(string: urlString) else { return }
+
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+
+            guard let data = data else {
+                completion(.failure(NSError(domain: "No data", code: -1, userInfo: nil)))
+                return
+            }
+
+            do {
+                let decoder = JSONDecoder()
+                let plantDetails = try decoder.decode(PlantDetails.self, from: data)
+                completion(.success(plantDetails))
+            } catch {
+                completion(.failure(error))
+            }
+        }.resume()
     }
 }
