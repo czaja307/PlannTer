@@ -15,8 +15,7 @@ struct MainScreenView: View {
                 VStack {
                     AppTitle()
                         .padding(.top, 20)
-                    Spacer()
-
+                   
                         Tiles(roomsList: controller.rooms)
 
                 } 
@@ -31,10 +30,13 @@ struct MainScreenView: View {
                         .frame(width: 70, height: 70)
                         .background(Color(.primaryBackground))
                         .cornerRadius(45)
+                        Spacer()
                     }
                     .padding(.horizontal, 20)
+                    
                 }
-                .padding(.bottom, 20)   
+                .frame(width: UIScreen.main.bounds.width)
+                .padding(.bottom, 20)
 
             }.background(.white)
         }
@@ -58,14 +60,18 @@ struct Tiles: View{
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 100) {
                     ForEach(Array(roomsList.enumerated()).filter { $0.offset % 2 == 0 }, id: \.1.id) { i, room in
-                        RoomTile(roomName: room.name, roomWarnings: room.numWarnings, numPlants: room.plants.count, listPosition: i)
+                        NavigationLink(destination: RoomDetailsView()) {
+                            RoomTile(roomName: room.name, roomWarnings: room.numWarnings, numPlants: room.plants.count, listPosition: i)
+                        }
                     }
                     if (appendTop) {
-                        AddRoomTile(listPosition: 0)
-                            .padding(.leading, 20)
+                        NavigationLink(destination: RoomEditView()) {
+                            AddRoomTile(listPosition: 0)
+                                .padding(.leading, 20)
+                        }
                     }
                 }
-                .padding()
+                .padding(.top, 50)
                 HStack(spacing: 100) {
                     ForEach(Array(roomsList.enumerated()).filter { $0.offset % 2 == 1 }, id: \.1.id) { i, room in
                         NavigationLink(destination: RoomDetailsView()) {
@@ -73,15 +79,18 @@ struct Tiles: View{
                         }
                     }
                     if (!appendTop) {
-                        AddRoomTile(listPosition: 1)
-                            .padding(.leading, 20)
+                        NavigationLink(destination: RoomEditView()) {
+                            AddRoomTile(listPosition: 1)
+                                .padding(.leading, 20)
+                        }
                     }
                 }
                 .padding(.leading, 200)
+                .padding(.top, 20)
             }
             .frame(width: 500)
            }
-        //        }
+        
     }
 }
 

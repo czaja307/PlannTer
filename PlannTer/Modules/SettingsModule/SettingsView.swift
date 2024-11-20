@@ -15,10 +15,9 @@ struct SettingsView: View {
                 .onTapGesture {
                     // Set expandedDropdown to nil to close any open dropdown
                     expandedDropdown = nil
+                    isFocused = false
                 }
             VStack {
-                ScreenTitle(title: "Settings")
-                    .padding(.top, 20)
                 Spacer()
                 VStack(spacing: 20) {
                     TextInput(title: "What should we call you?", prompt: "Enter your name", isActive:$isFocused
