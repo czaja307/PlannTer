@@ -1,7 +1,7 @@
 import Foundation
 
 class PerenualAPI {
-    private let apiKey = "sk-YqpL6732699b779497556"
+    private let apiKey = "api key here"
     private let baseURL = "https://perenual.com/api"
 
     func fetchPlantList(completion: @escaping (Result<[PlantData], Error>) -> Void) {
