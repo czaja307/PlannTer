@@ -17,5 +17,5 @@ struct PlannTerApp: App {
 }
 
 #Preview {
-    TestView()
+    MainScreenView()
 }

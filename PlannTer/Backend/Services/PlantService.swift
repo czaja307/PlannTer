@@ -8,10 +8,19 @@ class PlantService {
         api.fetchPlantList { result in
             switch result {
             case .success(let plants):
-                self.plantList = plants
-                print("Plant list loaded: \(plants)")
+                for plant in plants {
+                    print("Plant ID: \(plant.id ?? -1)")
+                    print("Common Name: \(plant.commonName ?? "Unknown")")
+                    if let sunlight = plant.sunlight {
+                        print("Sunlight requirements: \(sunlight.joined(separator: ", "))")
+                    } else {
+                        print("No sunlight data available")
+                    }
+                    print("Thumbnail: \(plant.defaultImage?.thumbnail ?? "No image available")")
+                    print("------")
+                }
             case .failure(let error):
-                print("Error loading plant list: \(error)")
+                print("Error: \(error.localizedDescription)")
             }
         }
     }
@@ -20,9 +29,9 @@ class PlantService {
         api.fetchPlantDetails(plantID: id) { result in
             switch result {
             case .success(let details):
-                print("Plant details: \(details)")
+                print("Plant Details: \(details)")
             case .failure(let error):
-                print("Error loading plant details: \(error)")
+                print("Error fetching plant details: \(error)")
             }
         }
     }
