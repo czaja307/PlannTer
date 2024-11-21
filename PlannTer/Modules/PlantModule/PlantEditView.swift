@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct PlantEditView: View {
+    let title : String
     @StateObject private var controller = PlantDetailsController(plant: PlantModel.examplePlant)
     @State private var waterDate = Date()
     @State private var waterDays: Int = 7
@@ -9,44 +10,47 @@ struct PlantEditView: View {
     @State private var conditioningDate = Date()
     @State private var conditioningDays: Int = 30
     @FocusState private var isActive: Bool
+    @Environment(\.presentationMode) var presentationMode
     
     @State private var dummyInputText: String = ""
     
     var body: some View {
-        ZStack {
-            Color(.primaryBackground)
-                .edgesIgnoringSafeArea(.all)
-            Color.clear
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    // Set expandedDropdown to false to close any open dropdown
-                    isActive = false
-                }
-            VStack {
-                TopBarView(title: controller.plant.name)
-                PlantImageSection()
-                TextInput(title: "Name your plant", prompt: "Edytka", inputText: $dummyInputText, isActive: $isActive)
+            ZStack {
+                Color(.primaryBackground)
+                    .edgesIgnoringSafeArea(.all)
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        // Set expandedDropdown to false to close any open dropdown
+                        isActive = false
+                    }
+                VStack {
+                    PlantImageSection()
+                    TextInput(title: "Name your plant", prompt: "Edytka", inputText: $dummyInputText, isActive: $isActive)
+                        .frame(width: 0.9 * UIScreen.main.bounds.width)
+                    SliderSection(
+                        value: $waterDays, title: "Watering interval", unit: "days", range: 1...30, step: 1
+                    )
+                    SliderSection(
+                        value: $waterAmount, title: "Water amount", unit: "ml", range: 50...1000, step: 50
+                    )
+                    SliderSection(
+                        value: $sunExposure, title: "Sun exposure", unit: "h", range: 0...12, step: 1
+                    )
+                    SliderSection(
+                        value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 1...90, step: 1
+                    )
+                    Spacer()
+                    HStack{
+                        MiniButton(title: "Reset", action:{})
+                        MiniButton(title: "Save", action:{})
+                    }
                     .frame(width: 0.9 * UIScreen.main.bounds.width)
-                SliderSection(
-                    value: $waterDays, title: "Watering interval", unit: "days", range: 1...30, step: 1
-                )
-                SliderSection(
-                    value: $waterAmount, title: "Water amount", unit: "ml", range: 50...1000, step: 50
-                )
-                SliderSection(
-                    value: $sunExposure, title: "Sun exposure", unit: "h", range: 0...12, step: 1
-                )
-                SliderSection(
-                    value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 1...90, step: 1
-                )
-                Spacer()
-                HStack{
-                    MiniButton(title: "Reset", action:{})
-                    MiniButton(title: "Save", action:{})
                 }
-                .frame(width: 0.9 * UIScreen.main.bounds.width)
             }
-        }
+            
+            .navigationBarBackButtonHidden(true)
+            .customToolbar(title: title, presentationMode: presentationMode)
     }
 }
 
@@ -155,5 +159,5 @@ private struct MiniButton : View {
 }
 
 #Preview {
-    PlantEditView()
+    PlantEditView(title: "Edit")
 }

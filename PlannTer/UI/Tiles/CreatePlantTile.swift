@@ -17,13 +17,12 @@ struct CreatePlantTile: View {
                     .fill(Color.accent)
                     .frame(width: 60, height: 60)
 
-                NavigationLink(destination: PlantEditView()) {
+                
                     Image(systemName: "plus")
                         .foregroundColor(.white)
                         .font(.system(size: 30))
                         .frame(width: 60, height: 60)  // Dopasowanie ramki przycisku
-                }
-                .buttonStyle(PlainButtonStyle()) // Usuwa domyślny styl przycisku
+                
             }
 
             Spacer()
