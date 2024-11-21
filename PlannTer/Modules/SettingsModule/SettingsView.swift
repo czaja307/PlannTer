@@ -21,20 +21,46 @@ struct SettingsView: View {
             VStack {
                 Spacer()
                 VStack(spacing: 20) {
-                    TextInput(title: "What should we call you?", prompt: "Enter your name", isActive:$isFocused
+                    // Text Input for Name
+                    TextInput(
+                        title: "What should we call you?",
+                        prompt: "Enter your name",
+                        inputText: $controller.name,
+                        isActive: $isFocused
                     )
-                    DropdownPicker(title: "NotificationsFrequency:", options: ["Insistent", "Moderate", "Sparing"], isExpanded: Binding(
-                        get: { expandedDropdown == "NotificationsFrequency" },
-                        set: { expandedDropdown = $0 ? "NotificationsFrequency" : nil }
-                    ))
-                    DropdownPicker(title: "Measurements unit system:", options: ["Metric", "Imperial"], isExpanded: Binding(
-                        get: { expandedDropdown == "MeasurementsUnitSystem" },
-                        set: { expandedDropdown = $0 ? "MeasurementsUnitSystem" : nil }
-                    ))
-                    DropdownPicker(title: "Temperature units:", options: ["Celsius", "Fahrenheit"], isExpanded: Binding(
-                        get: { expandedDropdown == "TemperatureUnits" },
-                        set: { expandedDropdown = $0 ? "TemperatureUnits" : nil }
-                    ))
+                    
+                    // Dropdown for Notifications Frequency
+                    DropdownPicker(
+                        title: "Notifications Frequency:",
+                        options: ["Insistent", "Moderate", "Sparing"],
+                        selectedOption: $controller.notificationsFrequency,
+                        isExpanded: Binding(
+                            get: { expandedDropdown == "NotificationsFrequency" },
+                            set: { expandedDropdown = $0 ? "NotificationsFrequency" : nil }
+                        )
+                    )
+                    
+                    // Dropdown for Measurements Unit System
+                    DropdownPicker(
+                        title: "Measurements Unit System:",
+                        options: ["Metric", "Imperial"],
+                        selectedOption: $controller.measurementsUnitSystem,
+                        isExpanded: Binding(
+                            get: { expandedDropdown == "MeasurementsUnitSystem" },
+                            set: { expandedDropdown = $0 ? "MeasurementsUnitSystem" : nil }
+                        )
+                    )
+                    
+                    // Dropdown for Temperature Units
+                    DropdownPicker(
+                        title: "Temperature Units:",
+                        options: ["Celsius", "Fahrenheit"],
+                        selectedOption: $controller.temperatureUnits,
+                        isExpanded: Binding(
+                            get: { expandedDropdown == "TemperatureUnits" },
+                            set: { expandedDropdown = $0 ? "TemperatureUnits" : nil }
+                        )
+                    )
                 }
                 Spacer()
                 LargeButton(title: "Save Settings", action: controller.saveSettings)
