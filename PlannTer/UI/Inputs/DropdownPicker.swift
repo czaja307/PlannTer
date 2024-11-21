@@ -3,15 +3,14 @@ import SwiftUI
 struct DropdownPicker: View {
     let title: String
     let options: [String]
-    
+    @Binding private var selectedOption: String
     @Binding private var isExpanded: Bool
-    @State private var selectedOption: String
     
-    init(title: String, options: [String], isExpanded: Binding<Bool>) {
+    init(title: String, options: [String], selectedOption: Binding<String>, isExpanded: Binding<Bool>) {
         self.title = title
         self.options = options
+        self._selectedOption = selectedOption
         self._isExpanded = isExpanded
-        self._selectedOption = State(initialValue: options.first ?? "")
     }
     
     var body: some View {

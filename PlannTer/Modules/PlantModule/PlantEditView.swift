@@ -10,6 +10,7 @@ struct PlantEditView: View {
     @State private var conditioningDays: Int = 30
     @FocusState private var isActive: Bool
     
+    @State private var dummyInputText: String = ""
     
     var body: some View {
         ZStack {
@@ -24,7 +25,7 @@ struct PlantEditView: View {
             VStack {
                 TopBarView(title: controller.plant.name)
                 PlantImageSection()
-                TextInput(title: "Name your plant", prompt: "Edytka", isActive: $isActive)
+                TextInput(title: "Name your plant", prompt: "Edytka", inputText: $dummyInputText, isActive: $isActive)
                     .frame(width: 0.9 * UIScreen.main.bounds.width)
                 SliderSection(
                     value: $waterDays, title: "Watering interval", unit: "days", range: 1...30, step: 1
