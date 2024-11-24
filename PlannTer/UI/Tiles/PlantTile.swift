@@ -54,9 +54,10 @@ struct PlantTile: View {
                                 .foregroundColor(plant.notificationsCount > 0 ? .yellow : .green)
                             
                             Text(plant.notificationsCount > 0 ? "\(plant.notificationsCount)" : "")
+                                .lineLimit(1)
                                 .font(.note)
                                 .foregroundColor(Color.primaryText)
-//                                .offset(x: -5)
+                                .offset(x: -5)
                                 .frame(maxWidth: .infinity)
                         }
                         .padding(8)
@@ -69,7 +70,7 @@ struct PlantTile: View {
             }
         }
         .padding(15)
-        .frame(width: 350, height: 180, alignment: .center)
+        .frame(height: 180, alignment: .center)
         .background(Color.secondaryBackground)
         .cornerRadius(15)
         .shadow(color: Color.secondaryText.opacity(0.5), radius: 3.3, x: 2, y: 4)

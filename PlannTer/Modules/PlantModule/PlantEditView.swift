@@ -29,21 +29,24 @@ struct PlantEditView: View {
                     TextInput(title: "Name your plant", prompt: "Edytka", inputText: $dummyInputText, isActive: $isActive)
                         .frame(width: 0.9 * UIScreen.main.bounds.width)
                     SliderSection(
-                        value: $waterDays, title: "Watering interval", unit: "days", range: 1...30, step: 1
+                        value: $waterDays, title: "Watering interval", unit: "days", range: 1...30, step: 1, sColor: .green
                     )
                     SliderSection(
-                        value: $waterAmount, title: "Water amount", unit: "ml", range: 50...1000, step: 50
+                        value: $waterAmount, title: "Water amount", unit: "ml", range: 50...1000, step: 50, sColor: .blue
                     )
                     SliderSection(
-                        value: $sunExposure, title: "Sun exposure", unit: "h", range: 0...12, step: 1
+                        value: $sunExposure, title: "Sun exposure", unit: "h", range: 0...12, step: 1, sColor: .yellow
                     )
                     SliderSection(
-                        value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 1...90, step: 1
+                        value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 1...90, step: 1, sColor: .pink
                     )
                     Spacer()
                     HStack{
+                        Spacer()
                         MiniButton(title: "Reset", action:{})
+                        Spacer()
                         MiniButton(title: "Save", action:{})
+                        Spacer()
                     }
                     .frame(width: 0.9 * UIScreen.main.bounds.width)
                 }
@@ -108,6 +111,7 @@ private struct SliderSection: View {
     var unit: String
     var range: ClosedRange<Double>
     var step: Double
+    let sColor: Color
     
     var body: some View {
         VStack {
@@ -135,6 +139,7 @@ private struct SliderSection: View {
                 }
             )
             .frame(width: 0.9 * UIScreen.main.bounds.width)
+            .tint(sColor)
         }
     }
 }
@@ -148,13 +153,13 @@ private struct MiniButton : View {
             Text(title)
                 .frame(maxWidth: .infinity)
                 .font(.buttonText)
+                .padding(10)
                 .foregroundColor(.secondaryText)
                 .background(.additionalBackground)
                 .cornerRadius(10)
-                .padding()
                 .shadow(color: Color(.brown), radius: 3, x: 2, y: 4)
         }
-        .frame(height: 80)
+        .frame(width: 160, height: 80)
     }
 }
 

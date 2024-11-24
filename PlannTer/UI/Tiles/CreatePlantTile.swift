@@ -20,7 +20,8 @@ struct CreatePlantTile: View {
             Spacer()
         }
         .padding(15)
-        .frame(width: 350, height: 180)
+        .frame(height: 180)
+        .frame(maxWidth: .infinity)
         .background(Color.secondaryBackground)
         .cornerRadius(15)
         .shadow(color: Color.secondaryText.opacity(0.5), radius: 3.3, x: 2, y: 4)

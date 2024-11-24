@@ -16,7 +16,7 @@ struct LargeButton : View {
                 .padding()
                 .shadow(color: Color(.brown), radius: 5, x: 2, y: 4)
         }
-        .frame( height: 160)
+        .frame( height: 190)
     }
 }
 

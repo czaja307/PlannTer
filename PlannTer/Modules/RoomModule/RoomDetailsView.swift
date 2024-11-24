@@ -12,14 +12,16 @@ struct RoomDetailsView: View {
                     }
                     
                 }
-                .frame(width: UIScreen.main.bounds.width)
                 NavigationLink(destination: PlantEditView(title: "Add Plant")){
                     CreatePlantTile()
                 }
                 
             }
+            .padding(.horizontal,10)
+            .padding(.vertical, 10)
             .navigationBarBackButtonHidden(true)
             .roomToolbar(title: title, sunHours: 5, presentationMode: presentationMode)
+            .ignoresSafeArea()
             .background(Color.primaryBackground)
         
     }

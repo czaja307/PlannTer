@@ -106,6 +106,8 @@ private struct WateringSection: View {
                 }
             )
             .frame(width: 0.9 * UIScreen.main.bounds.width)
+            .disabled(true)
+            .tint(.green)
         }
     }
 }
@@ -144,6 +146,7 @@ private struct WaterAmountSection: View {
                 }
             )
             .frame(width: 0.9 * UIScreen.main.bounds.width)
+            .disabled(true)
         }
     }
 }
@@ -182,6 +185,8 @@ private struct SunExposureSection: View {
                 }
             )
             .frame(width: 0.9 * UIScreen.main.bounds.width)
+            .disabled(true)
+            .tint(.yellow)
         }
     }
 }
@@ -228,6 +233,8 @@ private struct ConditioningSection: View {
                 }
             )
             .frame(width: 0.9 * UIScreen.main.bounds.width)
+            .disabled(true)
+            .tint(.pink)
         }
     }
 }

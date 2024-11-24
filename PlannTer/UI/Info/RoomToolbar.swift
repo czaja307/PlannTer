@@ -21,7 +21,7 @@ struct RoomToolbar: ViewModifier {
                         Color.additionalBackground
                             .edgesIgnoringSafeArea(.top)
                         
-                        VStack (alignment: .center){
+                        VStack (){
                         
                             HStack {
                                 // Leading Button (Back button)
@@ -29,7 +29,7 @@ struct RoomToolbar: ViewModifier {
                                     presentationMode.wrappedValue.dismiss()
                                 }) {
                                     Image(systemName: "chevron.left")
-                                        .padding(.horizontal, 30)
+                                        .padding(.horizontal, 25)
                                         .padding(.vertical, 0)
                                         .font(.mainText)
                                         .foregroundColor(.secondaryText)
@@ -37,12 +37,14 @@ struct RoomToolbar: ViewModifier {
                                 
                                 Text(title)
                                     .font(.mainText)
-                                    .frame(width: 200)
-                                    
-                                    .foregroundColor(.secondaryText)
-                                    .position(x: (UIScreen.main.bounds.width - 200)/2, y: 20)
+                                        .lineLimit(2)
+                                        .multilineTextAlignment(.center)
+                                        .foregroundColor(.secondaryText)
+                                        .frame(maxWidth: UIScreen.main.bounds.width * 0.8)
+                                        .frame(maxWidth: .infinity, alignment: .center)
+                                        .padding(.trailing, 85)
                                 
-                                Spacer()
+                                
                             }
                             
                             if(isToolbarExpanded) {
@@ -50,6 +52,7 @@ struct RoomToolbar: ViewModifier {
                                     Image("SunSymbol")
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
+                                        .frame(width: 50, height: 50)
                                     Text("\(sunHours)h")
                                         .font(.secondaryText)
                                         .foregroundColor(.secondaryText)
@@ -70,12 +73,12 @@ struct RoomToolbar: ViewModifier {
                                     .foregroundColor(.secondaryText)
                             }
                         }
-                        .padding(.top, 20)
+                        .padding(.top, 45)
                         .padding(.bottom, 15)
                     }
-                    .frame(maxHeight: isToolbarExpanded ? 190 : 130)
+                    .frame(maxHeight: isToolbarExpanded ? 290 : 200)
                     .animation(.easeInOut, value: isToolbarExpanded)
-                           
+                    .cornerRadius(15)
                     
                     content
                 }
@@ -124,6 +127,6 @@ extension View {
     VStack {
         
     }.navigationBarBackButtonHidden(true)
-        .roomToolbar(title: "title", sunHours: 4, presentationMode: presentationMode)
+        .roomToolbar(title: "titljmntghgjjhjbjdd", sunHours: 4, presentationMode: presentationMode)
         .background(Color.primaryBackground)
 }
