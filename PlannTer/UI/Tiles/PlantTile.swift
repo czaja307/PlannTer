@@ -4,89 +4,110 @@ struct PlantTile: View {
     @State var plant: PlantModel
 
     var body: some View {
-        HStack(alignment: .center, spacing: 15) {
-            Image(plant.imageUrl)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 100, height: 100)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text(plant.name)
-                    .font(Font.custom("Roboto", size: 25))
-                    .foregroundColor(Color.primaryText)
+        GeometryReader { geometry in
+            HStack(spacing: 15) {
+           
+                Image(plant.imageUrl)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: (geometry.size.width - 30) * 0.35, height: geometry.size.height)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                 
-                Text("Add water: \(plant.waterAmountInML)ml")
-                    .font(Font.custom("Roboto", size: 16))
-                    .foregroundColor(Color.primaryText)
-
-                //ProgressView(value: plant.progress).progressViewStyle(LinearProgressViewStyle()).frame(height: 8)
                 
-                let progressBarWidth: CGFloat = 140
-                let progressBarHeight: CGFloat = 20
-
-                ZStack(alignment: .leading) {
-                    // RIGHT (0-100%)
-                    Rectangle()
-                        .fill(Color.red)
-                        .frame(width: progressBarWidth * 1.00, height: progressBarHeight) // 25% szerokości
-
-                    // MIDDLE (0-75%)
-                    Rectangle()
-                        .fill(Color.white)
-                        .frame(width: progressBarWidth * 0.75, height: progressBarHeight) // 50% szerokości
-
-                    // LEFT (0-25%)
-                    Rectangle()
-                        .fill(Color.blue)
-                        .frame(width: progressBarWidth * 0.25, height: progressBarHeight) // 25% szerokości
-
-                    // pionowa kreska wskazująca postęp
-                    Rectangle()
-                        .fill(Color.black)
-                        .frame(width: 2, height: progressBarHeight)
-                        .position(x: CGFloat(plant.progress) * progressBarWidth, y: progressBarHeight / 2)
-                }
-                .cornerRadius(8)  // Zaokrąglone rogi paska
-
-            }
-            .padding(.vertical, 8)
-            
-            VStack(spacing: 10) {
-                Button(action: { plant.tryToWater() }) {
-                    Image(systemName: plant.isWatered ? "checkmark.circle.fill" : "checkmark.circle")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 40, height: 40)
-                        .foregroundColor(plant.isWatered ? .green : .red)
-                }
-                .disabled(plant.isWatered)
-                
-                ZStack(alignment: .topTrailing) {
-                    Image(systemName: plant.notificationsCount > 0 ? "exclamationmark.triangle.fill" : "hand.thumbsup.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 40, height: 40)
-                        .foregroundColor(plant.notificationsCount > 0 ? .yellow : .green)
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack() {
+                        Text(plant.name)
+                            .font(.secondaryText)
+                            .foregroundColor(Color.primaryText)
+                    }
                     
-                    Text(plant.notificationsCount > 0 ? "\(plant.notificationsCount)" : "")
-                        .font(.subheadline)
-                        .foregroundColor(Color.primaryText)
+                    HStack() {
+                        Text(plant.isWatered ? "All good!" : "Add water:")
+                            .font(.note)
+                            .foregroundColor(Color.primaryText)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        if(!plant.isWatered){
+                            Text("\(plant.waterAmountInML)ml")
+                                .font(.largeSlimText)
+                                .foregroundColor(Color.primaryText)
+                            
+                            Button(action: { plant.tryToWater() }) {
+                                Image("TickSymbol")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 30, height: 30)
+                            }
+                            .padding(3)
+                            .background(.white.opacity(0.6))
+                            .cornerRadius(25)
+                        }
+                    }
+                    .frame(height: 35)
+                    HStack(){
+                        Bar(progressBarWidth: 140, progressBarHeight: 20, progress: plant.progress)
+                        HStack(spacing: 0) {
+                            Image(plant.notificationsCount > 0 ? "WarnSymbol" : "ThumbsSymbol")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 20, height: 30)
+                                .foregroundColor(plant.notificationsCount > 0 ? .yellow : .green)
+                            
+                            Text(plant.notificationsCount > 0 ? "\(plant.notificationsCount)" : "")
+                                .lineLimit(1)
+                                .font(.note)
+                                .foregroundColor(Color.primaryText)
+                                .offset(x: -5)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .padding(8)
+                        .background(.white.opacity(0.6))
+                        .cornerRadius(15)
+                    }
                 }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
             }
-            .padding(.leading, 10)
         }
         .padding(15)
-        .frame(width: 350, height: 130, alignment: .top)
-        .background(Color.primaryBackground)
+        .frame(height: 180, alignment: .center)
+        .background(Color.secondaryBackground)
         .cornerRadius(15)
         .shadow(color: Color.secondaryText.opacity(0.5), radius: 3.3, x: 2, y: 4)
     }
 }
 
+struct Bar: View {
+    
+    let progressBarWidth: CGFloat
+    let progressBarHeight: CGFloat
+    var progress: Double
+    
+    var body: some View {
+        ZStack(alignment: .leading) {
+            Rectangle()
+                .fill(Color.waterBackground)
+                .frame(width: progressBarWidth * 1.00, height: progressBarHeight)
+
+            Rectangle()
+                .fill(Color.primaryBackground)
+                .frame(width: progressBarWidth * 0.75, height: progressBarHeight)
+            Rectangle()
+                .fill(Color.additionalBackground)
+                .frame(width: progressBarWidth * 0.25, height: progressBarHeight)
+            Rectangle()
+                .fill(Color.black)
+                .frame(width: 2, height: progressBarHeight)
+                .offset(x: CGFloat(progress) * progressBarWidth)
+        }
+        .border(Color.black, width: 1)
+        .cornerRadius(2)
+    }
+    
+}
+
 #Preview {
     PlantTile(plant: PlantModel.examplePlant)
     PlantTile(plant: PlantModel.examplePlant)
-    CreatePlantTile()
     CreatePlantTile()
 }

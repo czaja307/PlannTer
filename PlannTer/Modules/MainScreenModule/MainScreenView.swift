@@ -15,8 +15,7 @@ struct MainScreenView: View {
                 VStack {
                     AppTitle()
                         .padding(.top, 20)
-                   
-                        Tiles(roomsList: controller.rooms)
+                    Tiles(roomsList: controller.rooms)
 
                 } 
                 VStack{

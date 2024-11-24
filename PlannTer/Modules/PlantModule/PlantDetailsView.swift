@@ -8,46 +8,36 @@ struct PlantDetailsView: View {
     @State private var sunExposure: Int = 8
     @State private var conditioningDate = Date()
     @State private var conditioningDays: Int = 30
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
-        ZStack {
-            Color(.primaryBackground)
-                .edgesIgnoringSafeArea(.all)
-            VStack {
-                TopBarView(title: controller.plant.name)
-                PlantImageSection()
-                WateringSection(date: $waterDate, days: $waterDays)
-                WaterAmountSection(waterAmount: $waterAmount)
-                SunExposureSection(sunExposure: $sunExposure)
-                ConditioningSection(date: $conditioningDate, days: $conditioningDays)
-                Spacer()
+            ZStack {
+                Color(.primaryBackground)
+                    .edgesIgnoringSafeArea(.all)
+                VStack {
+                    PlantImageSection()
+                    WateringSection(date: $waterDate, days: $waterDays)
+                    WaterAmountSection(waterAmount: $waterAmount)
+                    SunExposureSection(sunExposure: $sunExposure)
+                    ConditioningSection(date: $conditioningDate, days: $conditioningDays)
+                    Spacer()
+                }
+            }
+            .navigationBarBackButtonHidden(true)
+            .customToolbar(title: controller.plant.name, presentationMode: presentationMode)
+            .toolbar{
+                ToolbarItem(placement: .topBarTrailing){
+                    NavigationLink(destination: PlantEditView(title: "Edit Plant")){
+                        Image(systemName: "gearshape.fill")
+                            .font(.mainText)
+                            .foregroundColor(.primaryText)
+                            .padding(.trailing, 50)
+                    }
             }
         }
     }
 }
 
-struct TopBarView: View {
-    var title: String
-    
-    var body: some View {
-        HStack {
-            Image(systemName: "chevron.left")
-                .font(.mainText)
-                .foregroundColor(.primaryText)
-                .padding(.leading, 50)
-            Spacer()
-            Text(title)
-                .font(.mainText)
-                .foregroundColor(.primaryText)
-                .multilineTextAlignment(.center)
-            Spacer()
-            Image(systemName: "gearshape.fill")
-                .font(.mainText)
-                .foregroundColor(.primaryText)
-                .padding(.trailing, 50)
-        }
-    }
-}
 
 private struct PlantImageSection: View {
     var body: some View {
@@ -116,6 +106,8 @@ private struct WateringSection: View {
                 }
             )
             .frame(width: 0.9 * UIScreen.main.bounds.width)
+            .disabled(true)
+            .tint(.green)
         }
     }
 }
@@ -154,6 +146,7 @@ private struct WaterAmountSection: View {
                 }
             )
             .frame(width: 0.9 * UIScreen.main.bounds.width)
+            .disabled(true)
         }
     }
 }
@@ -192,6 +185,8 @@ private struct SunExposureSection: View {
                 }
             )
             .frame(width: 0.9 * UIScreen.main.bounds.width)
+            .disabled(true)
+            .tint(.yellow)
         }
     }
 }
@@ -238,6 +233,8 @@ private struct ConditioningSection: View {
                 }
             )
             .frame(width: 0.9 * UIScreen.main.bounds.width)
+            .disabled(true)
+            .tint(.pink)
         }
     }
 }
