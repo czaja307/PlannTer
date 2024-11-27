@@ -1,7 +1,13 @@
 import Foundation
 
 class PerenualAPI {
-    private let apiKey = "sk-CqZ3673e491f7f6b27556"
+    //private let apiKey = "apikey"
+    private lazy var apiKey: String = {
+        guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "Api-key") as? String else {
+            fatalError("API_KEY not found in Info.plist")
+        }
+        return apiKey
+    }()
     private let baseURL = "https://perenual.com/api"
 
     func fetchPlantList(completion: @escaping (Result<[PlantData], Error>) -> Void) {

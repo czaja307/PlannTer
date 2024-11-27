@@ -13,6 +13,20 @@ struct PlantData: Codable {
     let watering: String?
     let sunlight: [String]?
     let defaultImage: ImageData?
+    
+    // computed property: category (last word of commonName)
+    var category: String? {
+        guard let name = commonName else { return nil }
+        let components = name.split(separator: " ")
+        return components.last.map(String.init)
+    }
+    // computed property: species (all but the last word of commonName)
+    var species: String? {
+        guard let name = commonName else { return nil }
+        let components = name.split(separator: " ")
+        guard components.count > 1 else { return nil }
+        return components.dropLast().joined(separator: " ")
+    }
 
     enum CodingKeys: String, CodingKey {
         case id
