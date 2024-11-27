@@ -3,42 +3,31 @@ import SwiftUI
 struct CreatePlantTile: View {
     var body: some View {
         VStack {
-            // Tekst na górze panelu
             Text("Add Plant")
-                .font(.headline)
+                .font(.buttonText)
                 .foregroundColor(Color.primaryText)
                 .padding(.top, 16)
-            
             Spacer()
-
-            // Panel z okrągłym przyciskiem z plusem
             ZStack {
                 Circle()
-                    .fill(Color.accent)
+                    .fill(.white.opacity(0.6))
                     .frame(width: 60, height: 60)
-
-                NavigationLink(destination: PlantEditView()) {
-                    Image(systemName: "plus")
-                        .foregroundColor(.white)
-                        .font(.system(size: 30))
-                        .frame(width: 60, height: 60)  // Dopasowanie ramki przycisku
-                }
-                .buttonStyle(PlainButtonStyle()) // Usuwa domyślny styl przycisku
+                Image("AddSymbol")
+                    .resizable()
+                    .frame(width: 50, height: 50)
+                    .aspectRatio(contentMode: .fit)
             }
-
             Spacer()
         }
         .padding(15)
-        .frame(width: 350, height: 130)
-        .background(Color.primaryBackground)
+        .frame(height: 180)
+        .frame(maxWidth: .infinity)
+        .background(Color.secondaryBackground)
         .cornerRadius(15)
         .shadow(color: Color.secondaryText.opacity(0.5), radius: 3.3, x: 2, y: 4)
     }
 }
 
 #Preview {
-    PlantTile(plant: PlantModel.examplePlant)
-    PlantTile(plant: PlantModel.examplePlant)
-    CreatePlantTile()
     CreatePlantTile()
 }

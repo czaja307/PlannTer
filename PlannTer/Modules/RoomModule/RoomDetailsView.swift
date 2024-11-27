@@ -5,30 +5,28 @@ struct RoomDetailsView: View {
     @StateObject private var controller = RoomDetailsController()
     @Environment(\.presentationMode) var presentationMode // To handle back navigation
     var body: some View {
-        VStack {
-            if /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/ {
-                NavigationView {
-                    List(PlantModel.examplePlants) { plant in
-                        VStack(alignment: .leading) {
-                            Text(plant.name).font(.headline)
-                            
-                            HStack {
-                                Text("Water level: ")
-                                Text(String(plant.maxWaterAmountInML))
-                            }
-                        }
+            ScrollView(.vertical){
+                ForEach(PlantModel.examplePlants) { plant in
+                    NavigationLink(destination: PlantDetailsView()){
+                        PlantTile(plant: plant)
                     }
+                    
                 }
-                .frame(width: UIScreen.main.bounds.width)
-                .navigationBarBackButtonHidden(true)
-                .customToolbar(title: title, presentationMode: presentationMode)
-            } else {
-                /*@START_MENU_TOKEN@*/EmptyView()/*@END_MENU_TOKEN@*/
+                NavigationLink(destination: PlantEditView(title: "Add Plant")){
+                    CreatePlantTile()
+                }
+                
             }
-        }
+            .padding(.horizontal,10)
+            .padding(.vertical, 10)
+            .navigationBarBackButtonHidden(true)
+            .roomToolbar(title: title, sunHours: 5, presentationMode: presentationMode)
+            .ignoresSafeArea()
+            .background(Color.primaryBackground)
+        
     }
 }
 
 #Preview {
-    RoomDetailsView(title: "Test")
+    RoomDetailsView(title:"Title")
 }

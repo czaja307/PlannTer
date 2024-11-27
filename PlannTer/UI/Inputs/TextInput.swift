@@ -3,10 +3,8 @@ import SwiftUI
 struct TextInput: View {
     let title: String
     let prompt: String
-    
+    @Binding var inputText: String
     @FocusState.Binding var isActive: Bool
-
-    @State private var inputText: String = ""
     
     var body: some View {
         VStack(alignment: .leading) {

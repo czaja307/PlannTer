@@ -18,12 +18,19 @@ struct RoomTile: View {
     
     var body: some View {
         ZStack(alignment: .top){
-            VStack(spacing: mainPadding) {
+            VStack(spacing: 5) {
                 Text(roomName)
                     .padding(mainPadding)
                     .font(.mainText)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.primaryText)
+                    .lineLimit(2)
+                    .foregroundColor(Color.primaryText)
+                    .frame(
+                            minWidth: 0,
+                            maxWidth: .infinity,
+                            minHeight: 0,
+                            maxHeight: .infinity,
+                            alignment: .center
+                        )
                 HStack(spacing: mainPadding) {
                     Spacer()
                     InfoBubble(color: fgColor, value: numPlants, image: Image("PlantSymbol"), size: (size - 3 * mainPadding)/3)
@@ -78,6 +85,6 @@ struct InfoBubble: View{
 }
 
 #Preview {
-    RoomTile(roomName: "osdfijldf", roomWarnings: 3, numPlants: 3, listPosition: 0)
+    RoomTile(roomName: "osdfijnvghfhgfhgfhldf", roomWarnings: 3, numPlants: 3, listPosition: 0)
     RoomTile(roomName: "osdfijldf", roomWarnings: 3, numPlants: 3, listPosition: 1)
 }
