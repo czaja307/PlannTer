@@ -9,7 +9,7 @@ struct PlantDetailsView: View {
     @State private var conditioningDate = Date()
     @State private var conditioningDays: Int = 30
     @Environment(\.presentationMode) var presentationMode
-    
+        
     var body: some View {
             ZStack {
                 Color(.primaryBackground)
