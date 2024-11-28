@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MainScreenView: View {
     @StateObject private var controller = MainScreenController()
+    @Environment(SettingsModel.self) private var settings
     
     var body: some View {
 
@@ -21,7 +22,7 @@ struct MainScreenView: View {
                 VStack{
                     Spacer()
                     HStack{
-                        NavigationLink(destination: SettingsView()) {
+                        NavigationLink(destination: SettingsView(settings: settings)) {
                             Image(systemName: "gear")
                                 .foregroundColor(.primaryText)
                         }
