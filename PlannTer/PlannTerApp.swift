@@ -27,7 +27,7 @@ struct RootView: View {
                 if settings.isEmpty {
                     context.insert(SettingsModel())
                 }
-            }).environment(settings.first ?? SettingsModel())
+            }).environment(settings.first)
     }
 }
 

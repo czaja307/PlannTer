@@ -45,7 +45,7 @@ struct MainScreenView: View {
 }
 
 struct Tiles: View{
-    var roomsList : [RoomModel]
+    var roomsList: [RoomModel]
     private var appendTop: Bool
     
     init(roomsList:[RoomModel]) {
@@ -88,7 +88,7 @@ struct RoomScrollView: View {
         
             HStack(spacing: 100) {
                 ForEach(rooms) { room in
-                    NavigationLink(destination: RoomDetailsView(title: room.name)) {
+                    NavigationLink(destination: RoomDetailsView(room: room)) {
                         RoomTile(roomName: room.name, roomWarnings: 2, numPlants: room.plants.count, listPosition: tilePosition)
                     }
                 }
