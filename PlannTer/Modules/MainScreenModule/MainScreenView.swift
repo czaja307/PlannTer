@@ -1,8 +1,9 @@
 import SwiftUI
+import SwiftData
 
 struct MainScreenView: View {
-    @StateObject private var controller = MainScreenController()
     @Environment(SettingsModel.self) private var settings
+    @Query var roomList: [RoomModel]
     
     var body: some View {
 
@@ -16,7 +17,7 @@ struct MainScreenView: View {
                 VStack {
                     AppTitle()
                         .padding(.top, 20)
-                    Tiles(roomsList: controller.rooms)
+                    Tiles(roomsList: roomList)
 
                 } 
                 VStack{
@@ -92,7 +93,7 @@ struct RoomScrollView: View {
                     }
                 }
                 if appendTile {
-                    NavigationLink(destination: RoomEditView()) {
+                    NavigationLink(destination: RoomAddView()) {
                         AddRoomTile(listPosition: tilePosition)
                             .padding(.leading, 20)
                     }

@@ -13,7 +13,7 @@ struct PlannTerApp: App {
         WindowGroup {
             RootView()
         }
-        .modelContainer(for: [SettingsModel.self])
+        .modelContainer(for: [SettingsModel.self, RoomModel.self, PlantModel.self])
     }
 }
 
