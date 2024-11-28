@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PlantDetailsView: View {
-    @StateObject private var controller = PlantDetailsController(plant: PlantModel.examplePlant)
+    @StateObject private var controller = PlantDetailsController(plant: PlantModel.exampleApiPlant)
     @State private var waterDate = Date()
     @State private var waterDays: Int = 7
     @State private var waterAmount: Int = 200
@@ -9,7 +9,7 @@ struct PlantDetailsView: View {
     @State private var conditioningDate = Date()
     @State private var conditioningDays: Int = 30
     @Environment(\.presentationMode) var presentationMode
-    
+        
     var body: some View {
             ZStack {
                 Color(.primaryBackground)

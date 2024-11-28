@@ -7,7 +7,7 @@ struct PlantTile: View {
         GeometryReader { geometry in
             HStack(spacing: 15) {
            
-                Image(plant.imageUrl)
+                Image(plant.imageUrl ?? "")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: (geometry.size.width - 30) * 0.35, height: geometry.size.height)
@@ -32,7 +32,7 @@ struct PlantTile: View {
                                 .font(.largeSlimText)
                                 .foregroundColor(Color.primaryText)
                             
-                            Button(action: { plant.tryToWater() }) {
+                            Button(action: { plant.waterThePlant() }) {
                                 Image("TickSymbol")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)

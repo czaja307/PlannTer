@@ -33,9 +33,9 @@ struct RoomTile: View {
                         )
                 HStack(spacing: mainPadding) {
                     Spacer()
-                    InfoBubble(color: fgColor, value: numPlants, image: Image("PlantSymbol"), size: (size - 2 * mainPadding)/3)
+                    InfoBubble(color: fgColor, value: numPlants, image: Image("PlantSymbol"), size: (size - 3 * mainPadding)/3)
                     Spacer()
-                    InfoBubble(color: fgColor, value: roomWarnings, image: Image("WarnSymbol"), size: (size - 2 * mainPadding)/3)
+                    InfoBubble(color: fgColor, value: roomWarnings, image: Image("WarnSymbol"), size: (size - 3 * mainPadding)/3)
                     Spacer()
                 }
                 .padding(mainPadding/2)
@@ -69,13 +69,11 @@ struct InfoBubble: View{
             HStack() {
                 image
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: size/1.3, height: size/1.3)
-                    
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: size/2)
                 Text("\(value)")
                     .font(.note)
                     .foregroundColor(.primaryText)
-                    .offset(x: -15)
                     
             }
             .font(.note)
