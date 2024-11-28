@@ -26,7 +26,7 @@ class PlantModel: Identifiable, Codable {
         self.imageUrl = details.defaultImage?.regularURL ?? ""
         self.category = details.category
         self.species = details.species
-        self.descriptionText = details.description
+        self.descriptionText = details.descriptionText
         self.details = details
         self.waterAmountInML = waterAmount
         self.dailySunExposure = sunlightHours

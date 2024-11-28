@@ -17,7 +17,7 @@ struct PlantAddView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
-    @State private var dummyInputText: String = ""
+    @State private var plantName: String = ""
     
     var body: some View {
         ZStack {
@@ -31,7 +31,7 @@ struct PlantAddView: View {
                 }
             VStack {
                 PlantImageSection()
-                TextInput(title: "Name your plant", prompt: "Edytka", inputText: $dummyInputText, isActive: $isActive)
+                TextInput(title: "Name your plant", prompt: "Edytka", inputText: $plantName, isActive: $isActive)
                     .frame(width: 0.9 * UIScreen.main.bounds.width)
                 SliderSection(
                     value: $waterDays, title: "Watering interval", unit: "days", range: 1...30, step: 1, sColor: .green
@@ -62,16 +62,10 @@ struct PlantAddView: View {
     }
     
     private func savePlant() {
-        let newPlant = PlantModel(name: "Edyta",
-                                  imageUrl: "ExamplePlant",
-                                  nextWateringDate: Date().addingTimeInterval(86400),  // Następne podlewanie za 24 godziny
-                                  waterAmountInML: 50,
-                                  dailySunExposure: 8,
-                                  nextConditioningDate: Date().addingTimeInterval(604800),  // Następne kondycjonowanie za tydzień
-                                  //room: exampleRoom,
-                                  category: .cactus,
-                                  species: .climbing,
-                                  room: room)
+        let nextWatering = Calendar.current.date(byAdding: .day, value: waterDays, to: Date())
+
+        
+        let newPlant = PlantModel(room: room, name: plantName, imageUrl: "ExamplePlant", category: "Jan", species: "Paweł", waterAmountInML: waterAmount, dailySunExposure: sunExposure, nextWateringDate: Date(), prevWateringDate: Date())
         context.insert(newPlant)
         
         do {

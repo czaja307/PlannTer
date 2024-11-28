@@ -7,7 +7,7 @@ struct RoomDetailsView: View {
     var body: some View {
         ScrollView(.vertical){
             ForEach(room.plants) { plant in
-                NavigationLink(destination: PlantDetailsView()){
+                NavigationLink(destination: PlantDetailsView(plant: plant)){
                     PlantTile(plant: plant)
                 }
                 

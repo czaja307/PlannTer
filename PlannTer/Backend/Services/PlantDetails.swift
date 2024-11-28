@@ -32,7 +32,7 @@ struct PlantDetails: Codable {
     let leafColor: [String]?
     let cones: Bool?
     let medicinal: Bool?
-    let description: String?
+    let descriptionText: String?
     let defaultImage: DefaultImage?
     
     // computed property: category (last word of commonName)
