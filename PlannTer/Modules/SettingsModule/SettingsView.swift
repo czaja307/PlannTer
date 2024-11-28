@@ -4,6 +4,7 @@ struct SettingsView: View {
     @StateObject private var controller = SettingsController()
     @State private var expandedDropdown: String?=nil
     @FocusState private var isFocused: Bool
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         ZStack {
@@ -15,10 +16,9 @@ struct SettingsView: View {
                 .onTapGesture {
                     // Set expandedDropdown to nil to close any open dropdown
                     expandedDropdown = nil
+                    isFocused = false
                 }
             VStack {
-                ScreenTitle(title: "Settings")
-                    .padding(.top, 20)
                 Spacer()
                 VStack(spacing: 20) {
                     // Text Input for Name
@@ -63,11 +63,13 @@ struct SettingsView: View {
                     )
                 }
                 Spacer()
-                LargeButton(title: "SaveSettings", action: controller.saveSettings)
+                LargeButton(title: "Save Settings", action: controller.saveSettings)
                 Spacer()
             }
             .padding(.horizontal, 20)
         }
+        .navigationBarBackButtonHidden(true)
+        .customToolbar(title: "Settings", presentationMode: presentationMode)
         .onChange(of: expandedDropdown) { newValue in
             // Add animation to dropdown state change
             if newValue != nil {
