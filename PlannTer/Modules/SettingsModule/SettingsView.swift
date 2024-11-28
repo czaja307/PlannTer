@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 
 struct SettingsView: View {
-//    @StateObject private var controller = SettingsController()
     @State private var expandedDropdown: String?=nil
     @FocusState private var isFocused: Bool
     @Environment(\.presentationMode) var presentationMode
