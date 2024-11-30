@@ -2,7 +2,6 @@ import SwiftUI
 
 struct RoomDetailsView: View {
     @Bindable var room: RoomModel
-    @StateObject private var controller = RoomDetailsController()
     @Environment(\.presentationMode) var presentationMode // To handle back navigation
     var body: some View {
         ScrollView(.vertical){

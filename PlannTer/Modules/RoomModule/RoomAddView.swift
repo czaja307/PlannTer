@@ -2,13 +2,12 @@ import SwiftUI
 import SwiftData
 
 struct RoomAddView: View {
-    //dummy controller that only works with view
-    @StateObject private var controller = RoomEditController()
     @FocusState private var isFocused: Bool
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.modelContext) private var context
     
     @State private var roomName: String = ""
+    @State private var windows = Array(repeating: false, count: 9)
     
     let columns: [GridItem] = [
         GridItem(.flexible()), // First column
@@ -33,8 +32,8 @@ struct RoomAddView: View {
                 LazyVGrid(columns: columns, spacing: 10) {
                     ForEach(0..<9, id: \.self) { index in
                         if(index != 4){
-                            if(controller.windows[index]) {
-                                Button(action: {controller.selectedWindow(index: index)}){
+                            if(windows[index]) {
+                                Button(action: {selectedWindow(index: index)}){
                                     Image("GreenGrid\(index)")
                                         .resizable()
                                         .scaledToFit()
@@ -42,7 +41,7 @@ struct RoomAddView: View {
                                 }
                             }
                             else {
-                                Button(action: {controller.selectedWindow(index: index)}){
+                                Button(action: {selectedWindow(index: index)}){
                                     Image("Grid\(index)")
                                         .resizable()
                                         .scaledToFit()
@@ -80,6 +79,10 @@ struct RoomAddView: View {
         
         // Dismiss the view
         presentationMode.wrappedValue.dismiss()
+    }
+    
+    private func selectedWindow(index: Int) {
+        windows[index].toggle()
     }
 }
 

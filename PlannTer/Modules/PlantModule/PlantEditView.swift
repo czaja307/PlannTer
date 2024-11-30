@@ -2,7 +2,6 @@ import SwiftUI
 
 struct PlantEditView: View {
     let title : String
-    @StateObject private var controller = PlantDetailsController(plant: PlantModel.examplePlant)
     @State private var waterDate = Date()
     @State private var waterDays: Int = 7
     @State private var waterAmount: Int = 200
