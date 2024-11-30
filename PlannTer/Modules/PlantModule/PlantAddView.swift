@@ -1,7 +1,11 @@
 import SwiftUI
+import SwiftData
 
-struct PlantEditView: View {
-    let title : String
+struct PlantAddView: View {
+    @Environment(\.modelContext) private var context
+    @Bindable var room: RoomModel
+    
+    //Sliders info
     @State private var waterDate = Date()
     @State private var waterDays: Int = 7
     @State private var waterAmount: Int = 200
@@ -9,50 +13,68 @@ struct PlantEditView: View {
     @State private var conditioningDate = Date()
     @State private var conditioningDays: Int = 30
     @FocusState private var isActive: Bool
+    //Sliders info
+    
     @Environment(\.presentationMode) var presentationMode
     
-    @State private var dummyInputText: String = ""
+    @State private var plantName: String = ""
     
     var body: some View {
-            ZStack {
-                Color(.primaryBackground)
-                    .edgesIgnoringSafeArea(.all)
-                Color.clear
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        // Set expandedDropdown to false to close any open dropdown
-                        isActive = false
-                    }
-                VStack {
-                    PlantImageSection()
-                    TextInput(title: "Name your plant", prompt: "Edytka", inputText: $dummyInputText, isActive: $isActive)
-                        .frame(width: 0.9 * UIScreen.main.bounds.width)
-                    SliderSection(
-                        value: $waterDays, title: "Watering interval", unit: "days", range: 1...30, step: 1, sColor: .green
-                    )
-                    SliderSection(
-                        value: $waterAmount, title: "Water amount", unit: "ml", range: 50...1000, step: 50, sColor: .blue
-                    )
-                    SliderSection(
-                        value: $sunExposure, title: "Sun exposure", unit: "h", range: 0...12, step: 1, sColor: .yellow
-                    )
-                    SliderSection(
-                        value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 1...90, step: 1, sColor: .pink
-                    )
-                    Spacer()
-                    HStack{
-                        Spacer()
-                        MiniButton(title: "Reset", action:{})
-                        Spacer()
-                        MiniButton(title: "Save", action:{})
-                        Spacer()
-                    }
-                    .frame(width: 0.9 * UIScreen.main.bounds.width)
+        ZStack {
+            Color(.primaryBackground)
+                .edgesIgnoringSafeArea(.all)
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    // Set expandedDropdown to false to close any open dropdown
+                    isActive = false
                 }
+            VStack {
+                PlantImageSection()
+                TextInput(title: "Name your plant", prompt: "Edytka", inputText: $plantName, isActive: $isActive)
+                    .frame(width: 0.9 * UIScreen.main.bounds.width)
+                SliderSection(
+                    value: $waterDays, title: "Watering interval", unit: "days", range: 1...30, step: 1, sColor: .green
+                )
+                SliderSection(
+                    value: $waterAmount, title: "Water amount", unit: "ml", range: 50...1000, step: 50, sColor: .blue
+                )
+                SliderSection(
+                    value: $sunExposure, title: "Sun exposure", unit: "h", range: 0...12, step: 1, sColor: .yellow
+                )
+                SliderSection(
+                    value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 1...90, step: 1, sColor: .pink
+                )
+                Spacer()
+                HStack{
+                    Spacer()
+                    MiniButton(title: "Reset", action:{})
+                    Spacer()
+                    MiniButton(title: "Save", action: savePlant)
+                    Spacer()
+                }
+                .frame(width: 0.9 * UIScreen.main.bounds.width)
             }
-            
-            .navigationBarBackButtonHidden(true)
-            .customToolbar(title: title, presentationMode: presentationMode)
+        }
+        
+        .navigationBarBackButtonHidden(true)
+        .customToolbar(title: "Add plant", presentationMode: presentationMode)
+    }
+    
+    private func savePlant() {
+        let nextWatering = Calendar.current.date(byAdding: .day, value: waterDays, to: Date())
+
+        
+        let newPlant = PlantModel(room: room, name: plantName, imageUrl: "ExamplePlant", category: "Jan", species: "Paweł", waterAmountInML: waterAmount, dailySunExposure: sunExposure, nextWateringDate: Date(), prevWateringDate: Date())
+        context.insert(newPlant)
+        
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save plant: \(error)")
+        }
+        
+        presentationMode.wrappedValue.dismiss()
     }
 }
 
@@ -146,7 +168,7 @@ private struct SliderSection: View {
 private struct MiniButton : View {
     var title: String
     var action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             Text(title)
@@ -162,6 +184,3 @@ private struct MiniButton : View {
     }
 }
 
-#Preview {
-    PlantEditView(title: "Edit")
-}

@@ -1,11 +1,12 @@
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
-    @StateObject private var controller = SettingsController()
     @State private var expandedDropdown: String?=nil
     @FocusState private var isFocused: Bool
     @Environment(\.presentationMode) var presentationMode
-    
+    @Bindable var settings: SettingsModel
+
     var body: some View {
         ZStack {
             Rectangle()
@@ -25,7 +26,7 @@ struct SettingsView: View {
                     TextInput(
                         title: "What should we call you?",
                         prompt: "Enter your name",
-                        inputText: $controller.name,
+                        inputText: $settings.username,
                         isActive: $isFocused
                     )
                     
@@ -33,7 +34,7 @@ struct SettingsView: View {
                     DropdownPicker(
                         title: "Notifications Frequency:",
                         options: ["Insistent", "Moderate", "Sparing"],
-                        selectedOption: $controller.notificationsFrequency,
+                        selectedOption: $settings.notificationFrequency,
                         isExpanded: Binding(
                             get: { expandedDropdown == "NotificationsFrequency" },
                             set: { expandedDropdown = $0 ? "NotificationsFrequency" : nil }
@@ -44,7 +45,7 @@ struct SettingsView: View {
                     DropdownPicker(
                         title: "Measurements Unit System:",
                         options: ["Metric", "Imperial"],
-                        selectedOption: $controller.measurementsUnitSystem,
+                        selectedOption: $settings.measurementUnitSystem,
                         isExpanded: Binding(
                             get: { expandedDropdown == "MeasurementsUnitSystem" },
                             set: { expandedDropdown = $0 ? "MeasurementsUnitSystem" : nil }
@@ -55,7 +56,7 @@ struct SettingsView: View {
                     DropdownPicker(
                         title: "Temperature Units:",
                         options: ["Celsius", "Fahrenheit"],
-                        selectedOption: $controller.temperatureUnits,
+                        selectedOption: $settings.temperatureUnits,
                         isExpanded: Binding(
                             get: { expandedDropdown == "TemperatureUnits" },
                             set: { expandedDropdown = $0 ? "TemperatureUnits" : nil }
@@ -63,7 +64,8 @@ struct SettingsView: View {
                     )
                 }
                 Spacer()
-                LargeButton(title: "Save Settings", action: controller.saveSettings)
+                //TODO: what about action here?
+                LargeButton(title: "Save Settings", action: { })
                 Spacer()
             }
             .padding(.horizontal, 20)
@@ -87,8 +89,4 @@ struct SettingsView: View {
             }
         }
     }
-}
-
-#Preview{
-    SettingsView()
 }

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PlantDetailsView: View {
-    @StateObject private var controller = PlantDetailsController(plant: PlantModel.exampleApiPlant)
+    @Bindable var plant: PlantModel
     @State private var waterDate = Date()
     @State private var waterDays: Int = 7
     @State private var waterAmount: Int = 200
@@ -15,7 +15,7 @@ struct PlantDetailsView: View {
                 Color(.primaryBackground)
                     .edgesIgnoringSafeArea(.all)
                 VStack {
-                    PlantImageSection()
+                    PlantImageSection(plant: plant)
                     WateringSection(date: $waterDate, days: $waterDays)
                     WaterAmountSection(waterAmount: $waterAmount)
                     SunExposureSection(sunExposure: $sunExposure)
@@ -24,7 +24,7 @@ struct PlantDetailsView: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
-            .customToolbar(title: controller.plant.name, presentationMode: presentationMode)
+            .customToolbar(title: plant.name, presentationMode: presentationMode)
             .toolbar{
                 ToolbarItem(placement: .topBarTrailing){
                     NavigationLink(destination: PlantEditView(title: "Edit Plant")){
@@ -40,6 +40,7 @@ struct PlantDetailsView: View {
 
 
 private struct PlantImageSection: View {
+    @Bindable var plant: PlantModel
     var body: some View {
         HStack {
             ZStack {
@@ -54,9 +55,9 @@ private struct PlantImageSection: View {
                     .cornerRadius(15)
             }
             VStack {
-                PlantLabel(text: "Green room")
-                PlantLabel(text: "Rose")
-                PlantLabel(text: "Climbing")
+                PlantLabel(text: plant.room?.name ?? "Room")
+                PlantLabel(text: plant.category ?? "Category")
+                PlantLabel(text: plant.species ?? "Specie")
             }
             .padding(.leading, 10)
         }
@@ -254,8 +255,4 @@ private struct PlantLabel: View {
         .foregroundStyle(Color.secondaryText)
         .cornerRadius(40)
     }
-}
-
-#Preview {
-    PlantDetailsView()
 }

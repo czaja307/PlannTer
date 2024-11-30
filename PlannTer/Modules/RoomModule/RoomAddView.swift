@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-struct RoomEditView: View {
+struct RoomAddView: View {
     @FocusState private var isFocused: Bool
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.modelContext) private var context
@@ -59,8 +59,7 @@ struct RoomEditView: View {
                 .frame(width: 230, height: 230)
                 
                 Spacer()
-                //TODO: use the actual logic here
-                LargeButton(title: "Save room", action: {presentationMode.wrappedValue.dismiss()})
+                LargeButton(title: "Save room", action: saveRoom)
                     .padding(20)
             }
         }
@@ -68,11 +67,23 @@ struct RoomEditView: View {
         .customToolbar(title: "Add new room", presentationMode: presentationMode)
     }
     
+    private func saveRoom() {
+        let newRoom = RoomModel(name: roomName, directions: [], plants: [])
+        context.insert(newRoom)
+        
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save room: \(error)")
+        }
+        
+        // Dismiss the view
+        presentationMode.wrappedValue.dismiss()
+    }
+    
     private func selectedWindow(index: Int) {
         windows[index].toggle()
     }
 }
 
-#Preview {
-    RoomEditView()
-}
+
