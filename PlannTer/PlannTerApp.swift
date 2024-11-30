@@ -32,5 +32,12 @@ struct RootView: View {
 }
 
 #Preview {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: SettingsModel.self, RoomModel.self, PlantModel.self, configurations: config)
+    let mockSettings = SettingsModel()
+
+
     MainScreenView()
+            .modelContainer(container)
+            .environment(mockSettings)
 }
