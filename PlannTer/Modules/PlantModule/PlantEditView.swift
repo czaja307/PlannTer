@@ -1,17 +1,30 @@
 import SwiftUI
+import SwiftData
 
 struct PlantEditView: View {
-    let title : String
+    @Environment(\.modelContext) private var context
+    @Bindable var plant: PlantModel
+    @Query var roomList: [RoomModel]
+    
+    //Sliders info
     @State private var waterDate = Date()
     @State private var waterDays: Int = 7
     @State private var waterAmount: Int = 200
     @State private var sunExposure: Int = 8
     @State private var conditioningDate = Date()
     @State private var conditioningDays: Int = 30
+    
+    @State private var rooms: [String] = []
+    @State private var selectedRoom: String = ""
+    @State private var types: [String] = ["None"]
+    @State private var selectedType: String = "None"
+    @State private var subtypes: [String] = ["None"]
+    @State private var selectedSubType: String = "None"
+    
     @FocusState private var isActive: Bool
     @Environment(\.presentationMode) var presentationMode
     
-    @State private var dummyInputText: String = ""
+    @State private var plantName: String = ""
     
     var body: some View {
             ZStack {
@@ -24,9 +37,20 @@ struct PlantEditView: View {
                         isActive = false
                     }
                 VStack {
-                    PlantImageSection()
-                    TextInput(title: "Name your plant", prompt: "Edytka", inputText: $dummyInputText, isActive: $isActive)
+                    PlantImageSection(
+                        roomList: roomList,
+                        rooms: $rooms,
+                        selectedRoom: $selectedRoom,
+                        types: $types,
+                        selectedType: $selectedType,
+                        subtypes: $subtypes,
+                        selectedSubType: $selectedSubType)
+                    
+                    TextInput(title: "Name your plant", prompt: "Edytka", inputText: $plantName, isActive: $isActive)
                         .frame(width: 0.9 * UIScreen.main.bounds.width)
+                        .onAppear(){
+                            plantName = plant.name
+                        }
                     SliderSection(
                         value: $waterDays, title: "Watering interval", unit: "days", range: 1...30, step: 1, sColor: .green
                     )
@@ -42,9 +66,11 @@ struct PlantEditView: View {
                     Spacer()
                     HStack{
                         Spacer()
-                        MiniButton(title: "Reset", action:{})
+                        MiniButton(title: "Reset", action:{
+                            
+                        })
                         Spacer()
-                        MiniButton(title: "Save", action:{})
+                        MiniButton(title: "Save", action: savePlant)
                         Spacer()
                     }
                     .frame(width: 0.9 * UIScreen.main.bounds.width)
@@ -52,22 +78,41 @@ struct PlantEditView: View {
             }
             
             .navigationBarBackButtonHidden(true)
-            .customToolbar(title: title, presentationMode: presentationMode)
+            .customToolbar(title: "Edit plant", presentationMode: presentationMode)
+    }
+    
+    private func savePlant() {
+        let nextWatering = Calendar.current.date(byAdding: .day, value: waterDays, to: Date())
+        plant.name = plantName
+        plant.room = RoomModel.getRoom(name: selectedRoom, fromRooms: roomList)
+        plant.category = selectedType != "None" ? selectedType : nil
+        plant.species = selectedSubType != "None" ? selectedSubType : nil
+        plant.wateringFreq = waterDays
+        plant.waterAmountInML = waterAmount
+        plant.dailySunExposure = sunExposure
+        plant.conditioningFreq = conditioningDays
+        plant.imageUrl = "examplePlant"
+        context.insert(plant)
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save plant: \(error)")
+        }
+        
+        presentationMode.wrappedValue.dismiss()
     }
 }
 
 
 private struct PlantImageSection: View {
-    @State private var rooms: [String] = ["Gren", "red"]
-    @State private var selectedRoom: String = "None"
-    @State private var types: [String] = ["None"]
-    @State private var selectedType: String = "None"
-    @State private var subtypes: [String] = ["None"]
-    @State private var selectedSubType: String = "None"
+    var roomList: [RoomModel]
+    @Binding var rooms: [String]
+    @Binding var selectedRoom: String
+    @Binding var types: [String]
+    @Binding var selectedType: String
+    @Binding var subtypes: [String]
+    @Binding var selectedSubType: String
     @State private var isTypeSelected: Bool = false
-   
-   
-    
     
     var body: some View {
         HStack {
@@ -87,13 +132,18 @@ private struct PlantImageSection: View {
                 
                 MiniDropdownPicker(selected: $selectedType, items: types)
                     .onChange(of: selectedType) {
-                        print("kurwaa")
-                        isTypeSelected = true
-                        PlantService.getUniqueSpeciesForCategory(selectedType) { categories in
-                            DispatchQueue.main.async {
-                                subtypes = categories
-                                selectedSubType = subtypes[0]
+                        isTypeSelected = selectedType != "None"
+                        if(isTypeSelected){
+                            PlantService.getUniqueSpeciesForCategory(selectedType) { categories in
+                                DispatchQueue.main.async {
+                                    subtypes = categories
+                                    subtypes.append("None")
+                                    selectedSubType = subtypes[0]
+                                }
                             }
+                        }
+                        else{
+                            selectedSubType = "None"
                         }
                     }
                 MiniDropdownPicker(selected: $selectedSubType, items: subtypes)
@@ -103,6 +153,8 @@ private struct PlantImageSection: View {
         }
         .padding(.horizontal, 40)
         .onAppear {
+            rooms = roomList.map { $0.name }
+            selectedRoom = rooms.first!
             PlantService.getUniqueCategories { categories in
                 DispatchQueue.main.async {
                     types = categories
@@ -199,5 +251,5 @@ private struct MiniButton : View {
 }
 
 #Preview {
-    PlantEditView(title: "Edit")
+    PlantEditView(plant: PlantModel.examplePlant)
 }

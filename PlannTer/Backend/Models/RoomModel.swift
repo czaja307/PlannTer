@@ -23,6 +23,7 @@ enum Direction: String, Codable, CaseIterable {
 @Model
 class RoomModel: Identifiable, Codable {
     var id: UUID = UUID()  // unikalne id
+    @Attribute(.unique)
     var name: String  // nazwa pokoju
     var directions: [Direction]  // tablica kierunków oświetlenia
     @Relationship(deleteRule: .cascade, inverse: \PlantModel.room)
@@ -64,5 +65,9 @@ class RoomModel: Identifiable, Codable {
                 PlantModel.examplePlant
             ]
         )
+    }
+    
+    static func getRoom(name: String, fromRooms: [RoomModel]) -> RoomModel? {
+        return fromRooms.first { $0.name == name }
     }
 }

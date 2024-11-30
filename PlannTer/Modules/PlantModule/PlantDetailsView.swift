@@ -22,12 +22,18 @@ struct PlantDetailsView: View {
                     ConditioningSection(date: $conditioningDate, days: $conditioningDays)
                     Spacer()
                 }
+                .onAppear() {
+                    waterAmount = plant.waterAmountInML ?? 100
+                    waterDays = plant.wateringFreq ?? 1
+                    sunExposure = plant.dailySunExposure ?? 4
+                    conditioningDays = plant.conditioningFreq ?? 0
+                }
             }
             .navigationBarBackButtonHidden(true)
             .customToolbar(title: plant.name, presentationMode: presentationMode)
             .toolbar{
                 ToolbarItem(placement: .topBarTrailing){
-                    NavigationLink(destination: PlantEditView(title: "Edit Plant")){
+                    NavigationLink(destination: PlantEditView(plant: plant)){
                         Image(systemName: "gearshape.fill")
                             .font(.mainText)
                             .foregroundColor(.primaryText)
