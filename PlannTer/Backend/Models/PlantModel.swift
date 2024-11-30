@@ -54,8 +54,8 @@ class PlantModel: Identifiable, Codable {
     }
     
     // fetch details from API and create plant model
-    static func createFromApi(plantId: Int, service: PlantService, completion: @escaping (PlantModel?) -> Void) {
-        service.getPlantDetails(for: plantId) { details in
+    static func createFromApi(plantId: Int, completion: @escaping (PlantModel?) -> Void) {
+        PlantService.getPlantDetails(for: plantId) { details in
             guard let details = details else {
                 print("Failed to fetch plant details for plant ID: \(plantId)")
                 completion(nil)
@@ -131,7 +131,7 @@ class PlantModel: Identifiable, Codable {
                                           nextWateringDate: Date(), prevWateringDate: Date())
             
             // ładujemy roślinę asynchronicznie
-            PlantModel.createFromApi(plantId: 3, service: PlantService()) { plant in
+            PlantModel.createFromApi(plantId: 3) { plant in
                 _exampleApiPlant = plant // Po załadowaniu, aktualizujemy plant
             }
             
@@ -155,11 +155,16 @@ class PlantModel: Identifiable, Codable {
     // check for errors
     var notificationsCount: Int {
         guard let nextWateringDate = nextWateringDate else { return 1 }
-        return nextWateringDate < Date() ? 1 : 0
+        guard let nextConditioningDate = nextConditioningDate else { return 1 }
+        var notifs = 0
+        notifs += nextWateringDate < Date() ? 1 : 0
+        notifs += nextConditioningDate < Date() ? 1 : 0
+        return notifs
     }
     
     var isWatered: Bool {
-        return false
+        guard let nextWateringDate = nextWateringDate else { return false }
+        return nextWateringDate > Date()
     }
     
     var progress: Double {

@@ -58,6 +58,17 @@ struct PlantEditView: View {
 
 
 private struct PlantImageSection: View {
+    @State private var rooms: [String] = ["Gren", "red"]
+    @State private var selectedRoom: String = "None"
+    @State private var types: [String] = ["None"]
+    @State private var selectedType: String = "None"
+    @State private var subtypes: [String] = ["None"]
+    @State private var selectedSubType: String = "None"
+    @State private var isTypeSelected: Bool = false
+   
+   
+    
+    
     var body: some View {
         HStack {
             ZStack {
@@ -72,36 +83,34 @@ private struct PlantImageSection: View {
                     .cornerRadius(15)
             }
             VStack {
-                Button(action: {}) {
-                    Label("Green room", systemImage: "chevron.down")
-                        .font(.secondaryText)
-                        .frame(width: 180, height: 30)
-                }
-                .buttonBorderShape(.capsule)
-                .tint(.additionalBackground)
+                MiniDropdownPicker(selected: $selectedRoom, items: rooms)
                 
-                Button(action: {}) {
-                    Label("Green room", systemImage: "chevron.down")
-                        .font(.secondaryText)
-                        .frame(width: 180, height: 30)
-                }
-                .buttonBorderShape(.capsule)
-                .tint(.additionalBackground)
-                
-                Button(action: {}) {
-                    Label("Green room", systemImage: "chevron.down")
-                        .font(.secondaryText)
-                        .frame(width: 180, height: 30)
-                }
-                .buttonBorderShape(.capsule)
-                .tint(.additionalBackground)
-                
+                MiniDropdownPicker(selected: $selectedType, items: types)
+                    .onChange(of: selectedType) {
+                        print("kurwaa")
+                        isTypeSelected = true
+                        PlantService.getUniqueSpeciesForCategory(selectedType) { categories in
+                            DispatchQueue.main.async {
+                                subtypes = categories
+                                selectedSubType = subtypes[0]
+                            }
+                        }
+                    }
+                MiniDropdownPicker(selected: $selectedSubType, items: subtypes)
+                    .disabled(!isTypeSelected)
             }
-            .buttonStyle(.borderedProminent)
             .padding(.leading, 10)
         }
         .padding(.horizontal, 40)
+        .onAppear {
+            PlantService.getUniqueCategories { categories in
+                DispatchQueue.main.async {
+                    types = categories
+                }
+            }
+        }
     }
+        
 }
 
 private struct SliderSection: View {
@@ -140,6 +149,33 @@ private struct SliderSection: View {
             .frame(width: 0.9 * UIScreen.main.bounds.width)
             .tint(sColor)
         }
+    }
+}
+
+private struct MiniDropdownPicker : View {
+    @Binding var selected: String
+    let items: [String]
+    
+    var body : some View {
+        Menu{
+            ForEach(items, id: \.self){ optionVal in
+                Button(action: {selected = optionVal}) {
+                    Text(optionVal)
+                }
+            }
+        } label: {
+            Label(selected, systemImage: "chevron.down")
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(.additionalBackground)
+                .font(.secondaryText)
+                .foregroundColor(.white)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .frame(width: 180, height: 30)
+        .padding(.vertical, 5)
+        .padding(.horizontal, 10)
+        .background(.additionalBackground)
+        .cornerRadius(30)
     }
 }
 

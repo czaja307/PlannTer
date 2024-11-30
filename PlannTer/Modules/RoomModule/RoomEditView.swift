@@ -59,9 +59,10 @@ struct RoomEditView: View {
                 .frame(width: 230, height: 230)
                 
                 Spacer()
-                //TODO: use the actual logic here
-                LargeButton(title: "Save room", action: {presentationMode.wrappedValue.dismiss()})
-                    .padding(20)
+                
+                LargeButton(title: "Save room", action: {
+                    
+                })                    .padding(20)
             }
         }
         .navigationBarBackButtonHidden(true)
