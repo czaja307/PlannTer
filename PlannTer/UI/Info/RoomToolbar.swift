@@ -43,8 +43,6 @@ struct RoomToolbar: ViewModifier {
                                         .frame(maxWidth: UIScreen.main.bounds.width * 0.8)
                                         .frame(maxWidth: .infinity, alignment: .center)
                                         .padding(.trailing, 85)
-                                
-                                
                             }
                             
                             if(isToolbarExpanded) {

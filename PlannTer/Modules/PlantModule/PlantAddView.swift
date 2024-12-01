@@ -4,6 +4,7 @@ import SwiftData
 struct PlantAddView: View {
     @Environment(\.modelContext) private var context
     @Bindable var room: RoomModel
+    @Query var roomList: [RoomModel]
     
     //Sliders info
     @State private var waterDate = Date()
@@ -12,6 +13,14 @@ struct PlantAddView: View {
     @State private var sunExposure: Int = 8
     @State private var conditioningDate = Date()
     @State private var conditioningDays: Int = 30
+    
+    @State private var rooms: [String] = []
+    @State private var selectedRoom: String = ""
+    @State private var types: [String] = ["None"]
+    @State private var selectedType: String = "None"
+    @State private var subtypes: [String] = ["None"]
+    @State private var selectedSubType: String = "None"
+    
     @FocusState private var isActive: Bool
     //Sliders info
     
@@ -30,7 +39,16 @@ struct PlantAddView: View {
                     isActive = false
                 }
             VStack {
-                PlantImageSection()
+                PlantImageSection(
+                    roomN: room.name,
+                    roomList: roomList,
+                    rooms: $rooms,
+                    selectedRoom: $selectedRoom,
+                    types: $types,
+                    selectedType: $selectedType,
+                    subtypes: $subtypes,
+                    selectedSubType: $selectedSubType)
+                
                 TextInput(title: "Name your plant", prompt: "Edytka", inputText: $plantName, isActive: $isActive)
                     .frame(width: 0.9 * UIScreen.main.bounds.width)
                 SliderSection(
@@ -43,7 +61,7 @@ struct PlantAddView: View {
                     value: $sunExposure, title: "Sun exposure", unit: "h", range: 0...12, step: 1, sColor: .yellow
                 )
                 SliderSection(
-                    value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 1...90, step: 1, sColor: .pink
+                    value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 0...90, step: 1, sColor: .pink
                 )
                 Spacer()
                 HStack{
@@ -62,10 +80,15 @@ struct PlantAddView: View {
     }
     
     private func savePlant() {
-        let nextWatering = Calendar.current.date(byAdding: .day, value: waterDays, to: Date())
-
-        
-        let newPlant = PlantModel(room: room, name: plantName, imageUrl: "ExamplePlant", category: "Jan", species: "Paweł", waterAmountInML: waterAmount, dailySunExposure: sunExposure, nextWateringDate: Date(), prevWateringDate: Date())
+        let newPlant = PlantModel(
+            room: RoomModel.getRoom(name: selectedRoom, fromRooms: roomList),
+            name: plantName,
+            imageUrl: "ExamplePlant",
+            category: selectedType != "None" ? selectedType : nil,
+            species: selectedSubType != "None" ? selectedSubType : nil,
+            waterAmountInML: waterAmount,
+            dailySunExposure: sunExposure,
+            wateringFreq: waterDays)
         context.insert(newPlant)
         
         do {
@@ -80,6 +103,16 @@ struct PlantAddView: View {
 
 
 private struct PlantImageSection: View {
+    var roomN: String
+    var roomList: [RoomModel]
+    @Binding var rooms: [String]
+    @Binding var selectedRoom: String
+    @Binding var types: [String]
+    @Binding var selectedType: String
+    @Binding var subtypes: [String]
+    @Binding var selectedSubType: String
+    @State private var isTypeSelected: Bool = false
+    
     var body: some View {
         HStack {
             ZStack {
@@ -94,36 +127,41 @@ private struct PlantImageSection: View {
                     .cornerRadius(15)
             }
             VStack {
-                Button(action: {}) {
-                    Label("Green room", systemImage: "chevron.down")
-                        .font(.secondaryText)
-                        .frame(width: 180, height: 30)
-                }
-                .buttonBorderShape(.capsule)
-                .tint(.additionalBackground)
+                MiniDropdownPicker(selected: $selectedRoom, items: rooms)
                 
-                Button(action: {}) {
-                    Label("Green room", systemImage: "chevron.down")
-                        .font(.secondaryText)
-                        .frame(width: 180, height: 30)
-                }
-                .buttonBorderShape(.capsule)
-                .tint(.additionalBackground)
-                
-                Button(action: {}) {
-                    Label("Green room", systemImage: "chevron.down")
-                        .font(.secondaryText)
-                        .frame(width: 180, height: 30)
-                }
-                .buttonBorderShape(.capsule)
-                .tint(.additionalBackground)
-                
+                MiniDropdownPicker(selected: $selectedType, items: types)
+                    .onChange(of: selectedType) {
+                        isTypeSelected = selectedType != "None"
+                        if(isTypeSelected){
+                            PlantService.getUniqueSpeciesForCategory(selectedType) { categories in
+                                DispatchQueue.main.async {
+                                    subtypes = categories
+                                    subtypes.append("None")
+                                    selectedSubType = subtypes[0]
+                                }
+                            }
+                        }
+                        else{
+                            selectedSubType = "None"
+                        }
+                    }
+                MiniDropdownPicker(selected: $selectedSubType, items: subtypes)
+                    .disabled(!isTypeSelected)
             }
-            .buttonStyle(.borderedProminent)
             .padding(.leading, 10)
         }
         .padding(.horizontal, 40)
+        .onAppear {
+            rooms = roomList.map { $0.name }
+            selectedRoom = roomN
+            PlantService.getUniqueCategories { categories in
+                DispatchQueue.main.async {
+                    types.append(contentsOf: categories)
+                }
+            }
+        }
     }
+        
 }
 
 private struct SliderSection: View {
@@ -165,6 +203,33 @@ private struct SliderSection: View {
     }
 }
 
+private struct MiniDropdownPicker : View {
+    @Binding var selected: String
+    let items: [String]
+    
+    var body : some View {
+        Menu{
+            ForEach(items, id: \.self){ optionVal in
+                Button(action: {selected = optionVal}) {
+                    Text(optionVal)
+                }
+            }
+        } label: {
+            Label(selected, systemImage: "chevron.down")
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(.additionalBackground)
+                .font(.secondaryText)
+                .foregroundColor(.white)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .frame(width: 180, height: 30)
+        .padding(.vertical, 5)
+        .padding(.horizontal, 10)
+        .background(.additionalBackground)
+        .cornerRadius(30)
+    }
+}
+
 private struct MiniButton : View {
     var title: String
     var action: () -> Void
@@ -183,4 +248,16 @@ private struct MiniButton : View {
         .frame(width: 160, height: 80)
     }
 }
+
+
+//#Preview {
+//    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+//    let container = try! ModelContainer(for: SettingsModel.self, RoomModel.self, PlantModel.self, configurations: config)
+//    let context = ModelContext(container)
+//
+//
+//    PlantAddView(room: RoomModel.exampleRoom)
+//            .modelContainer(container)
+//            .environment(context)
+//}
 

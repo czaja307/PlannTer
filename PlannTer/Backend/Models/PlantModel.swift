@@ -13,13 +13,17 @@ class PlantModel: Identifiable, Codable {
     var category: String?
     var species: String?
     var waterAmountInML: Int?
+    var wateringFreq: Int?
+    var conditioningFreq: Int?
     var dailySunExposure: Int?
     var nextWateringDate: Date?
     var prevWateringDate: Date?
+    var nextConditioningDate: Date?
+    var prevConditioningDate: Date?
     var details: PlantDetails?
     
     // Initializers
-    init(details: PlantDetails, waterAmount: Int, sunlightHours: Int, nextWatering: Date) {
+    init(details: PlantDetails, waterAmount: Int, sunlightHours: Int, wateringFreq: Int, conditioniingFreq: Int? = nil) {
         self.id = UUID()
         self.plantId = details.id
         self.name = details.commonName ?? "Unknown Plant"
@@ -29,15 +33,20 @@ class PlantModel: Identifiable, Codable {
         self.descriptionText = details.descriptionText
         self.details = details
         self.waterAmountInML = waterAmount
+        self.wateringFreq = wateringFreq
+        self.conditioningFreq = conditioningFreq
         self.dailySunExposure = sunlightHours
         self.prevWateringDate = Date()
-        self.nextWateringDate = nextWatering
+        self.nextWateringDate =  Calendar.current.date(byAdding: .day, value: wateringFreq, to: Date())
+        self.prevConditioningDate = conditioniingFreq == nil ? nil : Date()
+        self.nextConditioningDate = conditioniingFreq == nil ? nil :  Calendar.current.date(byAdding: .day, value: conditioniingFreq ?? 0, to: Date())
     }
     
     init(id: UUID = UUID(), plantId: Int? = nil, room: RoomModel? = nil, name: String = "Unnamed Plant",
          description: String? = nil, imageUrl: String? = nil, category: String? = nil, species: String? = nil,
          waterAmountInML: Int? = nil, dailySunExposure: Int? = nil, nextWateringDate: Date? = nil,
-         prevWateringDate: Date? = nil, details: PlantDetails? = nil) {
+         prevWateringDate: Date? = nil, wateringFreq: Int? = nil, nextConditioningDate: Date? = nil,
+         prevConditioningDate: Date? = nil, conditioningFreq: Int? = nil, details: PlantDetails? = nil) {
         self.id = id
         self.plantId = plantId
         self.room = room
@@ -50,12 +59,16 @@ class PlantModel: Identifiable, Codable {
         self.dailySunExposure = dailySunExposure
         self.nextWateringDate = nextWateringDate
         self.prevWateringDate = prevWateringDate
+        self.wateringFreq = wateringFreq
+        self.nextConditioningDate = nextWateringDate
+        self.prevConditioningDate = prevWateringDate
+        self.conditioningFreq = conditioningFreq
         self.details = details
     }
     
     // fetch details from API and create plant model
-    static func createFromApi(plantId: Int, service: PlantService, completion: @escaping (PlantModel?) -> Void) {
-        service.getPlantDetails(for: plantId) { details in
+    static func createFromApi(plantId: Int, completion: @escaping (PlantModel?) -> Void) {
+        PlantService.getPlantDetails(for: plantId) { details in
             guard let details = details else {
                 print("Failed to fetch plant details for plant ID: \(plantId)")
                 completion(nil)
@@ -65,10 +78,10 @@ class PlantModel: Identifiable, Codable {
             // Example logic for calculating water and sunlight needs
             let waterAmount = 500 // Assume 500ml as default
             let sunlightHours = 6 // Assume 6 hours as default
-            let nextWatering = Calendar.current.date(byAdding: .day, value: 3, to: Date()) ?? Date()
+            let wateringFreq = 3
             
             // Initialize the plant model
-            let plant = PlantModel(details: details, waterAmount: waterAmount, sunlightHours: sunlightHours, nextWatering: nextWatering)
+            let plant = PlantModel(details: details, waterAmount: waterAmount, sunlightHours: sunlightHours, wateringFreq: wateringFreq)
             completion(plant)
         }
     }
@@ -77,6 +90,8 @@ class PlantModel: Identifiable, Codable {
     enum CodingKeys: String, CodingKey {
         case id, plantId, name, descriptionText, imageUrl, category, species
         case waterAmountInML, dailySunExposure, nextWateringDate, prevWateringDate, details
+        case nextConditioningDate, prevConditioningDate
+        case wateringFreq, conditioningFreq
     }
     
     // Decodable implementation
@@ -93,6 +108,10 @@ class PlantModel: Identifiable, Codable {
         dailySunExposure = try container.decodeIfPresent(Int.self, forKey: .dailySunExposure)
         nextWateringDate = try container.decodeIfPresent(Date.self, forKey: .nextWateringDate)
         prevWateringDate = try container.decodeIfPresent(Date.self, forKey: .prevWateringDate)
+        wateringFreq = try container.decodeIfPresent(Int.self, forKey: .wateringFreq)
+        nextConditioningDate = try container.decodeIfPresent(Date.self, forKey: .nextConditioningDate)
+        prevConditioningDate = try container.decodeIfPresent(Date.self, forKey: .prevConditioningDate)
+        conditioningFreq = try container.decodeIfPresent(Int.self, forKey: .conditioningFreq)
         details = try container.decodeIfPresent(PlantDetails.self, forKey: .details)
     }
     
@@ -110,13 +129,17 @@ class PlantModel: Identifiable, Codable {
         try container.encodeIfPresent(dailySunExposure, forKey: .dailySunExposure)
         try container.encodeIfPresent(nextWateringDate, forKey: .nextWateringDate)
         try container.encodeIfPresent(prevWateringDate, forKey: .prevWateringDate)
+        try container.encodeIfPresent(wateringFreq, forKey: .wateringFreq)
+        try container.encodeIfPresent(nextConditioningDate, forKey: .nextConditioningDate)
+        try container.encodeIfPresent(prevConditioningDate, forKey: .prevConditioningDate)
+        try container.encodeIfPresent(conditioningFreq, forKey: .conditioningFreq)
         try container.encodeIfPresent(details, forKey: .details)
     }
     
     // Example Plant
     static var examplePlant = PlantModel(name: "Example Plant", imageUrl: "ExamplePlant", waterAmountInML: 500, dailySunExposure: 6,
                                          nextWateringDate: Calendar.current.date(byAdding: .day, value: 3, to: Date()),
-                                         prevWateringDate: Date())
+                                         prevWateringDate: Date(), wateringFreq: 3)
     
     // function to get a plant from API
     static var exampleApiPlant: PlantModel {
@@ -131,7 +154,7 @@ class PlantModel: Identifiable, Codable {
                                           nextWateringDate: Date(), prevWateringDate: Date())
             
             // ładujemy roślinę asynchronicznie
-            PlantModel.createFromApi(plantId: 3, service: PlantService()) { plant in
+            PlantModel.createFromApi(plantId: 3) { plant in
                 _exampleApiPlant = plant // Po załadowaniu, aktualizujemy plant
             }
             
@@ -155,11 +178,16 @@ class PlantModel: Identifiable, Codable {
     // check for errors
     var notificationsCount: Int {
         guard let nextWateringDate = nextWateringDate else { return 1 }
-        return nextWateringDate < Date() ? 1 : 0
+        guard let nextConditioningDate = nextConditioningDate else { return 1 }
+        var notifs = 0
+        notifs += nextWateringDate < Date() ? 1 : 0
+        notifs += nextConditioningDate < Date() ? 1 : 0
+        return notifs
     }
     
     var isWatered: Bool {
-        return false
+        guard let nextWateringDate = nextWateringDate else { return false }
+        return nextWateringDate > Date()
     }
     
     var progress: Double {

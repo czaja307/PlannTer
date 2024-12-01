@@ -5,9 +5,17 @@ struct RoomEditView: View {
     @FocusState private var isFocused: Bool
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.modelContext) private var context
+    @Bindable var room: RoomModel
+    @Query var roomList: [RoomModel]
+    @State var nameExists: Bool = false
     
     @State private var roomName: String = ""
     @State private var windows = Array(repeating: false, count: 9)
+    private let dirNames = [
+        Direction.northWest, Direction.north, Direction.northEast,
+        Direction.west, Direction.west, Direction.east,
+        Direction.southWest, Direction.south, Direction.southEast
+    ]
     
     let columns: [GridItem] = [
         GridItem(.flexible()), // First column
@@ -28,6 +36,16 @@ struct RoomEditView: View {
                 
                 TextInput(title: "Give your room a memorable name", prompt: "Green Sanctuary", inputText: $roomName, isActive: $isFocused)
                     .padding(20)
+                    .onChange(of: roomName) {
+                        let found = RoomModel.getRoom(name: roomName, fromRooms: roomList)
+                        nameExists = found != nil
+                }
+                if(nameExists) {
+                    Text("A room with such a name already exists, choose a different name!")
+                        .padding(.horizontal, 30)
+                        .font(.note)
+                        .foregroundColor(Color.red)
+                }
                 Spacer()
                 LazyVGrid(columns: columns, spacing: 10) {
                     ForEach(0..<9, id: \.self) { index in
@@ -59,9 +77,13 @@ struct RoomEditView: View {
                 .frame(width: 230, height: 230)
                 
                 Spacer()
-                //TODO: use the actual logic here
-                LargeButton(title: "Save room", action: {presentationMode.wrappedValue.dismiss()})
+                
+                LargeButton(title: "Save room", action: saveRoom)
                     .padding(20)
+            }
+            .onAppear() {
+                roomName = room.name
+                let windows = dirNames.map { room.directions.contains($0) }
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -71,8 +93,24 @@ struct RoomEditView: View {
     private func selectedWindow(index: Int) {
         windows[index].toggle()
     }
+    
+    private func saveRoom() {
+        if (!nameExists && roomName != "") {
+            var dirs: [Direction] = []
+            for (i, v) in windows.enumerated() { if(v){dirs.append(dirNames[i])}}
+            room.directions = dirs
+            room.name = roomName
+            context.insert(room)
+            do {
+                try context.save()
+            } catch {
+                print("Failed to save room: \(error)")
+            }
+            presentationMode.wrappedValue.dismiss()
+        }
+    }
 }
 
 #Preview {
-    RoomEditView()
+    RoomEditView(room: RoomModel.exampleRoom)
 }

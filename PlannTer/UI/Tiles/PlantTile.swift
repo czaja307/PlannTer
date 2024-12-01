@@ -7,12 +7,11 @@ struct PlantTile: View {
         GeometryReader { geometry in
             HStack(spacing: 15) {
            
-                Image(plant.imageUrl ?? "")
+                Image(plant.imageUrl ?? "Edytka")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: (geometry.size.width - 30) * 0.35, height: geometry.size.height)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                
                 
                 VStack(alignment: .leading, spacing: 8) {
                     HStack() {
