@@ -33,7 +33,6 @@ struct PlantEditView: View {
                 Color.clear
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        // Set expandedDropdown to false to close any open dropdown
                         isActive = false
                     }
                 VStack {
@@ -48,9 +47,6 @@ struct PlantEditView: View {
                     
                     TextInput(title: "Name your plant", prompt: "Edytka", inputText: $plantName, isActive: $isActive)
                         .frame(width: 0.9 * UIScreen.main.bounds.width)
-                        .onAppear(){
-                            plantName = plant.name
-                        }
                     SliderSection(
                         value: $waterDays, title: "Watering interval", unit: "days", range: 1...30, step: 1, sColor: .green
                     )
@@ -61,7 +57,7 @@ struct PlantEditView: View {
                         value: $sunExposure, title: "Sun exposure", unit: "h", range: 0...12, step: 1, sColor: .yellow
                     )
                     SliderSection(
-                        value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 1...90, step: 1, sColor: .pink
+                        value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 0...90, step: 1, sColor: .pink
                     )
                     Spacer()
                     HStack{
@@ -79,19 +75,34 @@ struct PlantEditView: View {
             
             .navigationBarBackButtonHidden(true)
             .customToolbar(title: "Edit plant", presentationMode: presentationMode)
+            .onAppear() {
+                plantName = plant.name
+                selectedRoom = plant.room?.name ?? "None"
+                selectedType = plant.category ?? "None"
+                selectedSubType = plant.species ?? "None"
+                waterDays = plant.wateringFreq!
+                waterAmount = plant.waterAmountInML!
+                sunExposure = plant.dailySunExposure!
+                conditioningDays = plant.conditioningFreq ?? 0
+              
+            }
     }
     
     private func savePlant() {
-        let nextWatering = Calendar.current.date(byAdding: .day, value: waterDays, to: Date())
         plant.name = plantName
-        plant.room = RoomModel.getRoom(name: selectedRoom, fromRooms: roomList)
+        let foundRoom = RoomModel.getRoom(name: selectedRoom, fromRooms: roomList)
+        if (foundRoom != nil) {
+            plant.room = foundRoom
+        }else {
+            print("kurwa hij")
+        }
         plant.category = selectedType != "None" ? selectedType : nil
         plant.species = selectedSubType != "None" ? selectedSubType : nil
         plant.wateringFreq = waterDays
         plant.waterAmountInML = waterAmount
         plant.dailySunExposure = sunExposure
         plant.conditioningFreq = conditioningDays
-        plant.imageUrl = "examplePlant"
+        plant.imageUrl = "ExamplePlant"
         context.insert(plant)
         do {
             try context.save()
@@ -154,7 +165,6 @@ private struct PlantImageSection: View {
         .padding(.horizontal, 40)
         .onAppear {
             rooms = roomList.map { $0.name }
-            selectedRoom = rooms.first!
             PlantService.getUniqueCategories { categories in
                 DispatchQueue.main.async {
                     types = categories
@@ -250,6 +260,11 @@ private struct MiniButton : View {
     }
 }
 
-#Preview {
-    PlantEditView(plant: PlantModel.examplePlant)
-}
+//#Preview {
+//    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+//    let container = try! ModelContainer(for: SettingsModel.self, RoomModel.self, PlantModel.self, configurations: config)
+//
+//
+//    PlantEditView(plant: PlantModel.examplePlant)
+//            .modelContainer(container)
+//}

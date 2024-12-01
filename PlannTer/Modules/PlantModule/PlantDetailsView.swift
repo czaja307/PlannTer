@@ -62,8 +62,8 @@ private struct PlantImageSection: View {
             }
             VStack {
                 PlantLabel(text: plant.room?.name ?? "Room")
-                PlantLabel(text: plant.category ?? "Category")
-                PlantLabel(text: plant.species ?? "Specie")
+                PlantLabel(text: plant.category ?? "None")
+                PlantLabel(text: plant.species ?? "None")
             }
             .padding(.leading, 10)
         }

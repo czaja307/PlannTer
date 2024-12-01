@@ -5,9 +5,16 @@ struct RoomEditView: View {
     @FocusState private var isFocused: Bool
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.modelContext) private var context
+    @Bindable var room: RoomModel
+    @State var nameExists: Bool = false
     
     @State private var roomName: String = ""
     @State private var windows = Array(repeating: false, count: 9)
+    private let dirNames = [
+        Direction.northWest, Direction.north, Direction.northEast,
+        Direction.west, Direction.west, Direction.east,
+        Direction.southWest, Direction.south, Direction.southEast
+    ]
     
     let columns: [GridItem] = [
         GridItem(.flexible()), // First column
@@ -60,9 +67,12 @@ struct RoomEditView: View {
                 
                 Spacer()
                 
-                LargeButton(title: "Save room", action: {
-                    
-                })                    .padding(20)
+                LargeButton(title: "Save room", action: saveRoom)
+                    .padding(20)
+            }
+            .onAppear() {
+                roomName = room.name
+                let windows = dirNames.map { room.directions.contains($0) }
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -72,8 +82,24 @@ struct RoomEditView: View {
     private func selectedWindow(index: Int) {
         windows[index].toggle()
     }
+    
+    private func saveRoom() {
+        if (!nameExists && roomName != "") {
+            var dirs: [Direction] = []
+            for (i, v) in windows.enumerated() { if(v){dirs.append(dirNames[i])}}
+            room.directions = dirs
+            room.name = roomName
+            context.insert(room)
+            do {
+                try context.save()
+            } catch {
+                print("Failed to save room: \(error)")
+            }
+            presentationMode.wrappedValue.dismiss()
+        }
+    }
 }
 
 #Preview {
-    RoomEditView()
+    RoomEditView(room: RoomModel.exampleRoom)
 }

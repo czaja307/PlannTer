@@ -40,6 +40,7 @@ struct PlantAddView: View {
                 }
             VStack {
                 PlantImageSection(
+                    roomN: room.name,
                     roomList: roomList,
                     rooms: $rooms,
                     selectedRoom: $selectedRoom,
@@ -60,7 +61,7 @@ struct PlantAddView: View {
                     value: $sunExposure, title: "Sun exposure", unit: "h", range: 0...12, step: 1, sColor: .yellow
                 )
                 SliderSection(
-                    value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 1...90, step: 1, sColor: .pink
+                    value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 0...90, step: 1, sColor: .pink
                 )
                 Spacer()
                 HStack{
@@ -79,9 +80,6 @@ struct PlantAddView: View {
     }
     
     private func savePlant() {
-        
- 
-        
         let newPlant = PlantModel(
             room: RoomModel.getRoom(name: selectedRoom, fromRooms: roomList),
             name: plantName,
@@ -105,6 +103,7 @@ struct PlantAddView: View {
 
 
 private struct PlantImageSection: View {
+    var roomN: String
     var roomList: [RoomModel]
     @Binding var rooms: [String]
     @Binding var selectedRoom: String
@@ -154,7 +153,7 @@ private struct PlantImageSection: View {
         .padding(.horizontal, 40)
         .onAppear {
             rooms = roomList.map { $0.name }
-            selectedRoom = rooms.first!
+            selectedRoom = roomN
             PlantService.getUniqueCategories { categories in
                 DispatchQueue.main.async {
                     types.append(contentsOf: categories)
@@ -250,8 +249,15 @@ private struct MiniButton : View {
     }
 }
 
-#Preview{
-    PlantAddView(room: RoomModel.exampleRoom)
-}
 
+//#Preview {
+//    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+//    let container = try! ModelContainer(for: SettingsModel.self, RoomModel.self, PlantModel.self, configurations: config)
+//    let context = ModelContext(container)
+//
+//
+//    PlantAddView(room: RoomModel.exampleRoom)
+//            .modelContainer(container)
+//            .environment(context)
+//}
 

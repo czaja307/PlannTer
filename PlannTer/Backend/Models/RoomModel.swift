@@ -28,7 +28,7 @@ class RoomModel: Identifiable, Codable {
     var directions: [Direction]  // tablica kierunków oświetlenia
     @Relationship(deleteRule: .cascade, inverse: \PlantModel.room)
     var plants: [PlantModel]  // lista roślin w pokoju
-    
+
     init(name: String, directions: [Direction], plants: [PlantModel]) {
         self.id = UUID()
         self.name = name
