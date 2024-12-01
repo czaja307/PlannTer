@@ -167,7 +167,7 @@ private struct PlantImageSection: View {
             rooms = roomList.map { $0.name }
             PlantService.getUniqueCategories { categories in
                 DispatchQueue.main.async {
-                    types = categories
+                    types.append(contentsOf: categories)
                 }
             }
         }

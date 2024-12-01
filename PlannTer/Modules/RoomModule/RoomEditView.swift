@@ -6,6 +6,7 @@ struct RoomEditView: View {
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.modelContext) private var context
     @Bindable var room: RoomModel
+    @Query var roomList: [RoomModel]
     @State var nameExists: Bool = false
     
     @State private var roomName: String = ""
@@ -35,6 +36,16 @@ struct RoomEditView: View {
                 
                 TextInput(title: "Give your room a memorable name", prompt: "Green Sanctuary", inputText: $roomName, isActive: $isFocused)
                     .padding(20)
+                    .onChange(of: roomName) {
+                        let found = RoomModel.getRoom(name: roomName, fromRooms: roomList)
+                        nameExists = found != nil
+                }
+                if(nameExists) {
+                    Text("A room with such a name already exists, choose a different name!")
+                        .padding(.horizontal, 30)
+                        .font(.note)
+                        .foregroundColor(Color.red)
+                }
                 Spacer()
                 LazyVGrid(columns: columns, spacing: 10) {
                     ForEach(0..<9, id: \.self) { index in

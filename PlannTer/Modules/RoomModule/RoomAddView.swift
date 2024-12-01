@@ -35,12 +35,15 @@ struct RoomAddView: View {
                 
                 TextInput(title: "Give your room a memorable name", prompt: "Green Sanctuary", inputText: $roomName, isActive: $isFocused)
                     .padding(20)
-                    .onSubmit {
+                    .onChange(of: roomName) {
                         let found = RoomModel.getRoom(name: roomName, fromRooms: roomList)
                         nameExists = found != nil
                     }
                 if(nameExists) {
                     Text("A room with such a name already exists, choose a different name!")
+                        .padding(.horizontal, 30)
+                        .font(.note)
+                        .foregroundColor(Color.red)
                 }
                 Spacer()
                 LazyVGrid(columns: columns, spacing: 10) {
