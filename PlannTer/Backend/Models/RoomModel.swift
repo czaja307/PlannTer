@@ -8,16 +8,33 @@
 import Foundation
 import SwiftData
 
-// enum do 8 kierunków geograficznych
+// enum do 8 kierunków geograficznych (deprecated)
 enum Direction: String, Codable, CaseIterable {
-    case north = "North"
-    case northEast = "North-East"
-    case east = "East"
-    case southEast = "South-East"
-    case south = "South"
-    case southWest = "South-West"
-    case west = "West"
-    case northWest = "North-West"
+    case north = "N"
+    case northEast = "NE"
+    case east = "E"
+    case southEast = "SE"
+    case south = "S"
+    case southWest = "SW"
+    case west = "W"
+    case northWest = "NW"
+}
+
+struct ApproxSunlight { //now this is fucking dumb
+    let sunlightHours: [String: Int]
+    static let average: ApproxSunlight = ApproxSunlight(sunlightHours: [
+        "N": 2,
+        "NE": 3,
+        "E": 4,
+        "SE": 5,
+        "S": 5,
+        "SW": 5,
+        "W": 4,
+        "NW": 3
+    ])
+    //usage:
+    //ApproxSunlight.average.sunlightHours["S"]
+    //ApproxSunlight.average.sunlightHours[Direction.north] (works too)
 }
 
 @Model
@@ -54,6 +71,10 @@ class RoomModel: Identifiable, Codable {
         try container.encode(name, forKey: .name)
         try container.encode(directions, forKey: .directions)
         try container.encode(plants, forKey: .plants) // Encode array of PlantModel
+    }
+    
+    var notificationsCount: Int {
+        return plants.reduce(0) { $0 + $1.notificationsCount } //fancy sumowanie kwiatkow
     }
 
     static var exampleRoom: RoomModel {

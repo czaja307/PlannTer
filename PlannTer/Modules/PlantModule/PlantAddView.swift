@@ -133,7 +133,7 @@ private struct PlantImageSection: View {
                     .onChange(of: selectedType) {
                         isTypeSelected = selectedType != "None"
                         if(isTypeSelected){
-                            PlantService.getUniqueSpeciesForCategory(selectedType) { categories in
+                            PlantService.shared.getUniqueSpeciesForCategory(selectedType) { categories in
                                 DispatchQueue.main.async {
                                     subtypes = categories
                                     subtypes.append("None")
@@ -154,7 +154,7 @@ private struct PlantImageSection: View {
         .onAppear {
             rooms = roomList.map { $0.name }
             selectedRoom = roomN
-            PlantService.getUniqueCategories { categories in
+            PlantService.shared.getUniqueCategories { categories in
                 DispatchQueue.main.async {
                     types.append(contentsOf: categories)
                 }
