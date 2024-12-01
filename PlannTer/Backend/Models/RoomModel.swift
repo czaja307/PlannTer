@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftData
 
 // enum do 8 kierunków geograficznych
 enum Direction: String, Codable, CaseIterable {
@@ -19,33 +20,42 @@ enum Direction: String, Codable, CaseIterable {
     case northWest = "North-West"
 }
 
-
-struct RoomModel: Codable, Identifiable {
+@Model
+class RoomModel: Identifiable, Codable {
     var id: UUID = UUID()  // unikalne id
+    @Attribute(.unique)
     var name: String  // nazwa pokoju
     var directions: [Direction]  // tablica kierunków oświetlenia
+    @Relationship(deleteRule: .cascade, inverse: \PlantModel.room)
     var plants: [PlantModel]  // lista roślin w pokoju
 
-    // Funkcja do dodawania rośliny do pokoju
-    mutating func addPlant(_ plant: PlantModel) {
-        plants.append(plant)
+    init(name: String, directions: [Direction], plants: [PlantModel]) {
+        self.id = UUID()
+        self.name = name
+        self.directions = directions
+        self.plants = plants
     }
 
-    // Funkcja do usuwania rośliny z pokoju po ID
-    mutating func removePlant(byId plantId: UUID) {
-        plants.removeAll { $0.id == plantId }
+    enum CodingKeys: String, CodingKey {
+        case id, name, directions, plants
     }
 
-    // Funkcja do zaktualizowania nazwy pokoju
-    mutating func updateRoomName(to newName: String) {
-        name = newName
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        directions = try container.decode([Direction].self, forKey: .directions)
+        plants = try container.decode([PlantModel].self, forKey: .plants) // Decode array of PlantModel
     }
 
-    // Funkcja do zaktualizowania kierunków oświetlenia
-    mutating func updateDirections(to newDirections: [Direction]) {
-        directions = newDirections
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(directions, forKey: .directions)
+        try container.encode(plants, forKey: .plants) // Encode array of PlantModel
     }
-    
+
     static var exampleRoom: RoomModel {
         return RoomModel(
             name: "Example Room",
@@ -55,5 +65,9 @@ struct RoomModel: Codable, Identifiable {
                 PlantModel.examplePlant
             ]
         )
+    }
+    
+    static func getRoom(name: String, fromRooms: [RoomModel]) -> RoomModel? {
+        return fromRooms.first { $0.name == name }
     }
 }

@@ -1,11 +1,10 @@
 import SwiftUI
 import SwiftData
 
-struct RoomEditView: View {
+struct RoomAddView: View {
     @FocusState private var isFocused: Bool
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.modelContext) private var context
-    @Bindable var room: RoomModel
     @Query var roomList: [RoomModel]
     @State var nameExists: Bool = false
     
@@ -39,7 +38,7 @@ struct RoomEditView: View {
                     .onChange(of: roomName) {
                         let found = RoomModel.getRoom(name: roomName, fromRooms: roomList)
                         nameExists = found != nil
-                }
+                    }
                 if(nameExists) {
                     Text("A room with such a name already exists, choose a different name!")
                         .padding(.horizontal, 30)
@@ -77,30 +76,20 @@ struct RoomEditView: View {
                 .frame(width: 230, height: 230)
                 
                 Spacer()
-                
                 LargeButton(title: "Save room", action: saveRoom)
                     .padding(20)
-            }
-            .onAppear() {
-                roomName = room.name
-                let windows = dirNames.map { room.directions.contains($0) }
             }
         }
         .navigationBarBackButtonHidden(true)
         .customToolbar(title: "Add new room", presentationMode: presentationMode)
     }
     
-    private func selectedWindow(index: Int) {
-        windows[index].toggle()
-    }
-    
     private func saveRoom() {
         if (!nameExists && roomName != "") {
             var dirs: [Direction] = []
             for (i, v) in windows.enumerated() { if(v){dirs.append(dirNames[i])}}
-            room.directions = dirs
-            room.name = roomName
-            context.insert(room)
+            let newRoom = RoomModel(name: roomName, directions: dirs, plants: [])
+            context.insert(newRoom)
             do {
                 try context.save()
             } catch {
@@ -109,8 +98,10 @@ struct RoomEditView: View {
             presentationMode.wrappedValue.dismiss()
         }
     }
+    
+    private func selectedWindow(index: Int) {
+        windows[index].toggle()
+    }
 }
 
-#Preview {
-    RoomEditView(room: RoomModel.exampleRoom)
-}
+

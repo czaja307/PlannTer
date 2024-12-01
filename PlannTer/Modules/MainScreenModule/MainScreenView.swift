@@ -1,7 +1,9 @@
 import SwiftUI
+import SwiftData
 
 struct MainScreenView: View {
-    @StateObject private var controller = MainScreenController()
+    @Environment(SettingsModel.self) private var settings
+    @Query var roomList: [RoomModel]
     
     var body: some View {
 
@@ -15,13 +17,13 @@ struct MainScreenView: View {
                 VStack {
                     AppTitle()
                         .padding(.top, 20)
-                    Tiles(roomsList: controller.rooms)
+                    Tiles(roomsList: roomList)
 
                 } 
                 VStack{
                     Spacer()
                     HStack{
-                        NavigationLink(destination: SettingsView()) {
+                        NavigationLink(destination: SettingsView(settings: settings)) {
                             Image(systemName: "gear")
                                 .foregroundColor(.primaryText)
                         }
@@ -43,7 +45,7 @@ struct MainScreenView: View {
 }
 
 struct Tiles: View{
-    var roomsList : [RoomModel]
+    var roomsList: [RoomModel]
     private var appendTop: Bool
     
     init(roomsList:[RoomModel]) {
@@ -86,12 +88,12 @@ struct RoomScrollView: View {
         
             HStack(spacing: 100) {
                 ForEach(rooms) { room in
-                    NavigationLink(destination: RoomDetailsView(title: room.name)) {
+                    NavigationLink(destination: RoomDetailsView(room: room)) {
                         RoomTile(roomName: room.name, roomWarnings: 2, numPlants: room.plants.count, listPosition: tilePosition)
                     }
                 }
                 if appendTile {
-                    NavigationLink(destination: RoomEditView()) {
+                    NavigationLink(destination: RoomAddView()) {
                         AddRoomTile(listPosition: tilePosition)
                             .padding(.leading, 20)
                     }
@@ -105,5 +107,12 @@ struct RoomScrollView: View {
 }
 
 #Preview {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: SettingsModel.self, RoomModel.self, PlantModel.self, configurations: config)
+    let mockSettings = SettingsModel()
+
+
     MainScreenView()
+            .modelContainer(container)
+            .environment(mockSettings)
 }

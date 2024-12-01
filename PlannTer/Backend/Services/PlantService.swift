@@ -1,12 +1,12 @@
 import Foundation
 
-class PlantService {
-    private let api = PerenualAPI()
-    private var plantList: [PlantData] = []
-    private var isPlantListLoaded = false
+final class PlantService {
+    private static let api = PerenualAPI()
+    private static var plantList: [PlantData] = []
+    private static var isPlantListLoaded = false
 
     // metoda do załadowania listy roślin z API
-    func loadPlantList(completion: @escaping ([PlantData]) -> Void) {
+    static func loadPlantList(completion: @escaping ([PlantData]) -> Void) {
         if isPlantListLoaded {
             completion(plantList)
             return
@@ -26,7 +26,7 @@ class PlantService {
     }
 
     // metoda do pobrania szczegółów rośliny po ID
-    func getPlantDetails(for id: Int, completion: @escaping (PlantDetails?) -> Void) {
+    static func getPlantDetails(for id: Int, completion: @escaping (PlantDetails?) -> Void) {
         api.fetchPlantDetails(plantID: id) { result in
             switch result {
             case .success(let details):
@@ -39,15 +39,16 @@ class PlantService {
     }
 
     // metoda zwracająca listę unikalnych kategorii
-    func getUniqueCategories(completion: @escaping ([String]) -> Void) {
+    static func getUniqueCategories(completion: @escaping ([String]) -> Void) {
         loadPlantList { plants in
             let categories = Set(plants.compactMap { $0.category })
             completion(Array(categories))
         }
     }
+    
 
     // metoda zwracająca listę unikalnych gatunków dla danej kategorii
-    func getUniqueSpeciesForCategory(_ category: String, completion: @escaping ([String]) -> Void) {
+    static func getUniqueSpeciesForCategory(_ category: String, completion: @escaping ([String]) -> Void) {
         loadPlantList { plants in
             let species = Set(plants.filter { $0.category == category }.compactMap { $0.species })
             completion(Array(species))
@@ -55,7 +56,7 @@ class PlantService {
     }
 
     // metoda zwracająca ID rośliny dla podanej kategorii i gatunku
-    func findPlantId(forCategory category: String, species: String, completion: @escaping (Int) -> Void) {
+    static func findPlantId(forCategory category: String, species: String, completion: @escaping (Int) -> Void) {
         loadPlantList { plants in
             let matchingPlants = plants.filter { $0.category == category && $0.species == species }
             completion(matchingPlants.first?.id ?? -1)
