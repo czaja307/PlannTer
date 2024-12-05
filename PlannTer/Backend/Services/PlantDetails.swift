@@ -22,6 +22,10 @@ struct PlantDetails: Codable {
     let propagation: [String]?
     let hardiness: Hardiness?
     let watering: String?
+    let depthWaterRequirement: DepthWaterRequirement?
+    let volumeWaterRequirement: VolumeWaterRequirement?
+    let wateringPeriod: String?
+    let wateringGeneralBenchmark: WateringGeneralBenchmark?
     let sunlight: [String]?
     let pruningMonth: [String]?
     let seeds: Int?
@@ -41,6 +45,7 @@ struct PlantDetails: Codable {
         let components = name.split(separator: " ")
         return components.last.map(String.init)
     }
+    
     // computed property: species (all but the last word of commonName)
     var species: String? {
         guard let name = commonName else { return nil }
@@ -48,8 +53,71 @@ struct PlantDetails: Codable {
         guard components.count > 1 else { return nil }
         return components.dropLast().joined(separator: " ")
     }
+    
+    // computed property: wateringAmount
+    var wateringAmount: Int? {
+        // obliczenie ilości wody w mililitrach
+        if let volumeStr = volumeWaterRequirement?.value,
+           let volume = Double(volumeStr),
+           let unit = volumeWaterRequirement?.unit?.lowercased() {
+            switch unit {
+            case "mm":
+                return Int(volume * 1000) // mm -> ml
+            case "feet":
+                return Int(volume * 28_316.8) // feet -> ml
+            case "inches":
+                return Int(volume * 16_387.064) // inches -> ml
+            default:
+                return nil
+            }
+        }
+        
+        if let depthStr = depthWaterRequirement?.value,
+           let depth = Double(depthStr),
+           let unit = depthWaterRequirement?.unit?.lowercased() {
+            switch unit {
+            case "mm":
+                return Int(depth * 500) // uproszczona zależność (np. połowa w mililitrach)
+            case "inches":
+                return Int(depth * 500 * 2) // uproszczenie dla inches (np. 2x więcej niż dla mm)
+            default:
+                return nil
+            }
+        }
+        
+        // fallback na podstawie watering
+        switch watering?.lowercased() {
+        case "frequent": return 900
+        case "average": return 400
+        case "minimum": return 200
+        case "none": return 0
+        default: return nil
+        }
+    }
+    
+    // computed property: wateringFreq
+    var wateringFreq: Int? {
+        // obliczenie częstotliwości podlewania w dniach
+        if let benchmark = wateringGeneralBenchmark?.value {
+            let range = benchmark.split(separator: "-").compactMap { Int($0) }
+            if range.count == 2 {
+                let average = (range[0] + range[1]) / 2
+                return average
+            }
+        }
+        
+        // fallback na podstawie watering
+        switch watering?.lowercased() {
+        case "frequent": return 1
+        case "average": return 3
+        case "minimum": return 7
+        case "none": return nil
+        default: return nil
+        }
+    }
 }
 
+// additional structs
 struct Dimensions: Codable {
     let type: String?
     let minValue: Int?
@@ -76,4 +144,20 @@ struct DefaultImage: Codable {
         case smallURL = "small_url"
         case thumbnail
     }
+}
+
+// new structs
+struct DepthWaterRequirement: Codable {
+    let unit: String?
+    let value: String?
+}
+
+struct VolumeWaterRequirement: Codable {
+    let unit: String?
+    let value: String?
+}
+
+struct WateringGeneralBenchmark: Codable {
+    let value: String?
+    let unit: String?
 }

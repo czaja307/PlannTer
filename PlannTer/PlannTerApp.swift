@@ -11,7 +11,7 @@ import SwiftData
 struct PlannTerApp: App {
     var body: some Scene {
         WindowGroup {
-            RootView()
+            TestView()
         }
         .modelContainer(for: [SettingsModel.self, RoomModel.self, PlantModel.self])
     }

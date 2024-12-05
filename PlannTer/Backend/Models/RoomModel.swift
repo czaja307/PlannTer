@@ -76,6 +76,10 @@ class RoomModel: Identifiable, Codable {
     var notificationsCount: Int {
         return plants.reduce(0) { $0 + $1.notificationsCount } //fancy sumowanie kwiatkow
     }
+    
+    var plantCount: Int {
+        return plants.count
+    }
 
     static var exampleRoom: RoomModel {
         return RoomModel(
