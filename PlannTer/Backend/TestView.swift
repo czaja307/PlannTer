@@ -51,6 +51,8 @@ struct TestView: View {
                 }
             }
             .padding()
+            
+            PlantTile(plant: PlantModel.exampleApiPlant)
         }
     }
 }

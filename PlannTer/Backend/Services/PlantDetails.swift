@@ -22,9 +22,9 @@ struct PlantDetails: Codable {
     let propagation: [String]?
     let hardiness: Hardiness?
     let watering: String?
-    let depthWaterRequirement: DepthWaterRequirement?
-    let volumeWaterRequirement: VolumeWaterRequirement?
-    let wateringPeriod: String?
+    //let depthWaterRequirement: DepthWaterRequirement?
+    //let volumeWaterRequirement: VolumeWaterRequirement?
+    //let wateringPeriod: String?
     let wateringGeneralBenchmark: WateringGeneralBenchmark?
     let sunlight: [String]?
     let pruningMonth: [String]?
@@ -57,7 +57,9 @@ struct PlantDetails: Codable {
     // computed property: wateringAmount
     var wateringAmount: Int? {
         // obliczenie ilości wody w mililitrach
+        /*
         if let volumeStr = volumeWaterRequirement?.value,
+           !volumeStr.isEmpty,
            let volume = Double(volumeStr),
            let unit = volumeWaterRequirement?.unit?.lowercased() {
             switch unit {
@@ -73,6 +75,7 @@ struct PlantDetails: Codable {
         }
         
         if let depthStr = depthWaterRequirement?.value,
+           !depthStr.isEmpty,
            let depth = Double(depthStr),
            let unit = depthWaterRequirement?.unit?.lowercased() {
             switch unit {
@@ -84,6 +87,7 @@ struct PlantDetails: Codable {
                 return nil
             }
         }
+        */
         
         // fallback na podstawie watering
         switch watering?.lowercased() {
@@ -96,13 +100,18 @@ struct PlantDetails: Codable {
     }
     
     // computed property: wateringFreq
-    var wateringFreq: Int? {
+    var wateringFreq: Int {
         // obliczenie częstotliwości podlewania w dniach
-        if let benchmark = wateringGeneralBenchmark?.value {
-            let range = benchmark.split(separator: "-").compactMap { Int($0) }
+        if let benchmark = wateringGeneralBenchmark?.value,
+            !benchmark.isEmpty {
+            let range = benchmark.split(separator: "-").compactMap { Int($0.trimmingCharacters(in: .whitespaces))
+            }
             if range.count == 2 {
                 let average = (range[0] + range[1]) / 2
                 return average
+            }
+            else if range.count == 1 {
+                return range[0] // pojedyncza wartość
             }
         }
         
@@ -111,10 +120,36 @@ struct PlantDetails: Codable {
         case "frequent": return 1
         case "average": return 3
         case "minimum": return 7
-        case "none": return nil
-        default: return nil
+        case "none": return 0
+        default: return 0
         }
     }
+    
+    var sunhours: Int? {
+        print("A")
+        print(sunlight)
+        guard let sunlightArray = sunlight, !sunlightArray.isEmpty else { return 0 }
+        
+        let sunlightMapping: [String: Int] = [
+            "full_shade": 0,
+            "part_shade": 1,
+            "sun-part_shade": 3,
+            "full_sun": 5
+        ]
+        
+        print(sunlightArray)
+        
+        // zamiana wartości w sunlightArray na format mapy (np. "Full sun" -> "full_sun")
+        let formattedArray = sunlightArray.map { $0.lowercased().replacingOccurrences(of: " ", with: "_") }
+        
+        let hoursArray = formattedArray.compactMap { sunlightMapping[$0] }
+        print(hoursArray)
+        
+        guard !hoursArray.isEmpty else { return nil }
+        let averageHours = Double(hoursArray.reduce(0, +)) / Double(hoursArray.count)
+        return Int(round(averageHours))
+    }
+
 }
 
 // additional structs
