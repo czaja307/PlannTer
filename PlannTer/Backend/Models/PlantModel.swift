@@ -68,7 +68,7 @@ class PlantModel: Identifiable, Codable {
     
     // fetch details from API and create plant model
     static func createFromApi(plantId: Int, completion: @escaping (PlantModel?) -> Void) {
-        PlantService.getPlantDetails(for: plantId) { details in
+        PlantService.shared.getPlantDetails(for: plantId) { details in
             guard let details = details else {
                 print("Failed to fetch plant details for plant ID: \(plantId)")
                 completion(nil)

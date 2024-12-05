@@ -11,7 +11,8 @@ class PerenualAPI {
     private let baseURL = "https://perenual.com/api"
 
     func fetchPlantList(completion: @escaping (Result<[PlantData], Error>) -> Void) {
-        let urlString = "\(baseURL)/species-list?key=\(apiKey)"
+        // indoor = true
+        let urlString = "\(baseURL)/species-list?key=\(apiKey)&indoor=1&page=3"
         guard let url = URL(string: urlString) else { return }
 
         URLSession.shared.dataTask(with: url) { data, response, error in
