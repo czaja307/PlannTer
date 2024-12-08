@@ -1,10 +1,9 @@
 import SwiftUI
 
 struct RoomTile: View {
-    let roomName : String
-    let roomWarnings : Int
-    let numPlants : Int
+    let room: RoomModel
     let listPosition : Int
+    let deleteAction: (RoomModel) -> ()
     
     private let size : CGFloat = 2 * UIScreen.main.bounds.width/3
     private let mainPadding: CGFloat = 20
@@ -14,12 +13,12 @@ struct RoomTile: View {
     private var bgColor : Color {
         listPosition % 2 == 0 ? Color.primaryBackground : Color.secondaryBackground
     }
-    
+    @State private var isNavigatingToEditView = false
     
     var body: some View {
         ZStack(alignment: .top){
             VStack(spacing: 5) {
-                Text(roomName)
+                Text(room.name)
                     .padding(mainPadding)
                     .font(.mainText)
                     .lineLimit(2)
@@ -33,9 +32,9 @@ struct RoomTile: View {
                         )
                 HStack(spacing: mainPadding) {
                     Spacer()
-                    InfoBubble(color: fgColor, value: numPlants, image: Image("PlantSymbol"), size: (size - 2 * mainPadding)/3)
+                    InfoBubble(color: fgColor, value: room.plants.count, image: Image("PlantSymbol"), size: (size - 2 * mainPadding)/3)
                     Spacer()
-                    InfoBubble(color: fgColor, value: roomWarnings, image: Image("WarnSymbol"), size: (size - 2 * mainPadding)/3)
+                    InfoBubble(color: fgColor, value: room.notificationsCount, image: Image("WarnSymbol"), size: (size - 2 * mainPadding)/3)
                     Spacer()
                 }
                 .padding(mainPadding/2)
@@ -55,6 +54,25 @@ struct RoomTile: View {
                 Spacer()
             }
         }
+        .contextMenu {
+            Button(action: {
+                isNavigatingToEditView = true
+            }) {
+                Label("Edit", systemImage: "gearshape.fill")
+            }
+            
+            Button (role: .destructive){
+                deleteAction(room)
+            }label:{
+                Label("Delete", systemImage: "trash")
+            }
+        }
+        .background(
+            NavigationLink(destination: RoomEditView(room: room ), isActive: $isNavigatingToEditView) {
+                EmptyView()
+            }
+            .hidden()
+        )
     }
 }
 
@@ -86,6 +104,6 @@ struct InfoBubble: View{
 }
 
 #Preview {
-    RoomTile(roomName: "osdfijnvghfhgfhgfhldf", roomWarnings: 3, numPlants: 3, listPosition: 0)
-    RoomTile(roomName: "osdfijldf", roomWarnings: 3, numPlants: 3, listPosition: 1)
+    RoomTile(room: RoomModel.exampleRoom, listPosition: 0, deleteAction: {_ in})
+    RoomTile(room: RoomModel.exampleRoom, listPosition: 1, deleteAction: {_ in})
 }
