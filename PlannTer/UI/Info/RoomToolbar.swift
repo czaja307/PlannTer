@@ -11,6 +11,7 @@ struct RoomToolbar: ViewModifier {
     let title: String
     let sunHours: Int
     let presentationMode: Binding<PresentationMode>
+    let room: RoomModel
     @State private var isToolbarExpanded: Bool = false
     
     
@@ -34,15 +35,19 @@ struct RoomToolbar: ViewModifier {
                                         .font(.mainText)
                                         .foregroundColor(.secondaryText)
                                 }
-                                
                                 Text(title)
                                     .font(.mainText)
                                         .lineLimit(2)
                                         .multilineTextAlignment(.center)
                                         .foregroundColor(.secondaryText)
-                                        .frame(maxWidth: UIScreen.main.bounds.width * 0.8)
                                         .frame(maxWidth: .infinity, alignment: .center)
-                                        .padding(.trailing, 85)
+                                NavigationLink(destination: RoomEditView(room: room)) {
+                                    Image(systemName: "gearshape.fill")
+                                        .padding(.horizontal, 25)
+                                        .padding(.vertical, 0)
+                                        .font(.mainText)
+                                        .foregroundColor(.secondaryText)
+                                }
                             }
                             
                             if(isToolbarExpanded) {
@@ -115,8 +120,8 @@ struct RoomBar: View {
 }
 
 extension View {
-    func roomToolbar(title: String, sunHours: Int, presentationMode: Binding<PresentationMode>) -> some View {
-        self.modifier(RoomToolbar(title: title, sunHours: sunHours, presentationMode: presentationMode))
+    func roomToolbar(title: String, sunHours: Int, presentationMode: Binding<PresentationMode>, room: RoomModel) -> some View {
+        self.modifier(RoomToolbar(title: title, sunHours: sunHours, presentationMode: presentationMode, room: room))
     }
 }
 
@@ -125,6 +130,6 @@ extension View {
     VStack {
         
     }.navigationBarBackButtonHidden(true)
-        .roomToolbar(title: "titljmntghgjjhjbjdd", sunHours: 4, presentationMode: presentationMode)
+        .roomToolbar(title: "hjbjdd", sunHours: 4, presentationMode: presentationMode, room: RoomModel.exampleRoom)
         .background(Color.primaryBackground)
 }

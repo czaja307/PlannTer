@@ -10,6 +10,7 @@ struct RoomEditView: View {
     @State var nameExists: Bool = false
     
     @State private var roomName: String = ""
+    @State private var origName: String = ""
     @State private var windows = Array(repeating: false, count: 9)
     private let dirNames = [
         Direction.northWest, Direction.north, Direction.northEast,
@@ -36,10 +37,13 @@ struct RoomEditView: View {
                 
                 TextInput(title: "Give your room a memorable name", prompt: "Green Sanctuary", inputText: $roomName, isActive: $isFocused)
                     .padding(20)
+                    .onAppear() {
+                        origName = roomName
+                    }
                     .onChange(of: roomName) {
                         let found = RoomModel.getRoom(name: roomName, fromRooms: roomList)
-                        nameExists = found != nil
-                }
+                        nameExists = (found != nil) && (roomName != origName)
+                    }
                 if(nameExists) {
                     Text("A room with such a name already exists, choose a different name!")
                         .padding(.horizontal, 30)
@@ -87,7 +91,7 @@ struct RoomEditView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        .customToolbar(title: "Add new room", presentationMode: presentationMode)
+        .customToolbar(title: "Edit room", presentationMode: presentationMode)
     }
     
     private func selectedWindow(index: Int) {

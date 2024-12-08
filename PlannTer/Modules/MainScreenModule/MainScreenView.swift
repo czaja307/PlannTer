@@ -3,11 +3,12 @@ import SwiftData
 
 struct MainScreenView: View {
     @Environment(SettingsModel.self) private var settings
+    @Environment(\.modelContext) private var context
     @Query var roomList: [RoomModel]
     
     var body: some View {
 
-        NavigationView{
+        NavigationStack{
             ZStack {
                 Image("CorkBackground")
                     .resizable()
@@ -17,7 +18,7 @@ struct MainScreenView: View {
                 VStack {
                     AppTitle()
                         .padding(.top, 20)
-                    Tiles(roomsList: roomList)
+                    Tiles(roomsList: roomList, deleteAction: deleteAction)
 
                 } 
                 VStack{
@@ -42,22 +43,28 @@ struct MainScreenView: View {
         }
         
     }
+    
+    func deleteAction(room: RoomModel) {
+        context.delete(room)
+    }
 }
 
 struct Tiles: View{
     var roomsList: [RoomModel]
+    let deleteAction: (RoomModel) -> Void
     private var appendTop: Bool
     
-    init(roomsList:[RoomModel]) {
+    init(roomsList:[RoomModel], deleteAction: @escaping (RoomModel) -> Void) {
         self.roomsList = roomsList
         appendTop = roomsList.count % 2 == 0 ? true : false
+        self.deleteAction = deleteAction
     }
     
     var body: some View{
         ScrollView(.horizontal, showsIndicators: false) {
             VStack{
-                RoomScrollView(rooms: evenIndexedRooms, appendTile: appendTop, isTop: true)
-                RoomScrollView(rooms: oddIndexedRooms, appendTile: !appendTop, isTop: false)
+                RoomScrollView(rooms: evenIndexedRooms, appendTile: appendTop, isTop: true, deleteAction: deleteAction)
+                RoomScrollView(rooms: oddIndexedRooms, appendTile: !appendTop, isTop: false, deleteAction: deleteAction)
                 
             }
         }.frame(width: 400)
@@ -76,11 +83,13 @@ struct RoomScrollView: View {
     let rooms: [RoomModel]
     let appendTile: Bool
     let tilePosition: Int
+    let deleteAction: (RoomModel) -> Void
     
-    init(rooms: [RoomModel], appendTile: Bool, isTop: Bool) {
+    init(rooms: [RoomModel], appendTile: Bool, isTop: Bool, deleteAction: @escaping (RoomModel) -> Void) {
         self.rooms = rooms
         self.appendTile = appendTile
         self.tilePosition = isTop ? 0 : 1
+        self.deleteAction = deleteAction
     }
     
     
@@ -89,7 +98,7 @@ struct RoomScrollView: View {
             HStack(spacing: 100) {
                 ForEach(rooms) { room in
                     NavigationLink(destination: RoomDetailsView(room: room)) {
-                        RoomTile(roomName: room.name, roomWarnings: 2, numPlants: room.plants.count, listPosition: tilePosition)
+                        RoomTile(room: room, listPosition: tilePosition, deleteAction: deleteAction)
                     }
                 }
                 if appendTile {
@@ -104,6 +113,7 @@ struct RoomScrollView: View {
             .padding(.bottom, 2)
         
     }
+    
 }
 
 #Preview {

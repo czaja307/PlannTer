@@ -1,7 +1,11 @@
 import SwiftUI
 
 struct PlantTile: View {
+    @Environment(\.presentationMode) var presentationMode // To handle back navigation
     @State var plant: PlantModel
+    let deleteAction: (PlantModel) -> ()
+    
+    @State private var isNavigatingToEditView = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -73,6 +77,25 @@ struct PlantTile: View {
         .background(Color.secondaryBackground)
         .cornerRadius(15)
         .shadow(color: Color.secondaryText.opacity(0.5), radius: 3.3, x: 2, y: 4)
+        .contextMenu {
+            Button(action: {
+                isNavigatingToEditView = true
+            }) {
+                Label("Edit", systemImage: "gearshape.fill")
+            }
+            
+            Button (role: .destructive){
+                deleteAction(plant)
+            }label:{
+                Label("Delete", systemImage: "trash")
+            }
+        }
+        .background(
+            NavigationLink(destination: PlantEditView(plant: plant), isActive: $isNavigatingToEditView) {
+                EmptyView()
+            }
+            .hidden()
+        )
     }
 }
 
@@ -106,7 +129,7 @@ struct Bar: View {
 }
 
 #Preview {
-    PlantTile(plant: PlantModel.examplePlant)
-    PlantTile(plant: PlantModel.examplePlant)
+    PlantTile(plant: PlantModel.examplePlant, deleteAction: {_ in})
+    PlantTile(plant: PlantModel.examplePlant, deleteAction: {_ in})
     CreatePlantTile()
 }
