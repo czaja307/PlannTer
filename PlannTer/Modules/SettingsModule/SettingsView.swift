@@ -64,9 +64,7 @@ struct SettingsView: View {
                     )
                 }
                 Spacer()
-                //TODO: what about action here?
-                LargeButton(title: "Save Settings", action: { })
-                Spacer()
+                
             }
             .padding(.horizontal, 20)
         }
