@@ -6,7 +6,8 @@ struct RoomAddView: View {
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.modelContext) private var context
     @Query var roomList: [RoomModel]
-    @State var nameExists: Bool = false
+    @State private var nameExists: Bool = false
+    @State private var savingEmpty: Bool = true
     
     @State private var roomName: String = ""
     @State private var windows = Array(repeating: false, count: 9)
@@ -38,9 +39,16 @@ struct RoomAddView: View {
                     .onChange(of: roomName) {
                         let found = RoomModel.getRoom(name: roomName, fromRooms: roomList)
                         nameExists = found != nil
+                        savingEmpty = roomName == ""
                     }
                 if(nameExists) {
                     Text("A room with such a name already exists, choose a different name!")
+                        .padding(.horizontal, 30)
+                        .font(.note)
+                        .foregroundColor(Color.red)
+                }
+                if(savingEmpty) {
+                    Text("You must give your room a name that is not empty")
                         .padding(.horizontal, 30)
                         .font(.note)
                         .foregroundColor(Color.red)
@@ -85,7 +93,7 @@ struct RoomAddView: View {
     }
     
     private func saveRoom() {
-        if (!nameExists && roomName != "") {
+        if (!nameExists && !savingEmpty) {
             var dirs: [Direction] = []
             for (i, v) in windows.enumerated() { if(v){dirs.append(dirNames[i])}}
             let newRoom = RoomModel(name: roomName, directions: dirs, plants: [])

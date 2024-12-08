@@ -4,27 +4,24 @@ import SwiftData
 struct PlantEditView: View {
     @Environment(\.modelContext) private var context
     @Bindable var plant: PlantModel
+    @State private var createdPlant: PlantModel
     @Query var roomList: [RoomModel]
-    
-    //Sliders info
-    @State private var waterDate = Date()
-    @State private var waterDays: Int = 7
-    @State private var waterAmount: Int = 200
-    @State private var sunExposure: Int = 8
-    @State private var conditioningDate = Date()
-    @State private var conditioningDays: Int = 30
-    
+   
     @State private var rooms: [String] = []
-    @State private var selectedRoom: String = ""
+    @State private var selectedRoom: String 
     @State private var types: [String] = ["None"]
-    @State private var selectedType: String = "None"
     @State private var subtypes: [String] = ["None"]
-    @State private var selectedSubType: String = "None"
     
     @FocusState private var isActive: Bool
+    @State private var savingEmpty: Bool = false
     @Environment(\.presentationMode) var presentationMode
     
-    @State private var plantName: String = ""
+    init(plant: PlantModel) {
+        self.plant = plant
+        self.createdPlant = PlantModel(plant: plant)
+        self.selectedRoom = plant.room!.name
+    }
+    
     
     var body: some View {
             ZStack {
@@ -36,35 +33,61 @@ struct PlantEditView: View {
                         isActive = false
                     }
                 VStack {
-                    PlantImageSection(
+                    TopEditSection(
+                        plant: $createdPlant,
                         roomList: roomList,
                         rooms: $rooms,
                         selectedRoom: $selectedRoom,
                         types: $types,
-                        selectedType: $selectedType,
+                        selectedType: Binding(
+                                get: { createdPlant.category ?? "None" },
+                                set: { createdPlant.category = $0 }
+                            ),
                         subtypes: $subtypes,
-                        selectedSubType: $selectedSubType)
+                        selectedSubType: Binding(
+                            get: { createdPlant.species ?? "None" },
+                            set: { createdPlant.species = $0 }
+                            ))
                     
-                    TextInput(title: "Name your plant", prompt: "Edytka", inputText: $plantName, isActive: $isActive)
+                    TextInput(title: "Name your plant", prompt: "Edytka", inputText: $createdPlant.name, isActive: $isActive)
                         .frame(width: 0.9 * UIScreen.main.bounds.width)
+                        .onChange(of: createdPlant.name) {
+                            savingEmpty = createdPlant.name == ""
+                        }
+                    if(savingEmpty) {
+                        Text("You must give your plant a name that is not empty")
+                            .padding(.horizontal, 30)
+                            .font(.note)
+                            .foregroundColor(Color.red)
+                    }
                     SliderSection(
-                        value: $waterDays, title: "Watering interval", unit: "days", range: 1...30, step: 1, sColor: .green
+                        value: Binding(
+                            get: { createdPlant.wateringFreq ?? 7 },
+                            set: { createdPlant.wateringFreq = $0 }
+                            ), title: "Watering interval", unit: "days", range: 1...30, step: 1, sColor: .green
                     )
                     SliderSection(
-                        value: $waterAmount, title: "Water amount", unit: "ml", range: 50...1000, step: 50, sColor: .blue
+                        value: Binding(
+                            get: { createdPlant.waterAmountInML ?? 220 },
+                            set: { createdPlant.waterAmountInML = $0 }
+                            ), title: "Water amount", unit: "ml", range: 50...1000, step: 50, sColor: .blue
                     )
                     SliderSection(
-                        value: $sunExposure, title: "Sun exposure", unit: "h", range: 0...12, step: 1, sColor: .yellow
+                        value: Binding(
+                            get: { createdPlant.dailySunExposure ?? 3 },
+                            set: { createdPlant.dailySunExposure = $0 }
+                            ), title: "Sun exposure", unit: "h", range: 0...12, step: 1, sColor: .yellow
                     )
                     SliderSection(
-                        value: $conditioningDays, title: "Conditioning interval", unit: "days", range: 0...90, step: 1, sColor: .pink
+                        value: Binding(
+                            get: { createdPlant.conditioningFreq ?? 0 },
+                            set: { createdPlant.conditioningFreq = $0 }
+                            ), title: "Conditioning interval", unit: "days", range: 0...90, step: 1, sColor: .pink
                     )
                     Spacer()
                     HStack{
                         Spacer()
-                        MiniButton(title: "Reset", action:{
-                            
-                        })
+                        MiniButton(title: "Reset", action: resetPlant)
                         Spacer()
                         MiniButton(title: "Save", action: savePlant)
                         Spacer()
@@ -72,37 +95,29 @@ struct PlantEditView: View {
                     .frame(width: 0.9 * UIScreen.main.bounds.width)
                 }
             }
-            
             .navigationBarBackButtonHidden(true)
             .customToolbar(title: "Edit plant", presentationMode: presentationMode)
-            .onAppear() {
-                plantName = plant.name
-                selectedRoom = plant.room?.name ?? "None"
-                selectedType = plant.category ?? "None"
-                selectedSubType = plant.species ?? "None"
-                waterDays = plant.wateringFreq!
-                waterAmount = plant.waterAmountInML!
-                sunExposure = plant.dailySunExposure!
-                conditioningDays = plant.conditioningFreq ?? 0
-              
-            }
+    }
+    
+    private func resetPlant() {
+        createdPlant = PlantModel(plant: plant)
     }
     
     private func savePlant() {
-        plant.name = plantName
+        if(savingEmpty){
+            return
+        }
         let foundRoom = RoomModel.getRoom(name: selectedRoom, fromRooms: roomList)
         if (foundRoom != nil) {
             plant.room = foundRoom
         }else {
             print("kurwa hij")
         }
-        plant.category = selectedType != "None" ? selectedType : nil
-        plant.species = selectedSubType != "None" ? selectedSubType : nil
-        plant.wateringFreq = waterDays
-        plant.waterAmountInML = waterAmount
-        plant.dailySunExposure = sunExposure
-        plant.conditioningFreq = conditioningDays
-        plant.imageUrl = "ExamplePlant"
+        plant.name = createdPlant.name
+        plant.wateringFreq = createdPlant.wateringFreq
+        plant.waterAmountInML = createdPlant.waterAmountInML
+        plant.dailySunExposure = createdPlant.dailySunExposure
+        plant.conditioningFreq = createdPlant.conditioningFreq
         context.insert(plant)
         do {
             try context.save()
@@ -115,7 +130,8 @@ struct PlantEditView: View {
 }
 
 
-private struct PlantImageSection: View {
+private struct TopEditSection: View {
+    @Binding var plant: PlantModel
     var roomList: [RoomModel]
     @Binding var rooms: [String]
     @Binding var selectedRoom: String
@@ -159,6 +175,24 @@ private struct PlantImageSection: View {
                     }
                 MiniDropdownPicker(selected: $selectedSubType, items: subtypes)
                     .disabled(!isTypeSelected)
+                    .onChange(of: selectedSubType) {
+                        if(selectedSubType != "None"){
+                            PlantService.shared.findPlantId(forCategory: selectedType, species: selectedSubType)
+                            { foundId in
+                                DispatchQueue.main.async {
+                                    PlantService.shared.getPlantDetails(for: foundId) { details in
+                                        DispatchQueue.main.async {
+                                            if(details != nil) {
+                                                let tempName = plant.name
+                                                plant = PlantModel(details: details!, conditioniingFreq: plant.conditioningFreq ?? 0)
+                                                plant.name = tempName
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
             }
             .padding(.leading, 10)
         }
