@@ -23,7 +23,7 @@ class PlantModel: Identifiable, Codable {
     var details: PlantDetails?
     
     // Initializers
-    init(details: PlantDetails, waterAmount: Int, sunlightHours: Int, wateringFreq: Int, conditioniingFreq: Int? = nil) {
+    init(details: PlantDetails, conditioniingFreq: Int? = nil) {
         self.id = UUID()
         self.plantId = details.id
         self.name = details.commonName ?? "Unknown Plant"
@@ -32,12 +32,12 @@ class PlantModel: Identifiable, Codable {
         self.species = details.species
         self.descriptionText = details.descriptionText
         self.details = details
-        self.waterAmountInML = waterAmount
-        self.wateringFreq = wateringFreq
+        self.waterAmountInML = details.wateringAmount
+        self.wateringFreq = details.wateringFreq
         self.conditioningFreq = conditioningFreq
-        self.dailySunExposure = sunlightHours
+        self.dailySunExposure = details.sunhours
         self.prevWateringDate = Date()
-        self.nextWateringDate =  Calendar.current.date(byAdding: .day, value: wateringFreq, to: Date())
+        self.nextWateringDate =  Calendar.current.date(byAdding: .day, value: details.wateringFreq, to: Date())
         self.prevConditioningDate = conditioniingFreq == nil ? nil : Date()
         self.nextConditioningDate = conditioniingFreq == nil ? nil :  Calendar.current.date(byAdding: .day, value: conditioniingFreq ?? 0, to: Date())
     }
@@ -77,11 +77,11 @@ class PlantModel: Identifiable, Codable {
             
             // Example logic for calculating water and sunlight needs
             let waterAmount = 500 // Assume 500ml as default
-            let sunlightHours = 6 // Assume 6 hours as default
+            let sunlightHours = 3 // Assume 6 hours as default
             let wateringFreq = 3
             
             // Initialize the plant model
-            let plant = PlantModel(details: details, waterAmount: waterAmount, sunlightHours: sunlightHours, wateringFreq: wateringFreq)
+            let plant = PlantModel(details: details, conditioniingFreq: 2) //losowe conditionning TO BE CHANGED!!!
             completion(plant)
         }
     }
@@ -156,7 +156,15 @@ class PlantModel: Identifiable, Codable {
             // ładujemy roślinę asynchronicznie
             PlantModel.createFromApi(plantId: 3) { plant in
                 _exampleApiPlant = plant // Po załadowaniu, aktualizujemy plant
+                
+                print(_exampleApiPlant?.dailySunExposure)
+                print(_exampleApiPlant?.waterAmountInML)
+                print(_exampleApiPlant?.wateringFreq)
             }
+            
+            print(_exampleApiPlant?.dailySunExposure)
+            print(_exampleApiPlant?.waterAmountInML)
+            print(_exampleApiPlant?.wateringFreq)
             
             return _exampleApiPlant!
         }
