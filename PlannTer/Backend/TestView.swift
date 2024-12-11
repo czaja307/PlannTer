@@ -21,8 +21,15 @@ struct TestView: View {
             }
             .padding()
             
-            Button("GET PLANT DETAILS") {
+            Button("GET PLANT DETAILS 3") {
                 PlantService.shared.getPlantDetails(for: 3) { details in
+                    print(details)
+                }
+            }
+            .padding()
+            
+            Button("GET PLANT DETAILS 1212") {
+                PlantService.shared.getPlantDetails(for: 1212) { details in
                     print(details)
                 }
             }
@@ -52,8 +59,11 @@ struct TestView: View {
             }
             .padding()
             
-            PlantTile(plant: PlantModel.exampleApiPlant)
+            PlantTile(plant: PlantModel.exampleApiPlant, deleteAction: deleteAction)
         }
+    }
+    func deleteAction(plant: PlantModel) {
+        print("A")
     }
 }
 

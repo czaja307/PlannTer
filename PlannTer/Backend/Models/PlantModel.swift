@@ -18,6 +18,7 @@ class PlantModel: Identifiable, Codable {
     var dailySunExposure: Int?
     var nextWateringDate: Date?
     var prevWateringDate: Date?
+    var prevPrevWateringDate: Date? // nowa zmienna przechowująca datę poprzedniego podlewania przed prevWateringDate potrzebna troche (moze to jest glupie nie wiem)
     var nextConditioningDate: Date?
     var prevConditioningDate: Date?
     var details: PlantDetails?
@@ -26,8 +27,8 @@ class PlantModel: Identifiable, Codable {
     init(details: PlantDetails, conditioniingFreq: Int? = nil) {
         self.id = UUID()
         self.plantId = details.id
-        self.name = details.commonName ?? "Unknown Plant"
-        self.imageUrl = details.defaultImage?.regularURL ?? ""
+        self.name = details.name
+        self.imageUrl = details.imageUrl
         self.category = details.category
         self.species = details.species
         self.descriptionText = details.descriptionText
@@ -156,15 +157,7 @@ class PlantModel: Identifiable, Codable {
             // ładujemy roślinę asynchronicznie
             PlantModel.createFromApi(plantId: 3) { plant in
                 _exampleApiPlant = plant // Po załadowaniu, aktualizujemy plant
-                
-                print(_exampleApiPlant?.dailySunExposure)
-                print(_exampleApiPlant?.waterAmountInML)
-                print(_exampleApiPlant?.wateringFreq)
             }
-            
-            print(_exampleApiPlant?.dailySunExposure)
-            print(_exampleApiPlant?.waterAmountInML)
-            print(_exampleApiPlant?.wateringFreq)
             
             return _exampleApiPlant!
         }
@@ -179,9 +172,11 @@ class PlantModel: Identifiable, Codable {
     
     // water the plant
     func waterThePlant() {
-        self.prevWateringDate = Date()
-        self.nextWateringDate = Calendar.current.date(byAdding: .day, value: 3, to: Date())
+        self.prevPrevWateringDate = self.prevWateringDate // zapisz poprzednią datę podlewania
+        self.prevWateringDate = Date() // ustaw dzisiejszą datę jako prevWateringDate
+        self.nextWateringDate = Calendar.current.date(byAdding: .day, value: wateringFreq ?? 0, to: Date()) // ustaw nextWateringDate na podstawie wateringFreq
     }
+
     
     // check for errors
     var notificationsCount: Int {
@@ -190,6 +185,7 @@ class PlantModel: Identifiable, Codable {
         var notifs = 0
         notifs += nextWateringDate < Date() ? 1 : 0
         notifs += nextConditioningDate < Date() ? 1 : 0
+        //room czy oswietlenie wieksze od obecnej sunhours wymaganego
         return notifs
     }
     
@@ -199,6 +195,26 @@ class PlantModel: Identifiable, Codable {
     }
     
     var progress: Double {
-        return 0.4
+        guard let prevWateringDate = prevWateringDate, let wateringFreq = wateringFreq else {
+            return 0.0 // brak daty ostatniego podlewania lub częstotliwości podlewania - za mało wody
+        }
+        
+        // Obliczanie czasu, który minął od ostatniego podlewania
+        let timeSinceLastWatering = Date().timeIntervalSince(prevWateringDate)
+        
+        // Całkowity czas podlewania (w sekundach)
+        let totalWateringTime = TimeInterval(wateringFreq * 86400) // wateringFreq to liczba dni, przekształcone na sekundy
+        
+        // Obliczanie czasu, który minął od poprzedniego podlewania (jeśli istnieje)
+        let timeSincePrevPrevWatering = prevPrevWateringDate != nil ? Date().timeIntervalSince(prevPrevWateringDate!) : 0
+        
+        // Całkowity czas podlewania od dwóch ostatnich dat
+        let totalTimeSinceLastWatering = timeSinceLastWatering + timeSincePrevPrevWatering
+        
+        // Obliczanie progresu na podstawie czasu
+        let progress = totalTimeSinceLastWatering / totalWateringTime
+        
+        // Zwrócenie wartości w zakresie 0.0 do 1.0 (Clamp)
+        return min(max(progress, 0.0), 1.0)
     }
 }
