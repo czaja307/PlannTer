@@ -19,7 +19,7 @@ struct PlantEditView: View {
     init(plant: PlantModel) {
         self.plant = plant
         self.createdPlant = PlantModel(plant: plant)
-        self.selectedRoom = plant.room!.name
+        self.selectedRoom = plant.room?.name ?? "None"
     }
     
     
@@ -101,6 +101,7 @@ struct PlantEditView: View {
     
     private func resetPlant() {
         createdPlant = PlantModel(plant: plant)
+        selectedRoom = plant.room!.name
     }
     
     private func savePlant() {
@@ -118,6 +119,9 @@ struct PlantEditView: View {
         plant.waterAmountInML = createdPlant.waterAmountInML
         plant.dailySunExposure = createdPlant.dailySunExposure
         plant.conditioningFreq = createdPlant.conditioningFreq
+        plant.category = createdPlant.category
+        plant.species = createdPlant.species
+        
         context.insert(plant)
         do {
             try context.save()
@@ -161,11 +165,12 @@ private struct TopEditSection: View {
                     .onChange(of: selectedType) {
                         isTypeSelected = selectedType != "None"
                         if(isTypeSelected){
+                            plant.category = selectedType
                             PlantService.shared.getUniqueSpeciesForCategory(selectedType) { categories in
                                 DispatchQueue.main.async {
                                     subtypes = categories
                                     subtypes.append("None")
-                                    selectedSubType = subtypes[0]
+                                    selectedSubType = subtypes.last!
                                 }
                             }
                         }
@@ -177,6 +182,7 @@ private struct TopEditSection: View {
                     .disabled(!isTypeSelected)
                     .onChange(of: selectedSubType) {
                         if(selectedSubType != "None"){
+                            plant.species = selectedSubType
                             PlantService.shared.findPlantId(forCategory: selectedType, species: selectedSubType)
                             { foundId in
                                 DispatchQueue.main.async {
@@ -185,7 +191,7 @@ private struct TopEditSection: View {
                                             if(details != nil) {
                                                 let tempName = plant.name
                                                 plant = PlantModel(details: details!, conditioniingFreq: plant.conditioningFreq ?? 0)
-                                                plant.name = tempName
+                                                plant.name = (tempName != "") ? tempName : plant.name
                                             }
                                         }
                                     }

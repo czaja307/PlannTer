@@ -102,6 +102,7 @@ struct PlantAddView: View {
     
     private func resetPlant() {
         createdPlant = PlantModel(room: nil, name: "", category: "None", species: "None",  waterAmountInML: 200, dailySunExposure: 3, nextWateringDate: Date(), wateringFreq: 7, nextConditioningDate: Date(), conditioningFreq: 0)
+        selectedRoom = room.name
     }
     
     private func savePlant() {
@@ -156,11 +157,12 @@ private struct TopEditSection: View {
                     .onChange(of: selectedType) {
                         isTypeSelected = selectedType != "None"
                         if(isTypeSelected){
+                            plant.category = selectedType
                             PlantService.shared.getUniqueSpeciesForCategory(selectedType) { categories in
                                 DispatchQueue.main.async {
                                     subtypes = categories
                                     subtypes.append("None")
-                                    selectedSubType = subtypes[0]
+                                    selectedSubType = subtypes.last!
                                 }
                             }
                         }
@@ -172,6 +174,7 @@ private struct TopEditSection: View {
                     .disabled(!isTypeSelected)
                     .onChange(of: selectedSubType) {
                         if(selectedSubType != "None"){
+                            plant.species = selectedSubType
                             PlantService.shared.findPlantId(forCategory: selectedType, species: selectedSubType)
                             { foundId in
                                 DispatchQueue.main.async {
@@ -180,7 +183,7 @@ private struct TopEditSection: View {
                                             if(details != nil) {
                                                 let tempName = plant.name
                                                 plant = PlantModel(details: details!, conditioniingFreq: plant.conditioningFreq ?? 0)
-                                                plant.name = tempName
+                                                plant.name = (tempName != "") ? tempName : plant.name
                                             }
                                         }
                                     }

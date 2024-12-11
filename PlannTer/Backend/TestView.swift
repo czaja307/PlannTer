@@ -58,8 +58,10 @@ struct TestView: View {
                 }
             }
             .padding()
+
             
             PlantTile(plant: PlantModel.exampleApiPlant, deleteAction: deleteAction)
+
         }
     }
     func deleteAction(plant: PlantModel) {
