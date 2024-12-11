@@ -31,7 +31,7 @@ struct PlantTile: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         if(!plant.isWatered){
-                            Text("\(plant.waterAmountInML)ml")
+                            Text("\(plant.waterAmountInML!)ml")
                                 .font(.largeSlimText)
                                 .foregroundColor(Color.primaryText)
                             

@@ -24,6 +24,25 @@ class PlantModel: Identifiable, Codable {
     var details: PlantDetails?
     
     // Initializers
+    init(plant: PlantModel) {
+        self.id = UUID()
+        self.plantId = plant.plantId
+        self.name = plant.name
+        self.imageUrl = plant.imageUrl
+        self.category = plant.category
+        self.species = plant.species
+        self.descriptionText = plant.descriptionText
+        self.details = plant.details
+        self.waterAmountInML = plant.waterAmountInML
+        self.wateringFreq = plant.wateringFreq
+        self.conditioningFreq = plant.conditioningFreq
+        self.dailySunExposure = plant.dailySunExposure
+        self.prevWateringDate = plant.prevWateringDate
+        self.nextWateringDate =  plant.nextWateringDate
+        self.prevConditioningDate = plant.prevConditioningDate
+        self.nextConditioningDate = plant.nextConditioningDate
+    }
+    
     init(details: PlantDetails, conditioniingFreq: Int? = nil) {
         self.id = UUID()
         self.plantId = details.id
