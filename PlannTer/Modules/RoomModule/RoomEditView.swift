@@ -7,7 +7,8 @@ struct RoomEditView: View {
     @Environment(\.modelContext) private var context
     @Bindable var room: RoomModel
     @Query var roomList: [RoomModel]
-    @State var nameExists: Bool = false
+    @State private var nameExists: Bool = false
+    @State private var savingEmpty: Bool = false
     
     @State private var roomName: String = ""
     @State private var origName: String = ""
@@ -43,9 +44,16 @@ struct RoomEditView: View {
                     .onChange(of: roomName) {
                         let found = RoomModel.getRoom(name: roomName, fromRooms: roomList)
                         nameExists = (found != nil) && (roomName != origName)
+                        savingEmpty = roomName == ""
                     }
                 if(nameExists) {
                     Text("A room with such a name already exists, choose a different name!")
+                        .padding(.horizontal, 30)
+                        .font(.note)
+                        .foregroundColor(Color.red)
+                }
+                if(savingEmpty) {
+                    Text("You must give your plant a name that is not empty")
                         .padding(.horizontal, 30)
                         .font(.note)
                         .foregroundColor(Color.red)
@@ -87,7 +95,7 @@ struct RoomEditView: View {
             }
             .onAppear() {
                 roomName = room.name
-                let windows = dirNames.map { room.directions.contains($0) }
+                windows = dirNames.map { room.directions.contains($0) }
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -99,7 +107,7 @@ struct RoomEditView: View {
     }
     
     private func saveRoom() {
-        if (!nameExists && roomName != "") {
+        if (!nameExists && !savingEmpty) {
             var dirs: [Direction] = []
             for (i, v) in windows.enumerated() { if(v){dirs.append(dirNames[i])}}
             room.directions = dirs
