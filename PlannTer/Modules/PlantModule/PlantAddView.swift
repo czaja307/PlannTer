@@ -17,7 +17,6 @@ struct PlantAddView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
-
     
     var body: some View {
         ZStack {
