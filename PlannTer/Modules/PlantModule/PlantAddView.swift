@@ -5,7 +5,7 @@ struct PlantAddView: View {
     @Environment(\.modelContext) private var context
     @Bindable var room: RoomModel
     @Query var roomList: [RoomModel]
-    @State var createdPlant = PlantModel(room: nil, name: "", category: "None", species: "None",  waterAmountInML: 200, dailySunExposure: 3, nextWateringDate: Date(), wateringFreq: 7, nextConditioningDate: Date(), conditioningFreq: 0)
+    @State var createdPlant = PlantModel(room: RoomModel.exampleRoom, name: "", category: "None", species: "None",  waterAmountInML: 200, dailySunExposure: 3, nextWateringDate: Date(), wateringFreq: 7, nextConditioningDate: Date(), conditioningFreq: 0)
       
     @State private var rooms: [String] = []
     @State private var selectedRoom: String = ""
@@ -101,7 +101,7 @@ struct PlantAddView: View {
     }
     
     private func resetPlant() {
-        createdPlant = PlantModel(room: nil, name: "", category: "None", species: "None",  waterAmountInML: 200, dailySunExposure: 3, nextWateringDate: Date(), wateringFreq: 7, nextConditioningDate: Date(), conditioningFreq: 0)
+        createdPlant = PlantModel(room: RoomModel.exampleRoom, name: "", category: "None", species: "None",  waterAmountInML: 200, dailySunExposure: 3, nextWateringDate: Date(), wateringFreq: 7, nextConditioningDate: Date(), conditioningFreq: 0)
         selectedRoom = room.name
     }
     
@@ -110,7 +110,7 @@ struct PlantAddView: View {
             return
         }
         let newPlant = createdPlant
-        newPlant.room = RoomModel.getRoom(name: selectedRoom, fromRooms: roomList)
+        newPlant.room = RoomModel.getRoom(name: selectedRoom, fromRooms: roomList)!
         newPlant.imageUrl = "ExamplePlant"
         context.insert(newPlant)
         
@@ -197,6 +197,7 @@ private struct TopEditSection: View {
         .padding(.horizontal, 40)
         .onAppear {
             rooms = roomList.map { $0.name }
+            rooms.removeAll { $0.isEmpty }
             selectedRoom = roomN
             PlantService.shared.getUniqueCategories { categories in
                 DispatchQueue.main.async {

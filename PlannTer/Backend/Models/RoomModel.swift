@@ -83,11 +83,9 @@ class RoomModel: Identifiable, Codable {
 
     static var exampleRoom: RoomModel {
         return RoomModel(
-            name: "Example Room",
-            directions: [.north, .east],
+            name: "",
+            directions: [],
             plants: [
-                PlantModel.examplePlant,
-                PlantModel.examplePlant
             ]
         )
     }
