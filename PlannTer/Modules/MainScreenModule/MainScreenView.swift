@@ -45,7 +45,14 @@ struct MainScreenView: View {
     }
     
     func deleteAction(room: RoomModel) {
+        for plant in room.plants {
+            plant.room = RoomModel.exampleRoom
+        }
+
         context.delete(room)
+        do {
+            try context.save()
+        } catch {}
     }
 }
 
@@ -56,6 +63,7 @@ struct Tiles: View{
     
     init(roomsList:[RoomModel], deleteAction: @escaping (RoomModel) -> Void) {
         self.roomsList = roomsList
+        self.roomsList.removeAll { $0.name.isEmpty }
         appendTop = roomsList.count % 2 == 0 ? true : false
         self.deleteAction = deleteAction
     }

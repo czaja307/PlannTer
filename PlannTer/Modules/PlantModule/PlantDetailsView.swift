@@ -61,7 +61,7 @@ private struct PlantImageSection: View {
                     .cornerRadius(15)
             }
             VStack {
-                PlantLabel(text: plant.room?.name ?? "Room")
+                PlantLabel(text: plant.room.name)
                 PlantLabel(text: plant.category ?? "None")
                 PlantLabel(text: plant.species ?? "None")
             }

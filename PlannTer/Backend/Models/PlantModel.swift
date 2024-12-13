@@ -5,7 +5,7 @@ import SwiftData
 class PlantModel: Identifiable, Codable {
     var id: UUID
     var plantId: Int?
-    var room: RoomModel?
+    var room: RoomModel
     
     var name: String
     var descriptionText: String?
@@ -28,6 +28,7 @@ class PlantModel: Identifiable, Codable {
         self.id = UUID()
         self.plantId = plant.plantId
         self.name = plant.name
+        self.room = RoomModel.exampleRoom
         self.imageUrl = plant.imageUrl
         self.category = plant.category
         self.species = plant.species
@@ -47,6 +48,7 @@ class PlantModel: Identifiable, Codable {
         self.id = UUID()
         self.plantId = details.id
         self.name = details.name
+        self.room = RoomModel.exampleRoom
         self.imageUrl = details.imageUrl
         self.category = details.category
         self.species = details.species
@@ -62,7 +64,7 @@ class PlantModel: Identifiable, Codable {
         self.nextConditioningDate = conditioniingFreq == nil ? nil :  Calendar.current.date(byAdding: .day, value: conditioniingFreq ?? 0, to: Date())
     }
     
-    init(id: UUID = UUID(), plantId: Int? = nil, room: RoomModel? = nil, name: String = "Unnamed Plant",
+    init(id: UUID = UUID(), plantId: Int? = nil, room: RoomModel, name: String = "Unnamed Plant",
          description: String? = nil, imageUrl: String? = nil, category: String? = nil, species: String? = nil,
          waterAmountInML: Int? = nil, dailySunExposure: Int? = nil, nextWateringDate: Date? = nil,
          prevWateringDate: Date? = nil, wateringFreq: Int? = nil, nextConditioningDate: Date? = nil,
@@ -108,7 +110,7 @@ class PlantModel: Identifiable, Codable {
     
     // CodingKeys
     enum CodingKeys: String, CodingKey {
-        case id, plantId, name, descriptionText, imageUrl, category, species
+        case id, plantId, name, room, descriptionText, imageUrl, category, species
         case waterAmountInML, dailySunExposure, nextWateringDate, prevWateringDate, details
         case nextConditioningDate, prevConditioningDate
         case wateringFreq, conditioningFreq
@@ -120,6 +122,7 @@ class PlantModel: Identifiable, Codable {
         id = try container.decode(UUID.self, forKey: .id)
         plantId = try container.decodeIfPresent(Int.self, forKey: .plantId)
         name = try container.decode(String.self, forKey: .name)
+        room = try container.decode(RoomModel.self, forKey: .room)
         descriptionText = try container.decodeIfPresent(String.self, forKey: .descriptionText)
         imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
         category = try container.decodeIfPresent(String.self, forKey: .category)
@@ -141,6 +144,7 @@ class PlantModel: Identifiable, Codable {
         try container.encode(id, forKey: .id)
         try container.encodeIfPresent(plantId, forKey: .plantId)
         try container.encode(name, forKey: .name)
+        try container.encode(room, forKey: .room)
         try container.encodeIfPresent(descriptionText, forKey: .descriptionText)
         try container.encodeIfPresent(imageUrl, forKey: .imageUrl)
         try container.encodeIfPresent(category, forKey: .category)
@@ -157,7 +161,7 @@ class PlantModel: Identifiable, Codable {
     }
     
     // Example Plant
-    static var examplePlant = PlantModel(name: "Example Plant", imageUrl: "ExamplePlant", waterAmountInML: 500, dailySunExposure: 6,
+    static var examplePlant = PlantModel(room: RoomModel.exampleRoom, name: "Example Plant", imageUrl: "ExamplePlant", waterAmountInML: 500, dailySunExposure: 6,
                                          nextWateringDate: Calendar.current.date(byAdding: .day, value: 3, to: Date()),
                                          prevWateringDate: Date(), wateringFreq: 3)
     
@@ -170,7 +174,7 @@ class PlantModel: Identifiable, Codable {
             }
             
             // placeholder na czas ładowania danych z API
-            _exampleApiPlant = PlantModel(name: "Loading...", waterAmountInML: 0, dailySunExposure: 0,
+            _exampleApiPlant = PlantModel(room: RoomModel.exampleRoom, name: "Loading...", waterAmountInML: 0, dailySunExposure: 0,
                                           nextWateringDate: Date(), prevWateringDate: Date())
             
             // ładujemy roślinę asynchronicznie

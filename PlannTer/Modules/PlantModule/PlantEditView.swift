@@ -19,7 +19,7 @@ struct PlantEditView: View {
     init(plant: PlantModel) {
         self.plant = plant
         self.createdPlant = PlantModel(plant: plant)
-        self.selectedRoom = plant.room?.name ?? "None"
+        self.selectedRoom = plant.room.name
     }
     
     
@@ -101,7 +101,7 @@ struct PlantEditView: View {
     
     private func resetPlant() {
         createdPlant = PlantModel(plant: plant)
-        selectedRoom = plant.room!.name
+        selectedRoom = plant.room.name
     }
     
     private func savePlant() {
@@ -110,7 +110,7 @@ struct PlantEditView: View {
         }
         let foundRoom = RoomModel.getRoom(name: selectedRoom, fromRooms: roomList)
         if (foundRoom != nil) {
-            plant.room = foundRoom
+            plant.room = foundRoom!
         }else {
             print("kurwa hij")
         }
@@ -205,6 +205,7 @@ private struct TopEditSection: View {
         .padding(.horizontal, 40)
         .onAppear {
             rooms = roomList.map { $0.name }
+            rooms.removeAll { $0.isEmpty }
             PlantService.shared.getUniqueCategories { categories in
                 DispatchQueue.main.async {
                     types.append(contentsOf: categories)
