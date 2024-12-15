@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 struct PlantEditView: View {
     @Environment(\.modelContext) private var context
@@ -14,12 +15,15 @@ struct PlantEditView: View {
     
     @FocusState private var isActive: Bool
     @State private var savingEmpty: Bool = false
+    @State private var uiImg: UIImage? = nil
+    
     @Environment(\.presentationMode) var presentationMode
     
     init(plant: PlantModel) {
         self.plant = plant
         self.createdPlant = PlantModel(plant: plant)
         self.selectedRoom = plant.room.name
+        
     }
     
     
@@ -47,7 +51,9 @@ struct PlantEditView: View {
                         selectedSubType: Binding(
                             get: { createdPlant.species ?? "None" },
                             set: { createdPlant.species = $0 }
-                            ))
+                            ),
+                        uiImg: $uiImg
+                    )
                     
                     TextInput(title: "Name your plant", prompt: "Edytka", inputText: $createdPlant.name, isActive: $isActive)
                         .frame(width: 0.9 * UIScreen.main.bounds.width)
@@ -95,6 +101,11 @@ struct PlantEditView: View {
                     .frame(width: 0.9 * UIScreen.main.bounds.width)
                 }
             }
+            .onAppear {
+                if let imageUrl = createdPlant.imageUrl, imageUrl != "ExamplePlant" {
+                    uiImg = LocalFileManager.instance.getImage(name: createdPlant.imageUrl!)
+                }
+            }
             .navigationBarBackButtonHidden(true)
             .customToolbar(title: "Edit plant", presentationMode: presentationMode)
     }
@@ -102,6 +113,7 @@ struct PlantEditView: View {
     private func resetPlant() {
         createdPlant = PlantModel(plant: plant)
         selectedRoom = plant.room.name
+        uiImg = LocalFileManager.instance.getImage(name: createdPlant.imageUrl!)
     }
     
     private func savePlant() {
@@ -114,6 +126,9 @@ struct PlantEditView: View {
         }else {
             print("kurwa hij")
         }
+        if (plant.imageUrl != nil && plant.imageUrl != "ExamplePlant" && plant.imageUrl !=  "\(selectedRoom)_\(createdPlant.name)") {
+            LocalFileManager.instance.deleteImage(name: plant.imageUrl!)
+        }
         plant.name = createdPlant.name
         plant.wateringFreq = createdPlant.wateringFreq
         plant.waterAmountInML = createdPlant.waterAmountInML
@@ -121,7 +136,14 @@ struct PlantEditView: View {
         plant.conditioningFreq = createdPlant.conditioningFreq
         plant.category = createdPlant.category
         plant.species = createdPlant.species
-        
+        if (uiImg != nil) {
+            print("Saving img")
+            let fileName = "\(selectedRoom)_\(createdPlant.name)"
+            LocalFileManager.instance.saveImage(image: uiImg!, name: fileName)
+            plant.imageUrl = fileName
+        } else {
+            plant.imageUrl = "ExamplePlant"
+        }
         context.insert(plant)
         do {
             try context.save()
@@ -144,6 +166,26 @@ private struct TopEditSection: View {
     @Binding var subtypes: [String]
     @Binding var selectedSubType: String
     @State private var isTypeSelected: Bool = false
+    @State private var pickedPhoto: PhotosPickerItem? = nil
+    @Binding var uiImg: UIImage?
+        
+        private func loadImage(from urlString: String?) {
+            guard let urlString = urlString, let url = URL(string: urlString) else { return }
+           
+            Task {
+                do {
+                    let (data, _) = try await URLSession.shared.data(from: url)
+                    if let downloadedImage = UIImage(data: data) {
+                        DispatchQueue.main.async {
+                            uiImg = downloadedImage
+                        }
+                    }
+                } catch {
+                    print("Failed to load image from URL: \(error)")
+                }
+            }
+        
+        }
     
     var body: some View {
         HStack {
@@ -152,11 +194,36 @@ private struct TopEditSection: View {
                     .fill(Color.white.opacity(0.4))
                     .frame(width: 150, height: 150)
                     .cornerRadius(15)
-                Image(.edytka)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 130, height: 130)
-                    .cornerRadius(15)
+                PhotosPicker(
+                        selection: $pickedPhoto,
+                        matching: .images,
+                        photoLibrary: .shared()) {
+                            if (uiImg != nil) {
+                                Image(uiImage: uiImg!)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 130, height: 130)
+                                    .cornerRadius(15)
+                            } else {
+                                Image(plant.imageUrl!)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 130, height: 130)
+                                    .cornerRadius(15)
+                            }
+                        }
+                        .task (id: pickedPhoto) {
+                            if let data = try? await pickedPhoto?.loadTransferable(type: Data.self) {
+                                uiImg = UIImage(data: data)
+                            }
+                        }
+                        .onChange(of: plant.imageUrl)  { newImageUrl in
+                            loadImage(from: newImageUrl)
+                            if(uiImg == nil) {
+                                pickedPhoto = nil
+                            }
+                        }
+                
             }
             VStack {
                 MiniDropdownPicker(selected: $selectedRoom, items: rooms)
@@ -167,11 +234,9 @@ private struct TopEditSection: View {
                         if(isTypeSelected){
                             plant.category = selectedType
                             PlantService.shared.getUniqueSpeciesForCategory(selectedType) { categories in
-                                DispatchQueue.main.async {
-                                    subtypes = categories
-                                    subtypes.append("None")
-                                    selectedSubType = subtypes.last!
-                                }
+                                subtypes = categories
+                                subtypes.append("None")
+                                selectedSubType = subtypes.last!
                             }
                         }
                         else{
@@ -185,15 +250,11 @@ private struct TopEditSection: View {
                             plant.species = selectedSubType
                             PlantService.shared.findPlantId(forCategory: selectedType, species: selectedSubType)
                             { foundId in
-                                DispatchQueue.main.async {
-                                    PlantService.shared.getPlantDetails(for: foundId) { details in
-                                        DispatchQueue.main.async {
-                                            if(details != nil) {
-                                                let tempName = plant.name
-                                                plant = PlantModel(details: details!, conditioniingFreq: plant.conditioningFreq ?? 0)
-                                                plant.name = (tempName != "") ? tempName : plant.name
-                                            }
-                                        }
+                                PlantService.shared.getPlantDetails(for: foundId) { details in
+                                    if(details != nil) {
+                                        let tempName = plant.name
+                                        plant = PlantModel(details: details!, conditioniingFreq: plant.conditioningFreq ?? 0)
+                                        plant.name = (tempName != "") ? tempName : plant.name
                                     }
                                 }
                             }

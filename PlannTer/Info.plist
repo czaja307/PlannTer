@@ -9,5 +9,7 @@
 		<string>Roboto-Regular.ttf</string>
 		<string>Roboto-Light.ttf</string>
 	</array>
+	<key>UIRequiresPersistentWiFi</key>
+	<true/>
 </dict>
 </plist>

@@ -33,6 +33,9 @@ struct RoomDetailsView: View {
         let idToRemove = room.plants.firstIndex(of: plant)
         if(idToRemove != nil){
             tempList.remove(at: idToRemove!)
+            if (plant.imageUrl != nil && plant.imageUrl != "ExamplePlant") {
+                LocalFileManager.instance.deleteImage(name: plant.imageUrl!)
+            }
             context.delete(plant)
             do {
                 try context.save()

@@ -54,11 +54,21 @@ private struct PlantImageSection: View {
                     .fill(Color.white.opacity(0.4))
                     .frame(width: 150, height: 150)
                     .cornerRadius(15)
-                Image(.edytka)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 130, height: 130)
-                    .cornerRadius(15)
+                if(plant.imageUrl != "ExamplePlant") {
+                    if let localImage = LocalFileManager.instance.getImage(name: plant.imageUrl!) {
+                        Image(uiImage: localImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 130, height: 130)
+                            .cornerRadius(15)
+                    }
+                } else {
+                    Image(plant.imageUrl!)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 130, height: 130)
+                        .cornerRadius(15)
+                }
             }
             VStack {
                 PlantLabel(text: plant.room.name)

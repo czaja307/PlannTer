@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 struct PlantAddView: View {
     @Environment(\.modelContext) private var context
@@ -14,6 +15,7 @@ struct PlantAddView: View {
     
     @FocusState private var isActive: Bool
     @State private var savingEmpty = true
+    @State private var uiImg: UIImage? = nil
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -44,7 +46,9 @@ struct PlantAddView: View {
                     selectedSubType: Binding(
                         get: { createdPlant.species ?? "None" },
                         set: { createdPlant.species = $0 }
-                        ))
+                        ),
+                    uiImg: $uiImg
+                )
                 
                 TextInput(title: "Name your plant", prompt: "Edytka", inputText: $createdPlant.name, isActive: $isActive)
                     .frame(width: 0.9 * UIScreen.main.bounds.width)
@@ -103,6 +107,7 @@ struct PlantAddView: View {
     private func resetPlant() {
         createdPlant = PlantModel(room: RoomModel.exampleRoom, name: "", category: "None", species: "None",  waterAmountInML: 200, dailySunExposure: 3, nextWateringDate: Date(), wateringFreq: 7, nextConditioningDate: Date(), conditioningFreq: 0)
         selectedRoom = room.name
+        uiImg = nil
     }
     
     private func savePlant() {
@@ -111,7 +116,14 @@ struct PlantAddView: View {
         }
         let newPlant = createdPlant
         newPlant.room = RoomModel.getRoom(name: selectedRoom, fromRooms: roomList)!
-        newPlant.imageUrl = "ExamplePlant"
+        if (uiImg != nil) {
+            print("Saving img")
+            let fileName = "\(selectedRoom)_\(createdPlant.name)"
+            LocalFileManager.instance.saveImage(image: uiImg!, name: fileName)
+            newPlant.imageUrl = fileName
+        } else {
+            newPlant.imageUrl = "ExamplePlant"
+        }
         context.insert(newPlant)
         
         do {
@@ -136,6 +148,26 @@ private struct TopEditSection: View {
     @Binding var subtypes: [String]
     @Binding var selectedSubType: String
     @State private var isTypeSelected: Bool = false
+    @State private var pickedPhoto: PhotosPickerItem? = nil
+    @Binding var uiImg: UIImage?
+    
+    private func loadImage(from urlString: String?) {
+            guard let urlString = urlString, let url = URL(string: urlString) else { return }
+           
+            Task {
+                do {
+                    let (data, _) = try await URLSession.shared.data(from: url)
+                    if let downloadedImage = UIImage(data: data) {
+                        DispatchQueue.main.async {
+                            uiImg = downloadedImage
+                        }
+                    }
+                } catch {
+                    print("Failed to load image from URL: \(error)")
+                }
+            }
+        
+        }
     
     var body: some View {
         HStack {
@@ -144,11 +176,36 @@ private struct TopEditSection: View {
                     .fill(Color.white.opacity(0.4))
                     .frame(width: 150, height: 150)
                     .cornerRadius(15)
-                Image(.edytka)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 130, height: 130)
-                    .cornerRadius(15)
+                PhotosPicker(
+                    selection: $pickedPhoto,
+                    matching: .images,
+                    photoLibrary: .shared()) {
+                        if (uiImg != nil) {
+                            Image(uiImage: uiImg!)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 130, height: 130)
+                                .cornerRadius(15)
+                        } else {
+                            Image("ExamplePlant")
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 130, height: 130)
+                                .cornerRadius(15)
+                        }
+                    }
+                    .task (id: pickedPhoto) {
+                        if let data = try? await pickedPhoto?.loadTransferable(type: Data.self) {
+                            uiImg = UIImage(data: data)
+                        }
+                    }
+                    .onChange(of: plant.imageUrl)  { newImageUrl in
+                        loadImage(from: newImageUrl)
+                        if(uiImg == nil) {
+                            pickedPhoto = nil
+                        }
+                    }
+               
             }
             VStack {
                 MiniDropdownPicker(selected: $selectedRoom, items: rooms)
@@ -159,11 +216,9 @@ private struct TopEditSection: View {
                         if(isTypeSelected){
                             plant.category = selectedType
                             PlantService.shared.getUniqueSpeciesForCategory(selectedType) { categories in
-                                DispatchQueue.main.async {
-                                    subtypes = categories
-                                    subtypes.append("None")
-                                    selectedSubType = subtypes.last!
-                                }
+                                subtypes = categories
+                                subtypes.append("None")
+                                selectedSubType = subtypes.last!
                             }
                         }
                         else{
@@ -177,15 +232,12 @@ private struct TopEditSection: View {
                             plant.species = selectedSubType
                             PlantService.shared.findPlantId(forCategory: selectedType, species: selectedSubType)
                             { foundId in
-                                DispatchQueue.main.async {
-                                    PlantService.shared.getPlantDetails(for: foundId) { details in
-                                        DispatchQueue.main.async {
-                                            if(details != nil) {
-                                                let tempName = plant.name
-                                                plant = PlantModel(details: details!, conditioniingFreq: plant.conditioningFreq ?? 0)
-                                                plant.name = (tempName != "") ? tempName : plant.name
-                                            }
-                                        }
+                                PlantService.shared.getPlantDetails(for: foundId) { details in
+                                    if(details != nil) {
+                                        let tempName = plant.name
+                                        plant = PlantModel(details: details!, conditioniingFreq: plant.conditioningFreq ?? 0)
+                                        plant.name = (tempName != "") ? tempName : plant.name
+                                        print(plant.imageUrl)
                                     }
                                 }
                             }
@@ -293,18 +345,6 @@ private struct MiniButton : View {
         .frame(width: 160, height: 80)
     }
 }
-
-
-//#Preview {
-//    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-//    let container = try! ModelContainer(for: SettingsModel.self, RoomModel.self, PlantModel.self, configurations: config)
-//    let context = ModelContext(container)
-//
-//
-//    PlantAddView(room: RoomModel.exampleRoom)
-//            .modelContainer(container)
-//            .environment(context)
-//}
 
 
 #Preview {
