@@ -126,6 +126,9 @@ struct PlantEditView: View {
         }else {
             print("kurwa hij")
         }
+        if (plant.imageUrl != nil && plant.imageUrl != "ExamplePlant" && plant.imageUrl !=  "\(selectedRoom)_\(createdPlant.name)") {
+            LocalFileManager.instance.deleteImage(name: plant.imageUrl!)
+        }
         plant.name = createdPlant.name
         plant.wateringFreq = createdPlant.wateringFreq
         plant.waterAmountInML = createdPlant.waterAmountInML
