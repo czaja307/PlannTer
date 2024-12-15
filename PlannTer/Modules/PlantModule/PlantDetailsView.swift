@@ -55,17 +55,6 @@ private struct PlantImageSection: View {
                     .frame(width: 150, height: 150)
                     .cornerRadius(15)
                 if(plant.imageUrl != "ExamplePlant") {
-//                    let path = NSURL(string: plant.imageUrl!)?.path
-//                    if (path != nil) {
-//                        if let localImage = UIImage(contentsOfFile: path!) {
-//                            let uiImg = localImage
-//                            Image(uiImage: uiImg)
-//                                .resizable()
-//                                .aspectRatio(contentMode: .fill)
-//                                .frame(width: 130, height: 130)
-//                                .cornerRadius(15)
-//                        }
-//                    }
                     if let localImage = LocalFileManager.instance.getImage(name: plant.imageUrl!) {
                         Image(uiImage: localImage)
                             .resizable()
@@ -73,12 +62,13 @@ private struct PlantImageSection: View {
                             .frame(width: 130, height: 130)
                             .cornerRadius(15)
                     }
+                } else {
+                    Image(plant.imageUrl!)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 130, height: 130)
+                        .cornerRadius(15)
                 }
-                Image(plant.imageUrl!)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 130, height: 130)
-                    .cornerRadius(15)
             }
             VStack {
                 PlantLabel(text: plant.room.name)
