@@ -47,6 +47,10 @@ struct MainScreenView: View {
     func deleteAction(room: RoomModel) {
         for plant in room.plants {
             plant.room = RoomModel.exampleRoom
+            if (plant.imageUrl != nil && plant.imageUrl != "ExamplePlant") {
+                LocalFileManager.instance.deleteImage(name: plant.imageUrl!)
+            }
+            context.delete(plant)
         }
 
         context.delete(room)
