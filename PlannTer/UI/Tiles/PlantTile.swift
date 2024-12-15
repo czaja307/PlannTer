@@ -6,17 +6,24 @@ struct PlantTile: View {
     let deleteAction: (PlantModel) -> ()
     
     @State private var isNavigatingToEditView = false
+    @State private var uiImg: UIImage? = nil
 
     var body: some View {
         GeometryReader { geometry in
             HStack(spacing: 15) {
-           
-                Image(plant.imageUrl ?? "Edytka")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: (geometry.size.width - 30) * 0.35, height: geometry.size.height)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                
+                if (uiImg != nil) {
+                    Image(uiImage: uiImg!)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: (geometry.size.width - 30) * 0.35, height: geometry.size.height)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                } else {
+                    Image(plant.imageUrl!)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: (geometry.size.width - 30) * 0.35, height: geometry.size.height)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
                 VStack(alignment: .leading, spacing: 8) {
                     HStack() {
                         Text(plant.name)
@@ -70,6 +77,11 @@ struct PlantTile: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 8)
+            }
+            .onAppear() {
+                if (plant.imageUrl != nil && plant.imageUrl != "ExamplePlant") {
+                    uiImg = LocalFileManager.instance.getImage(name: plant.imageUrl!)
+                }
             }
         }
         .padding(15)
