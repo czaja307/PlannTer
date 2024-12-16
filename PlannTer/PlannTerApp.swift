@@ -27,7 +27,9 @@ struct RootView: View {
                 if settings.isEmpty {
                     context.insert(SettingsModel())
                 }
-            }).environment(settings.first ?? SettingsModel())
+                checkForPermissions()
+            })
+            .environment(settings.first ?? SettingsModel())
     }
 }
 
@@ -38,6 +40,6 @@ struct RootView: View {
 
 
     MainScreenView()
-            .modelContainer(container)
-            .environment(mockSettings)
+        .modelContainer(container)
+        .environment(mockSettings)
 }
