@@ -7,9 +7,9 @@ struct PlantEditView: View {
     @Bindable var plant: PlantModel
     @State private var createdPlant: PlantModel
     @Query var roomList: [RoomModel]
-   
+    
     @State private var rooms: [String] = []
-    @State private var selectedRoom: String 
+    @State private var selectedRoom: String
     @State private var types: [String] = ["None"]
     @State private var subtypes: [String] = ["None"]
     
@@ -28,86 +28,86 @@ struct PlantEditView: View {
     
     
     var body: some View {
-            ZStack {
-                Color(.primaryBackground)
-                    .edgesIgnoringSafeArea(.all)
-                Color.clear
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        isActive = false
-                    }
-                VStack {
-                    TopEditSection(
-                        plant: $createdPlant,
-                        roomList: roomList,
-                        rooms: $rooms,
-                        selectedRoom: $selectedRoom,
-                        types: $types,
-                        selectedType: Binding(
-                                get: { createdPlant.category ?? "None" },
-                                set: { createdPlant.category = $0 }
-                            ),
-                        subtypes: $subtypes,
-                        selectedSubType: Binding(
-                            get: { createdPlant.species ?? "None" },
-                            set: { createdPlant.species = $0 }
-                            ),
-                        uiImg: $uiImg
-                    )
-                    
-                    TextInput(title: "Name your plant", prompt: "Edytka", inputText: $createdPlant.name, isActive: $isActive)
-                        .frame(width: 0.9 * UIScreen.main.bounds.width)
-                        .onChange(of: createdPlant.name) {
-                            savingEmpty = createdPlant.name == ""
-                        }
-                    if(savingEmpty) {
-                        Text("You must give your plant a name that is not empty")
-                            .padding(.horizontal, 30)
-                            .font(.note)
-                            .foregroundColor(Color.red)
-                    }
-                    SliderSection(
-                        value: Binding(
-                            get: { createdPlant.wateringFreq ?? 7 },
-                            set: { createdPlant.wateringFreq = $0 }
-                            ), title: "Watering interval", unit: "days", range: 1...30, step: 1, sColor: .green
-                    )
-                    SliderSection(
-                        value: Binding(
-                            get: { createdPlant.waterAmountInML ?? 220 },
-                            set: { createdPlant.waterAmountInML = $0 }
-                            ), title: "Water amount", unit: "ml", range: 50...1000, step: 50, sColor: .blue
-                    )
-                    SliderSection(
-                        value: Binding(
-                            get: { createdPlant.dailySunExposure ?? 3 },
-                            set: { createdPlant.dailySunExposure = $0 }
-                            ), title: "Sun exposure", unit: "h", range: 0...12, step: 1, sColor: .yellow
-                    )
-                    SliderSection(
-                        value: Binding(
-                            get: { createdPlant.conditioningFreq ?? 0 },
-                            set: { createdPlant.conditioningFreq = $0 }
-                            ), title: "Conditioning interval", unit: "days", range: 0...90, step: 1, sColor: .pink
-                    )
-                    Spacer()
-                    HStack{
-                        Spacer()
-                        MiniButton(title: "Reset", action: resetPlant)
-                        Spacer()
-                        MiniButton(title: "Save", action: savePlant)
-                        Spacer()
-                    }
+        ZStack {
+            Color(.primaryBackground)
+                .edgesIgnoringSafeArea(.all)
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    isActive = false
+                }
+            VStack {
+                TopEditSection(
+                    plant: $createdPlant,
+                    roomList: roomList,
+                    rooms: $rooms,
+                    selectedRoom: $selectedRoom,
+                    types: $types,
+                    selectedType: Binding(
+                        get: { createdPlant.category ?? "None" },
+                        set: { createdPlant.category = $0 }
+                    ),
+                    subtypes: $subtypes,
+                    selectedSubType: Binding(
+                        get: { createdPlant.species ?? "None" },
+                        set: { createdPlant.species = $0 }
+                    ),
+                    uiImg: $uiImg
+                )
+                
+                TextInput(title: "Name your plant", prompt: "Edytka", inputText: $createdPlant.name, isActive: $isActive)
                     .frame(width: 0.9 * UIScreen.main.bounds.width)
+                    .onChange(of: createdPlant.name) {
+                        savingEmpty = createdPlant.name == ""
+                    }
+                if(savingEmpty) {
+                    Text("You must give your plant a name that is not empty")
+                        .padding(.horizontal, 30)
+                        .font(.note)
+                        .foregroundColor(Color.red)
                 }
-            }
-            .onAppear {
-                if let imageUrl = createdPlant.imageUrl, imageUrl != "ExamplePlant" {
-                    uiImg = LocalFileManager.instance.getImage(name: createdPlant.imageUrl!)
+                SliderSection(
+                    value: Binding(
+                        get: { createdPlant.wateringFreq ?? 7 },
+                        set: { createdPlant.wateringFreq = $0 }
+                    ), title: "Watering interval", unit: "days", range: 1...30, step: 1, sColor: .green
+                )
+                SliderSection(
+                    value: Binding(
+                        get: { createdPlant.waterAmountInML ?? 220 },
+                        set: { createdPlant.waterAmountInML = $0 }
+                    ), title: "Water amount", unit: "ml", range: 50...1000, step: 50, sColor: .blue
+                )
+                SliderSection(
+                    value: Binding(
+                        get: { createdPlant.dailySunExposure ?? 3 },
+                        set: { createdPlant.dailySunExposure = $0 }
+                    ), title: "Sun exposure", unit: "h", range: 0...12, step: 1, sColor: .yellow
+                )
+                SliderSection(
+                    value: Binding(
+                        get: { createdPlant.conditioningFreq ?? 0 },
+                        set: { createdPlant.conditioningFreq = $0 }
+                    ), title: "Conditioning interval", unit: "days", range: 0...90, step: 1, sColor: .pink
+                )
+                Spacer()
+                HStack{
+                    Spacer()
+                    MiniButton(title: "Reset", action: resetPlant)
+                    Spacer()
+                    MiniButton(title: "Save", action: savePlant)
+                    Spacer()
                 }
+                .frame(width: 0.9 * UIScreen.main.bounds.width)
             }
-            .navigationBarBackButtonHidden(true)
-            .customToolbar(title: "Edit plant", presentationMode: presentationMode)
+        }
+        .onAppear {
+            if let imageUrl = createdPlant.imageUrl, imageUrl != "ExamplePlant" {
+                uiImg = LocalFileManager.instance.getImage(name: createdPlant.imageUrl!)
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+        .customToolbar(title: "Edit plant", presentationMode: presentationMode)
     }
     
     private func resetPlant() {
@@ -151,6 +151,9 @@ struct PlantEditView: View {
             print("Failed to save plant: \(error)")
         }
         
+        if let wateringDate = plant.nextWateringDate {
+            dispatchNotification(identifier: plant.id.description, title: plant.name + " is thirsty!", body: "Your plant needs to drink some water.", date: wateringDate)
+        }
         presentationMode.wrappedValue.dismiss()
     }
 }
@@ -168,24 +171,24 @@ private struct TopEditSection: View {
     @State private var isTypeSelected: Bool = false
     @State private var pickedPhoto: PhotosPickerItem? = nil
     @Binding var uiImg: UIImage?
+    
+    private func loadImage(from urlString: String?) {
+        guard let urlString = urlString, let url = URL(string: urlString) else { return }
         
-        private func loadImage(from urlString: String?) {
-            guard let urlString = urlString, let url = URL(string: urlString) else { return }
-           
-            Task {
-                do {
-                    let (data, _) = try await URLSession.shared.data(from: url)
-                    if let downloadedImage = UIImage(data: data) {
-                        DispatchQueue.main.async {
-                            uiImg = downloadedImage
-                        }
+        Task {
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                if let downloadedImage = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        uiImg = downloadedImage
                     }
-                } catch {
-                    print("Failed to load image from URL: \(error)")
                 }
+            } catch {
+                print("Failed to load image from URL: \(error)")
             }
-        
         }
+        
+    }
     
     var body: some View {
         HStack {
@@ -195,34 +198,34 @@ private struct TopEditSection: View {
                     .frame(width: 150, height: 150)
                     .cornerRadius(15)
                 PhotosPicker(
-                        selection: $pickedPhoto,
-                        matching: .images,
-                        photoLibrary: .shared()) {
-                            if (uiImg != nil) {
-                                Image(uiImage: uiImg!)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 130, height: 130)
-                                    .cornerRadius(15)
-                            } else {
-                                Image(plant.imageUrl!)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 130, height: 130)
-                                    .cornerRadius(15)
-                            }
+                    selection: $pickedPhoto,
+                    matching: .images,
+                    photoLibrary: .shared()) {
+                        if (uiImg != nil) {
+                            Image(uiImage: uiImg!)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 130, height: 130)
+                                .cornerRadius(15)
+                        } else {
+                            Image(plant.imageUrl!)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 130, height: 130)
+                                .cornerRadius(15)
                         }
-                        .task (id: pickedPhoto) {
-                            if let data = try? await pickedPhoto?.loadTransferable(type: Data.self) {
-                                uiImg = UIImage(data: data)
-                            }
+                    }
+                    .task (id: pickedPhoto) {
+                        if let data = try? await pickedPhoto?.loadTransferable(type: Data.self) {
+                            uiImg = UIImage(data: data)
                         }
-                        .onChange(of: plant.imageUrl)  { newImageUrl in
-                            loadImage(from: newImageUrl)
-                            if(uiImg == nil) {
-                                pickedPhoto = nil
-                            }
+                    }
+                    .onChange(of: plant.imageUrl)  { newImageUrl in
+                        loadImage(from: newImageUrl)
+                        if(uiImg == nil) {
+                            pickedPhoto = nil
                         }
+                    }
                 
             }
             VStack {
@@ -274,7 +277,7 @@ private struct TopEditSection: View {
             }
         }
     }
-        
+    
 }
 
 private struct SliderSection: View {
@@ -346,7 +349,7 @@ private struct MiniDropdownPicker : View {
 private struct MiniButton : View {
     var title: String
     var action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             Text(title)

@@ -42,9 +42,6 @@ class PlantModel: Identifiable, Codable {
         self.nextWateringDate =  plant.nextWateringDate
         self.prevConditioningDate = plant.prevConditioningDate
         self.nextConditioningDate = plant.nextConditioningDate
-        if let nextWateringDate = nextWateringDate {
-            dispatchNotification(identifier: self.id.description, title: self.name + " is thirsty!", body: "Your plant needs to drink some water.", date: nextWateringDate)
-        }
     }
     
     init(details: PlantDetails, conditioniingFreq: Int? = nil) {
@@ -65,9 +62,6 @@ class PlantModel: Identifiable, Codable {
         self.nextWateringDate =  Calendar.current.date(byAdding: .day, value: details.wateringFreq, to: Date())
         self.prevConditioningDate = conditioniingFreq == nil ? nil : Date()
         self.nextConditioningDate = conditioniingFreq == nil ? nil :  Calendar.current.date(byAdding: .day, value: conditioniingFreq ?? 0, to: Date())
-        if let nextWateringDate = nextWateringDate {
-            dispatchNotification(identifier: self.id.description, title: self.name + " is thirsty!", body: "Your plant needs to drink some water.", date: nextWateringDate)
-        }
     }
     
     init(id: UUID = UUID(), plantId: Int? = nil, room: RoomModel, name: String = "Unnamed Plant",
@@ -92,9 +86,6 @@ class PlantModel: Identifiable, Codable {
         self.prevConditioningDate = prevWateringDate
         self.conditioningFreq = conditioningFreq
         self.details = details
-        if let nextWateringDate = nextWateringDate {
-            dispatchNotification(identifier: self.id.description, title: self.name + " is thirsty!", body: "Your plant needs to drink some water.", date: nextWateringDate)
-        }
     }
     
     // fetch details from API and create plant model
