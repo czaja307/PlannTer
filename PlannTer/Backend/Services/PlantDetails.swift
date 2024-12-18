@@ -19,7 +19,7 @@ struct PlantDetails: Codable {
     let defaultImage: DefaultImage?
 
     var name: String{
-        species ?? "default_name"
+        commonName ?? "default_name"
     }
     
     var category: String {

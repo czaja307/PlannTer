@@ -16,12 +16,27 @@ class PlantModel: Identifiable, Codable {
     var wateringFreq: Int?
     var conditioningFreq: Int?
     var dailySunExposure: Int?
-    var nextWateringDate: Date?
+    //var nextWateringDate: Date?
     var prevWateringDate: Date?
     var prevPrevWateringDate: Date? // nowa zmienna przechowująca datę poprzedniego podlewania przed prevWateringDate potrzebna troche (moze to jest glupie nie wiem)
-    var nextConditioningDate: Date?
+    //var nextConditioningDate: Date?
     var prevConditioningDate: Date?
     var details: PlantDetails?
+    
+    // dynamic computed properties for next dates
+    var nextWateringDate: Date {
+        guard let prevWateringDate = prevWateringDate, let wateringFreq = wateringFreq else {
+            return Date() // default to today if data is unavailable
+        }
+        return Calendar.current.date(byAdding: .day, value: wateringFreq, to: prevWateringDate) ?? Date()
+    }
+    
+    var nextConditioningDate: Date {
+        guard let prevConditioningDate = prevConditioningDate, let conditioningFreq = conditioningFreq else {
+            return Date() // default to today if data is unavailable
+        }
+        return Calendar.current.date(byAdding: .day, value: conditioningFreq, to: prevConditioningDate) ?? Date()
+    }
     
     // Initializers
     init(plant: PlantModel) {
@@ -39,9 +54,9 @@ class PlantModel: Identifiable, Codable {
         self.conditioningFreq = plant.conditioningFreq
         self.dailySunExposure = plant.dailySunExposure
         self.prevWateringDate = plant.prevWateringDate
-        self.nextWateringDate =  plant.nextWateringDate
+        //self.nextWateringDate =  plant.nextWateringDate
         self.prevConditioningDate = plant.prevConditioningDate
-        self.nextConditioningDate = plant.nextConditioningDate
+        //self.nextConditioningDate = plant.nextConditioningDate
     }
     
     init(details: PlantDetails, conditioniingFreq: Int? = nil) {
@@ -59,9 +74,9 @@ class PlantModel: Identifiable, Codable {
         self.conditioningFreq = conditioningFreq
         self.dailySunExposure = details.sunhours
         self.prevWateringDate = Date()
-        self.nextWateringDate =  Calendar.current.date(byAdding: .day, value: details.wateringFreq, to: Date())
+        //self.nextWateringDate = Calendar.current.date(byAdding: .day, value: details.wateringFreq, to: Date())
         self.prevConditioningDate = conditioniingFreq == nil ? nil : Date()
-        self.nextConditioningDate = conditioniingFreq == nil ? nil :  Calendar.current.date(byAdding: .day, value: conditioniingFreq ?? 0, to: Date())
+        //self.nextConditioningDate = conditioniingFreq == nil ? nil : Calendar.current.date(byAdding: .day, value: conditioniingFreq ?? 0, to: Date())
     }
     
     init(id: UUID = UUID(), plantId: Int? = nil, room: RoomModel, name: String = "Unnamed Plant",
@@ -79,10 +94,10 @@ class PlantModel: Identifiable, Codable {
         self.species = species
         self.waterAmountInML = waterAmountInML
         self.dailySunExposure = dailySunExposure
-        self.nextWateringDate = nextWateringDate
+        //self.nextWateringDate = nextWateringDate
         self.prevWateringDate = prevWateringDate
         self.wateringFreq = wateringFreq
-        self.nextConditioningDate = nextWateringDate
+        //self.nextConditioningDate = nextWateringDate
         self.prevConditioningDate = prevWateringDate
         self.conditioningFreq = conditioningFreq
         self.details = details
@@ -96,11 +111,6 @@ class PlantModel: Identifiable, Codable {
                 completion(nil)
                 return
             }
-            
-            // Example logic for calculating water and sunlight needs
-            let waterAmount = 500 // Assume 500ml as default
-            let sunlightHours = 3 // Assume 6 hours as default
-            let wateringFreq = 3
             
             // Initialize the plant model
             let plant = PlantModel(details: details, conditioniingFreq: 2) //losowe conditionning TO BE CHANGED!!!
@@ -129,10 +139,10 @@ class PlantModel: Identifiable, Codable {
         species = try container.decodeIfPresent(String.self, forKey: .species)
         waterAmountInML = try container.decodeIfPresent(Int.self, forKey: .waterAmountInML)
         dailySunExposure = try container.decodeIfPresent(Int.self, forKey: .dailySunExposure)
-        nextWateringDate = try container.decodeIfPresent(Date.self, forKey: .nextWateringDate)
+        //nextWateringDate = try container.decodeIfPresent(Date.self, forKey: .nextWateringDate)
         prevWateringDate = try container.decodeIfPresent(Date.self, forKey: .prevWateringDate)
         wateringFreq = try container.decodeIfPresent(Int.self, forKey: .wateringFreq)
-        nextConditioningDate = try container.decodeIfPresent(Date.self, forKey: .nextConditioningDate)
+        //nextConditioningDate = try container.decodeIfPresent(Date.self, forKey: .nextConditioningDate)
         prevConditioningDate = try container.decodeIfPresent(Date.self, forKey: .prevConditioningDate)
         conditioningFreq = try container.decodeIfPresent(Int.self, forKey: .conditioningFreq)
         details = try container.decodeIfPresent(PlantDetails.self, forKey: .details)
@@ -151,10 +161,10 @@ class PlantModel: Identifiable, Codable {
         try container.encodeIfPresent(species, forKey: .species)
         try container.encodeIfPresent(waterAmountInML, forKey: .waterAmountInML)
         try container.encodeIfPresent(dailySunExposure, forKey: .dailySunExposure)
-        try container.encodeIfPresent(nextWateringDate, forKey: .nextWateringDate)
+        //try container.encodeIfPresent(nextWateringDate, forKey: .nextWateringDate)
         try container.encodeIfPresent(prevWateringDate, forKey: .prevWateringDate)
         try container.encodeIfPresent(wateringFreq, forKey: .wateringFreq)
-        try container.encodeIfPresent(nextConditioningDate, forKey: .nextConditioningDate)
+        //try container.encodeIfPresent(nextConditioningDate, forKey: .nextConditioningDate)
         try container.encodeIfPresent(prevConditioningDate, forKey: .prevConditioningDate)
         try container.encodeIfPresent(conditioningFreq, forKey: .conditioningFreq)
         try container.encodeIfPresent(details, forKey: .details)
@@ -197,47 +207,62 @@ class PlantModel: Identifiable, Codable {
     func waterThePlant() {
         self.prevPrevWateringDate = self.prevWateringDate // zapisz poprzednią datę podlewania
         self.prevWateringDate = Date() // ustaw dzisiejszą datę jako prevWateringDate
-        self.nextWateringDate = Calendar.current.date(byAdding: .day, value: wateringFreq ?? 0, to: Date()) // ustaw nextWateringDate na podstawie wateringFreq
+        //self.nextWateringDate = Calendar.current.date(byAdding: .day, value: wateringFreq ?? 0, to: Date()) // ustaw nextWateringDate na podstawie wateringFreq
     }
 
     
     // check for errors
     var notificationsCount: Int {
-        guard let nextWateringDate = nextWateringDate else { return 1 }
-        guard let nextConditioningDate = nextConditioningDate else { return 1 }
         var notifs = 0
-        notifs += nextWateringDate < Date() ? 1 : 0
-        notifs += nextConditioningDate < Date() ? 1 : 0
-        //room czy oswietlenie wieksze od obecnej sunhours wymaganego
+        // check if nextWateringDate is overdue
+        if nextWateringDate <= Date() {
+            notifs += 1
+        }
+        // check if nextConditioningDate is overdue
+        if nextConditioningDate <= Date() {
+            notifs += 1
+        }
         return notifs
     }
-    
+
     var isWatered: Bool {
-        guard let nextWateringDate = nextWateringDate else { return false }
+        // check if nextWateringDate is in the future
         return nextWateringDate > Date()
+    }
+
+    func calculate_progress(prevWateringDate: Date?, wateringFreq: Int?) -> Double {
+        // use current date if prevWateringDate is nil
+        let prevDate = prevWateringDate ?? Date()
+        
+        // default watering frequency is 7 days if nil
+        let frequency = wateringFreq ?? 7
+        
+        // calculate the number of seconds in a day
+        let secondsInDay = 86400.0
+
+        // calculate the time interval since the last watering
+        let now = Date()
+        let timeInterval = now.timeIntervalSince(prevDate)
+
+        // calculate the number of days since the last watering
+        let daysSinceWatering = timeInterval / secondsInDay
+
+        // calculate the max interval for hydration (2 times wateringFreq)
+        let maxInterval = Double(frequency * 2)
+
+        // if the flower is over-dried
+        if daysSinceWatering >= maxInterval {
+            return 0.1
+        }
+
+        // calculate progress based on wateringFreq
+        let progress = 1.0 - (daysSinceWatering / maxInterval)
+
+        // ensure the result is clamped between 0.0 and 1.0
+        return max(0.1, min(0.9, progress))
     }
     
     var progress: Double {
-        guard let prevWateringDate = prevWateringDate, let wateringFreq = wateringFreq else {
-            return 0.0 // brak daty ostatniego podlewania lub częstotliwości podlewania - za mało wody
-        }
-        
-        // Obliczanie czasu, który minął od ostatniego podlewania
-        let timeSinceLastWatering = Date().timeIntervalSince(prevWateringDate)
-        
-        // Całkowity czas podlewania (w sekundach)
-        let totalWateringTime = TimeInterval(wateringFreq * 86400) // wateringFreq to liczba dni, przekształcone na sekundy
-        
-        // Obliczanie czasu, który minął od poprzedniego podlewania (jeśli istnieje)
-        let timeSincePrevPrevWatering = prevPrevWateringDate != nil ? Date().timeIntervalSince(prevPrevWateringDate!) : 0
-        
-        // Całkowity czas podlewania od dwóch ostatnich dat
-        let totalTimeSinceLastWatering = timeSinceLastWatering + timeSincePrevPrevWatering
-        
-        // Obliczanie progresu na podstawie czasu
-        let progress = totalTimeSinceLastWatering / totalWateringTime
-        
-        // Zwrócenie wartości w zakresie 0.0 do 1.0 (Clamp)
-        return min(max(progress, 0.0), 1.0)
+        return calculate_progress(prevWateringDate: self.prevWateringDate, wateringFreq: self.wateringFreq)
     }
 }

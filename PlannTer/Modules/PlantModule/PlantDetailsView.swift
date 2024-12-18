@@ -2,51 +2,39 @@ import SwiftUI
 
 struct PlantDetailsView: View {
     @Bindable var plant: PlantModel
-    @State private var waterDate = Date()
-    @State private var waterDays: Int = 7
-    @State private var waterAmount: Int = 200
-    @State private var sunExposure: Int = 8
-    @State private var conditioningDate = Date()
-    @State private var conditioningDays: Int = 30
     @Environment(\.presentationMode) var presentationMode
         
     var body: some View {
-            ZStack {
-                Color(.primaryBackground)
-                    .edgesIgnoringSafeArea(.all)
-                VStack {
-                    PlantImageSection(plant: plant)
-                    WateringSection(date: $waterDate, days: $waterDays)
-                    WaterAmountSection(waterAmount: $waterAmount)
-                    SunExposureSection(sunExposure: $sunExposure)
-                    ConditioningSection(date: $conditioningDate, days: $conditioningDays)
-                    Spacer()
-                }
-                .onAppear() {
-                    waterAmount = plant.waterAmountInML ?? 100
-                    waterDays = plant.wateringFreq ?? 1
-                    sunExposure = plant.dailySunExposure ?? 4
-                    conditioningDays = plant.conditioningFreq ?? 0
-                }
+        ZStack {
+            Color(.primaryBackground)
+                .edgesIgnoringSafeArea(.all)
+            VStack {
+                PlantImageSection(plant: plant)
+                WateringSection(date: plant.nextWateringDate ?? Date(), days: plant.wateringFreq ?? 7)
+                WaterAmountSection(waterAmount: plant.waterAmountInML ?? 200)
+                SunExposureSection(sunExposure: plant.dailySunExposure ?? 8)
+                ConditioningSection(date: plant.nextConditioningDate ?? Date(), days: plant.conditioningFreq ?? 30)
+                Spacer()
             }
-            .navigationBarBackButtonHidden(true)
-            .customToolbar(title: plant.name, presentationMode: presentationMode)
-            .toolbar{
-                ToolbarItem(placement: .topBarTrailing){
-                    NavigationLink(destination: PlantEditView(plant: plant)){
-                        Image(systemName: "gearshape.fill")
-                            .font(.mainText)
-                            .foregroundColor(.primaryText)
-                            .padding(.trailing, 50)
-                    }
+        }
+        .navigationBarBackButtonHidden(true)
+        .customToolbar(title: plant.name, presentationMode: presentationMode)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink(destination: PlantEditView(plant: plant)) {
+                    Image(systemName: "gearshape.fill")
+                        .font(.mainText)
+                        .foregroundColor(.primaryText)
+                        .padding(.trailing, 50)
+                }
             }
         }
     }
 }
 
-
 private struct PlantImageSection: View {
     @Bindable var plant: PlantModel
+    
     var body: some View {
         HStack {
             ZStack {
@@ -82,16 +70,16 @@ private struct PlantImageSection: View {
 }
 
 private struct WateringSection: View {
-    @Binding var date: Date
-    @Binding var days: Int
-    
+    var date: Date
+    var days: Int
+
     var body: some View {
-        VStack{
+        VStack {
             HStack {
                 Text("Next watering:")
                 DatePicker(
                     "",
-                    selection: $date,
+                    selection: .constant(date),
                     displayedComponents: [.date]
                 )
                 .disabled(true)
@@ -100,20 +88,15 @@ private struct WateringSection: View {
                 .padding(.trailing, 20)
                 Text("\(days) days")
             }
-            
         }
         .frame(width: 0.9 * UIScreen.main.bounds.width)
         .padding(.top, 20)
         .font(.custom("Roboto", size: 20))
         .foregroundColor(.primaryText)
-        
-        
-        HStack{
+
+        HStack {
             Slider(
-                value: Binding(
-                    get: { Double(days) },
-                    set: { days = Int($0) }
-                ),
+                value: .constant(Double(days)),
                 in: 1...30,
                 step: 1,
                 minimumValueLabel: Text("1"),
@@ -130,30 +113,24 @@ private struct WateringSection: View {
 }
 
 private struct WaterAmountSection: View {
-    @Binding var waterAmount: Int
-    
+    var waterAmount: Int
+
     var body: some View {
-        VStack{
+        VStack {
             HStack {
                 Text("Water amount:")
-                
                 Spacer()
                 Text("\(waterAmount) ml")
             }
-            
         }
         .frame(width: 0.9 * UIScreen.main.bounds.width)
         .padding(.top, 20)
         .font(.custom("Roboto", size: 20))
         .foregroundColor(.primaryText)
-        
-        
-        HStack{
+
+        HStack {
             Slider(
-                value: Binding(
-                    get: { Double(waterAmount) },
-                    set: { waterAmount = Int($0) }
-                ),
+                value: .constant(Double(waterAmount)),
                 in: 50...1000,
                 step: 50,
                 minimumValueLabel: Text("50"),
@@ -169,30 +146,24 @@ private struct WaterAmountSection: View {
 }
 
 private struct SunExposureSection: View {
-    @Binding var sunExposure: Int
-    
+    var sunExposure: Int
+
     var body: some View {
-        VStack{
+        VStack {
             HStack {
                 Text("Sun exposure:")
-                
                 Spacer()
                 Text("\(sunExposure) h")
             }
-            
         }
         .frame(width: 0.9 * UIScreen.main.bounds.width)
         .padding(.top, 20)
         .font(.custom("Roboto", size: 20))
         .foregroundColor(.primaryText)
-        
-        
-        HStack{
+
+        HStack {
             Slider(
-                value: Binding(
-                    get: { Double(sunExposure) },
-                    set: { sunExposure = Int($0) }
-                ),
+                value: .constant(Double(sunExposure)),
                 in: 0...12,
                 step: 0.25,
                 minimumValueLabel: Text("0 h"),
@@ -209,16 +180,16 @@ private struct SunExposureSection: View {
 }
 
 private struct ConditioningSection: View {
-    @Binding var date: Date
-    @Binding var days: Int
-    
+    var date: Date
+    var days: Int
+
     var body: some View {
-        VStack{
+        VStack {
             HStack {
                 Text("Next conditioning:")
                 DatePicker(
                     "",
-                    selection: $date,
+                    selection: .constant(date),
                     displayedComponents: [.date]
                 )
                 .disabled(true)
@@ -227,20 +198,15 @@ private struct ConditioningSection: View {
                 .padding(.trailing, 20)
                 Text("\(days) days")
             }
-            
         }
         .frame(width: 0.95 * UIScreen.main.bounds.width)
         .padding(.top, 20)
         .font(.custom("Roboto", size: 18))
         .foregroundColor(.primaryText)
-        
-        
-        HStack{
+
+        HStack {
             Slider(
-                value: Binding(
-                    get: { Double(days) },
-                    set: { days = Int($0) }
-                ),
+                value: .constant(Double(days)),
                 in: 1...90,
                 step: 1,
                 minimumValueLabel: Text("1"),
@@ -258,7 +224,7 @@ private struct ConditioningSection: View {
 
 private struct PlantLabel: View {
     var text: String
-    
+
     var body: some View {
         HStack(alignment: .center, spacing: 3) {
             Text(text)
