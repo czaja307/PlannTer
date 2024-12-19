@@ -132,9 +132,7 @@ struct PlantAddView: View {
             print("Failed to save plant: \(error)")
         }
         
-        if let wateringDate = newPlant.nextWateringDate {
-            dispatchNotification(identifier: newPlant.id.description, title: newPlant.name + " is thirsty!", body: "Your plant needs to drink some water.", date: wateringDate)
-        }
+        dispatchNotification(identifier: newPlant.id.description, title: newPlant.name + " is thirsty!", body: "Your plant needs to drink some water.", date: newPlant.nextWateringDate)
         
         presentationMode.wrappedValue.dismiss()
     }
@@ -239,9 +237,12 @@ private struct TopEditSection: View {
                                 PlantService.shared.getPlantDetails(for: foundId) { details in
                                     if(details != nil) {
                                         let tempName = plant.name
+                                        let cat = plant.category
+                                        let sub = plant.species
                                         plant = PlantModel(details: details!, conditioniingFreq: plant.conditioningFreq ?? 0)
                                         plant.name = (tempName != "") ? tempName : plant.name
-                                        print(plant.imageUrl)
+                                        plant.category =  cat
+                                        plant.species = sub
                                     }
                                 }
                             }

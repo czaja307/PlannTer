@@ -6,7 +6,18 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		A126BB982D13426A00153522 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A5B229522CCA9B8A005C3D2F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A5B229592CCA9B8A005C3D2F;
+			remoteInfo = PlannTer;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		A126BB942D13426A00153522 /* PlannTerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlannTerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5B2295A2CCA9B8A005C3D2F /* PlannTer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlannTer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -21,6 +32,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		A126BB952D13426A00153522 /* PlannTerTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PlannTerTests;
+			sourceTree = "<group>";
+		};
 		A5B2295C2CCA9B8A005C3D2F /* PlannTer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -32,6 +48,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A126BB912D13426A00153522 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A5B229572CCA9B8A005C3D2F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -46,6 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				A5B2295C2CCA9B8A005C3D2F /* PlannTer */,
+				A126BB952D13426A00153522 /* PlannTerTests */,
 				A5B2295B2CCA9B8A005C3D2F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				A5B2295A2CCA9B8A005C3D2F /* PlannTer.app */,
+				A126BB942D13426A00153522 /* PlannTerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,6 +86,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A126BB932D13426A00153522 /* PlannTerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A126BB9A2D13426A00153522 /* Build configuration list for PBXNativeTarget "PlannTerTests" */;
+			buildPhases = (
+				A126BB902D13426A00153522 /* Sources */,
+				A126BB912D13426A00153522 /* Frameworks */,
+				A126BB922D13426A00153522 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A126BB992D13426A00153522 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A126BB952D13426A00153522 /* PlannTerTests */,
+			);
+			name = PlannTerTests;
+			packageProductDependencies = (
+			);
+			productName = PlannTerTests;
+			productReference = A126BB942D13426A00153522 /* PlannTerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		A5B229592CCA9B8A005C3D2F /* PlannTer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A5B229682CCA9B8B005C3D2F /* Build configuration list for PBXNativeTarget "PlannTer" */;
@@ -93,6 +141,10 @@
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					A126BB932D13426A00153522 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = A5B229592CCA9B8A005C3D2F;
+					};
 					A5B229592CCA9B8A005C3D2F = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -115,11 +167,19 @@
 			projectRoot = "";
 			targets = (
 				A5B229592CCA9B8A005C3D2F /* PlannTer */,
+				A126BB932D13426A00153522 /* PlannTerTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A126BB922D13426A00153522 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A5B229582CCA9B8A005C3D2F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -130,6 +190,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A126BB902D13426A00153522 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A5B229562CCA9B8A005C3D2F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -139,7 +206,49 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		A126BB992D13426A00153522 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A5B229592CCA9B8A005C3D2F /* PlannTer */;
+			targetProxy = A126BB982D13426A00153522 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		A126BB9B2D13426A00153522 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.plannter.PlannTerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PlannTer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PlannTer";
+			};
+			name = Debug;
+		};
+		A126BB9C2D13426A00153522 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.plannter.PlannTerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PlannTer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PlannTer";
+			};
+			name = Release;
+		};
 		A5B229662CCA9B8B005C3D2F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -324,6 +433,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A126BB9A2D13426A00153522 /* Build configuration list for PBXNativeTarget "PlannTerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A126BB9B2D13426A00153522 /* Debug */,
+				A126BB9C2D13426A00153522 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A5B229552CCA9B8A005C3D2F /* Build configuration list for PBXProject "PlannTer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
