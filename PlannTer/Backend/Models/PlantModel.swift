@@ -198,8 +198,11 @@ class PlantModel: Identifiable, Codable {
         self.prevPrevWateringDate = self.prevWateringDate // zapisz poprzednią datę podlewania
         self.prevWateringDate = Date() // ustaw dzisiejszą datę jako prevWateringDate
         self.nextWateringDate = Calendar.current.date(byAdding: .day, value: wateringFreq ?? 0, to: Date()) // ustaw nextWateringDate na podstawie wateringFreq
+        if let nextWateringDate = nextWateringDate {
+            dispatchNotification(identifier: self.id.description, title: self.name + " is thirsty!", body: "Your plant needs to drink some water.", date: nextWateringDate)
+        }
     }
-
+    
     
     // check for errors
     var notificationsCount: Int {

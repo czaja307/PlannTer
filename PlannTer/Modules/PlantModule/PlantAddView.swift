@@ -7,7 +7,7 @@ struct PlantAddView: View {
     @Bindable var room: RoomModel
     @Query var roomList: [RoomModel]
     @State var createdPlant = PlantModel(room: RoomModel.exampleRoom, name: "", category: "None", species: "None",  waterAmountInML: 200, dailySunExposure: 3, nextWateringDate: Date(), wateringFreq: 7, nextConditioningDate: Date(), conditioningFreq: 0)
-      
+    
     @State private var rooms: [String] = []
     @State private var selectedRoom: String = ""
     @State private var types: [String] = ["None"]
@@ -39,14 +39,14 @@ struct PlantAddView: View {
                     selectedRoom: $selectedRoom,
                     types: $types,
                     selectedType: Binding(
-                            get: { createdPlant.category ?? "None" },
-                            set: { createdPlant.category = $0 }
-                        ),
+                        get: { createdPlant.category ?? "None" },
+                        set: { createdPlant.category = $0 }
+                    ),
                     subtypes: $subtypes,
                     selectedSubType: Binding(
                         get: { createdPlant.species ?? "None" },
                         set: { createdPlant.species = $0 }
-                        ),
+                    ),
                     uiImg: $uiImg
                 )
                 
@@ -65,25 +65,25 @@ struct PlantAddView: View {
                     value: Binding(
                         get: { createdPlant.wateringFreq ?? 7 },
                         set: { createdPlant.wateringFreq = $0 }
-                        ), title: "Watering interval", unit: "days", range: 1...30, step: 1, sColor: .green
+                    ), title: "Watering interval", unit: "days", range: 1...30, step: 1, sColor: .green
                 )
                 SliderSection(
                     value: Binding(
                         get: { createdPlant.waterAmountInML ?? 220 },
                         set: { createdPlant.waterAmountInML = $0 }
-                        ), title: "Water amount", unit: "ml", range: 50...1000, step: 50, sColor: .blue
+                    ), title: "Water amount", unit: "ml", range: 50...1000, step: 50, sColor: .blue
                 )
                 SliderSection(
                     value: Binding(
                         get: { createdPlant.dailySunExposure ?? 3 },
                         set: { createdPlant.dailySunExposure = $0 }
-                        ), title: "Sun exposure", unit: "h", range: 0...12, step: 1, sColor: .yellow
+                    ), title: "Sun exposure", unit: "h", range: 0...12, step: 1, sColor: .yellow
                 )
                 SliderSection(
                     value: Binding(
                         get: { createdPlant.conditioningFreq ?? 0 },
                         set: { createdPlant.conditioningFreq = $0 }
-                        ), title: "Conditioning interval", unit: "days", range: 0...90, step: 1, sColor: .pink
+                    ), title: "Conditioning interval", unit: "days", range: 0...90, step: 1, sColor: .pink
                 )
                 Spacer()
                 HStack{
@@ -132,6 +132,10 @@ struct PlantAddView: View {
             print("Failed to save plant: \(error)")
         }
         
+        if let wateringDate = newPlant.nextWateringDate {
+            dispatchNotification(identifier: newPlant.id.description, title: newPlant.name + " is thirsty!", body: "Your plant needs to drink some water.", date: wateringDate)
+        }
+        
         presentationMode.wrappedValue.dismiss()
     }
 }
@@ -152,22 +156,22 @@ private struct TopEditSection: View {
     @Binding var uiImg: UIImage?
     
     private func loadImage(from urlString: String?) {
-            guard let urlString = urlString, let url = URL(string: urlString) else { return }
-           
-            Task {
-                do {
-                    let (data, _) = try await URLSession.shared.data(from: url)
-                    if let downloadedImage = UIImage(data: data) {
-                        DispatchQueue.main.async {
-                            uiImg = downloadedImage
-                        }
-                    }
-                } catch {
-                    print("Failed to load image from URL: \(error)")
-                }
-            }
+        guard let urlString = urlString, let url = URL(string: urlString) else { return }
         
+        Task {
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                if let downloadedImage = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        uiImg = downloadedImage
+                    }
+                }
+            } catch {
+                print("Failed to load image from URL: \(error)")
+            }
         }
+        
+    }
     
     var body: some View {
         HStack {
@@ -205,7 +209,7 @@ private struct TopEditSection: View {
                             pickedPhoto = nil
                         }
                     }
-               
+                
             }
             VStack {
                 MiniDropdownPicker(selected: $selectedRoom, items: rooms)
@@ -258,7 +262,7 @@ private struct TopEditSection: View {
             }
         }
     }
-        
+    
 }
 
 private struct SliderSection: View {
@@ -351,9 +355,9 @@ private struct MiniButton : View {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: SettingsModel.self, RoomModel.self, PlantModel.self, configurations: config)
     let mockSettings = SettingsModel()
-
-
+    
+    
     MainScreenView()
-            .modelContainer(container)
-            .environment(mockSettings)
+        .modelContainer(container)
+        .environment(mockSettings)
 }
