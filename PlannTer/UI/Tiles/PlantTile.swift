@@ -1,13 +1,15 @@
 import SwiftUI
+import AVFoundation
 
 struct PlantTile: View {
     @Environment(\.presentationMode) var presentationMode // To handle back navigation
     @State var plant: PlantModel
-    let deleteAction: (PlantModel) -> ()
-    
     @State private var isNavigatingToEditView = false
     @State private var uiImg: UIImage? = nil
-
+    @State private var audioPlayer: AVAudioPlayer?
+    
+    let deleteAction: (PlantModel) -> ()
+    
     var body: some View {
         GeometryReader { geometry in
             HStack(spacing: 15) {
@@ -42,7 +44,10 @@ struct PlantTile: View {
                                 .font(.largeSlimText)
                                 .foregroundColor(Color.primaryText)
                             
-                            Button(action: { plant.waterThePlant() }) {
+                            Button(action: {
+                                plant.waterThePlant()
+                                playWateringSound()
+                            }) {
                                 Image("TickSymbol")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
@@ -106,8 +111,20 @@ struct PlantTile: View {
             NavigationLink(destination: PlantEditView(plant: plant), isActive: $isNavigatingToEditView) {
                 EmptyView()
             }
-            .hidden()
+                .hidden()
         )
+    }
+    
+    func playWateringSound() {
+        if let path = Bundle.main.path(forResource: "water-sound", ofType: "wav") {
+            let url = URL(fileURLWithPath: path)
+            do {
+                audioPlayer = try AVAudioPlayer(contentsOf: url)
+                audioPlayer?.play()
+            } catch {
+                print("Error: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
@@ -122,7 +139,7 @@ struct Bar: View {
             Rectangle()
                 .fill(Color.waterBackground)
                 .frame(width: progressBarWidth * 1.00, height: progressBarHeight)
-
+            
             Rectangle()
                 .fill(Color.primaryBackground)
                 .frame(width: progressBarWidth * 0.75, height: progressBarHeight)
@@ -137,8 +154,9 @@ struct Bar: View {
         .border(Color.black, width: 1)
         .cornerRadius(2)
     }
-    
 }
+
+
 
 #Preview {
     PlantTile(plant: PlantModel.examplePlant, deleteAction: {_ in})
