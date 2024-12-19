@@ -124,7 +124,7 @@ struct PlantEditView: View {
         if (foundRoom != nil) {
             plant.room = foundRoom!
         }else {
-            print("kurwa hij")
+            print("kurwa hij") //kluczowe do poprawnego dzialania aplikacji
         }
         if (plant.imageUrl != nil && plant.imageUrl != "ExamplePlant" && plant.imageUrl !=  "\(selectedRoom)_\(createdPlant.name)") {
             LocalFileManager.instance.deleteImage(name: plant.imageUrl!)
@@ -151,9 +151,9 @@ struct PlantEditView: View {
             print("Failed to save plant: \(error)")
         }
         
-        if let wateringDate = plant.nextWateringDate {
-            dispatchNotification(identifier: plant.id.description, title: plant.name + " is thirsty!", body: "Your plant needs to drink some water.", date: wateringDate)
-        }
+        
+        dispatchNotification(identifier: plant.id.description, title: plant.name + " is thirsty!", body: "Your plant needs to drink some water.", date: plant.nextWateringDate)
+        
         presentationMode.wrappedValue.dismiss()
     }
 }
@@ -256,8 +256,12 @@ private struct TopEditSection: View {
                                 PlantService.shared.getPlantDetails(for: foundId) { details in
                                     if(details != nil) {
                                         let tempName = plant.name
+                                        let cat = plant.category
+                                        let sub = plant.species
                                         plant = PlantModel(details: details!, conditioniingFreq: plant.conditioningFreq ?? 0)
                                         plant.name = (tempName != "") ? tempName : plant.name
+                                        plant.category =  cat
+                                        plant.species = sub
                                     }
                                 }
                             }
