@@ -8,7 +8,7 @@
 import XCTest
 @testable import PlannTer
 
-final class PlantModelTests: XCTestCase {
+final class PlantModelTests: XCTestCase { //testy jednostkowe
 
     // test inicjalizacji modelu
     func testInitialization() {
@@ -65,18 +65,4 @@ final class PlantModelTests: XCTestCase {
     
     
     
-    //testy manualne reczne
-    func manualTests() {
-        let plant = PlantModel.examplePlant
-
-        print("Testing manual functionality for \(plant.name)")
-        print("Next watering date: \(plant.nextWateringDate)")
-        print("Next conditioning date: \(plant.nextConditioningDate)")
-        print("Progress: \(plant.progress)")
-        print("Is watered: \(plant.isWatered)")
-        
-        plant.waterThePlant()
-        print("Watered the plant. Prev watering date: \(plant.prevWateringDate)")
-    }
-
 }
