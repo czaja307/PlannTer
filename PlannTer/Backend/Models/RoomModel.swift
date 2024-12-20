@@ -52,6 +52,18 @@ class RoomModel: Identifiable, Codable {
         self.directions = directions
         self.plants = plants
     }
+    
+    var getsunlight: Double {
+        let sunlightValues = directions.compactMap { direction in
+            ApproxSunlight.average.sunlightHours[direction.rawValue]
+        }
+        guard !sunlightValues.isEmpty else {
+            return 0.0 // brak kierunków = brak światła
+        }
+        let totalSunlight = sunlightValues.reduce(0, +)
+        return directions.count > 1 ? Double(totalSunlight) / 2.0 : Double(totalSunlight)
+    }
+
 
     enum CodingKeys: String, CodingKey {
         case id, name, directions, plants

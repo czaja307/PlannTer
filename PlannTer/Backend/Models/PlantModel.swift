@@ -73,7 +73,7 @@ class PlantModel: Identifiable, Codable {
         self.wateringFreq = details.wateringFreq
         self.conditioningFreq = conditioningFreq
         self.dailySunExposure = details.sunhours
-        self.prevWateringDate = Date()
+        self.prevWateringDate = Calendar.current.date(byAdding: .day, value: -(details.wateringFreq), to: Date())
         //self.nextWateringDate = Calendar.current.date(byAdding: .day, value: details.wateringFreq, to: Date())
         self.prevConditioningDate = conditioniingFreq == nil ? nil : Date()
         //self.nextConditioningDate = conditioniingFreq == nil ? nil : Calendar.current.date(byAdding: .day, value: conditioniingFreq ?? 0, to: Date())
@@ -95,7 +95,7 @@ class PlantModel: Identifiable, Codable {
         self.waterAmountInML = waterAmountInML
         self.dailySunExposure = dailySunExposure
         //self.nextWateringDate = nextWateringDate
-        self.prevWateringDate = prevWateringDate
+        self.prevWateringDate = Calendar.current.date(byAdding: .day, value: -(wateringFreq ?? 7), to: Date())
         self.wateringFreq = wateringFreq
         //self.nextConditioningDate = nextWateringDate
         self.prevConditioningDate = prevWateringDate
@@ -213,13 +213,20 @@ class PlantModel: Identifiable, Codable {
     
     // check for errors
     var notificationsCount: Int {
+        print(name)
+        print(wateringFreq)
+        print(nextWateringDate)
+        print(prevWateringDate)
+        print(conditioningFreq)
+        print(nextConditioningDate)
+        print(prevConditioningDate)
         var notifs = 0
         // check if nextWateringDate is overdue
         if nextWateringDate <= Date() {
             notifs += 1
         }
         // check if nextConditioningDate is overdue
-        if nextConditioningDate <= Date() {
+        if nextConditioningDate <= Date() && (conditioningFreq != nil && conditioningFreq != 0){
             notifs += 1
         }
         return notifs
