@@ -68,7 +68,7 @@ struct Tiles: View{
     init(roomsList:[RoomModel], deleteAction: @escaping (RoomModel) -> Void) {
         self.roomsList = roomsList
         self.roomsList.removeAll { $0.name.isEmpty }
-        appendTop = roomsList.count % 2 == 0 ? true : false
+        appendTop = roomsList.count % 2 == 1 ? true : false
         self.deleteAction = deleteAction
     }
     
