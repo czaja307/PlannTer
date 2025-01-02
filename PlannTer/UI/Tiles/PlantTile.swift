@@ -57,7 +57,7 @@ struct PlantTile: View {
                                 .foregroundColor(Color.primaryText)
                             
                             Button(action: {
-                                plant.waterThePlant()
+                                plant.waterThePlant(settings: settings)
                                 playWateringSound()
                             }) {
                                 Image("TickSymbol")

@@ -18,7 +18,7 @@ struct PlantAddView: View {
     @State private var uiImg: UIImage? = nil
     
     @Environment(\.presentationMode) var presentationMode
-    
+    @Environment(SettingsModel.self) var settings
     
     var body: some View {
         ZStack {
@@ -132,7 +132,8 @@ struct PlantAddView: View {
             print("Failed to save plant: \(error)")
         }
         
-        dispatchNotification(identifier: newPlant.id.description, title: newPlant.name + " is thirsty!", body: "Your plant needs to drink some water.", date: newPlant.nextWateringDate)
+        let username = settings.username.isEmpty ? "there" : settings.username
+        dispatchNotification(identifier: newPlant.id.description, title: newPlant.name + " is thirsty!", body: "Hey \(username) your plant needs to drink some water.", date: newPlant.nextWateringDate)
         
         presentationMode.wrappedValue.dismiss()
     }

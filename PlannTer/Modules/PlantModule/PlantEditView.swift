@@ -18,6 +18,7 @@ struct PlantEditView: View {
     @State private var uiImg: UIImage? = nil
     
     @Environment(\.presentationMode) var presentationMode
+    @Environment(SettingsModel.self) private var settings
     
     init(plant: PlantModel) {
         self.plant = plant
@@ -151,8 +152,8 @@ struct PlantEditView: View {
             print("Failed to save plant: \(error)")
         }
         
-        
-        dispatchNotification(identifier: plant.id.description, title: plant.name + " is thirsty!", body: "Your plant needs to drink some water.", date: plant.nextWateringDate)
+        let username = settings.username.isEmpty ? "there" : settings.username
+        dispatchNotification(identifier: plant.id.description, title: plant.name + " is thirsty!", body: "Hey \(username) your plant needs to drink some water.", date: plant.nextWateringDate)
         
         presentationMode.wrappedValue.dismiss()
     }
