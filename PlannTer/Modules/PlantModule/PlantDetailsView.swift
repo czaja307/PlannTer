@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 struct PlantDetailsView: View {
     @Bindable var plant: PlantModel
@@ -10,10 +11,12 @@ struct PlantDetailsView: View {
                 .edgesIgnoringSafeArea(.all)
             VStack {
                 PlantImageSection(plant: plant)
-                WateringSection(date: plant.nextWateringDate ?? Date(), days: plant.wateringFreq ?? 7)
+                WateringSection(plant: plant, date: plant.nextWateringDate ?? Date(), days: plant.wateringFreq ?? 7)
                 WaterAmountSection(waterAmountInML: plant.waterAmountInML ?? 200)
                 SunExposureSection(sunExposure: plant.dailySunExposure ?? 8)
-                ConditioningSection(date: plant.nextConditioningDate ?? Date(), days: plant.conditioningFreq ?? 30)
+                if(plant.conditioningFreq != 0) {
+                    ConditioningSection(plant: plant, date: plant.nextConditioningDate ?? Date(), days: plant.conditioningFreq ?? 0)
+                }
                 Spacer()
             }
         }
@@ -70,6 +73,8 @@ private struct PlantImageSection: View {
 }
 
 private struct WateringSection: View {
+    @Environment(SettingsModel.self) private var settings
+    var plant: PlantModel
     var date: Date
     var days: Int
 
@@ -87,6 +92,20 @@ private struct WateringSection: View {
                 .datePickerStyle(.compact)
                 .padding(.trailing, 20)
                 Text("\(days) days")
+                if(!plant.isWatered){
+                    Button(action: {
+                        plant.waterThePlant(settings: settings)
+                        AudioPlayer.instance.playSound(soundName: "water-sound")
+                    }) {
+                        Image("TickSymbol")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 30, height: 30)
+                    }
+                    .padding(3)
+                    .background(.white.opacity(0.6))
+                    .cornerRadius(25)
+                }
             }
         }
         .frame(width: 0.9 * UIScreen.main.bounds.width)
@@ -198,9 +217,11 @@ private struct SunExposureSection: View {
 }
 
 private struct ConditioningSection: View {
+    @Environment(SettingsModel.self) private var settings
+    var plant: PlantModel
     var date: Date
     var days: Int
-
+    
     var body: some View {
         VStack {
             HStack {
@@ -215,6 +236,20 @@ private struct ConditioningSection: View {
                 .datePickerStyle(.compact)
                 .padding(.trailing, 20)
                 Text("\(days) days")
+                if(!plant.isConditioned){
+                    Button(action: {
+                        plant.conditionThePlant(settings: settings)
+                        AudioPlayer.instance.playSound(soundName: "condition-sound")
+                    }) {
+                        Image("TickSymbol")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 30, height: 30)
+                    }
+                    .padding(3)
+                    .background(.white.opacity(0.6))
+                    .cornerRadius(25)
+                }
             }
         }
         .frame(width: 0.95 * UIScreen.main.bounds.width)

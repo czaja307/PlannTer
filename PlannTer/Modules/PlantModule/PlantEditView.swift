@@ -154,6 +154,9 @@ struct PlantEditView: View {
         
         let username = settings.username.isEmpty ? "there" : settings.username
         dispatchNotification(identifier: plant.id.description, title: plant.name + " is thirsty!", body: "Hey \(username) your plant needs to drink some water.", date: plant.nextWateringDate)
+        if(plant.conditioningFreq != 0) {
+            dispatchNotification(identifier: plant.id.description, title: plant.name + " needs some care!", body: "Hey \(username), your plant might be a bit hungry", date: plant.nextConditioningDate)
+        }
         
         presentationMode.wrappedValue.dismiss()
     }

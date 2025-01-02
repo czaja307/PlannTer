@@ -7,7 +7,6 @@ struct PlantTile: View {
     @State var plant: PlantModel
     @State private var isNavigatingToEditView = false
     @State private var uiImg: UIImage? = nil
-    @State private var audioPlayer: AVAudioPlayer?
     
     let deleteAction: (PlantModel) -> ()
     
@@ -58,7 +57,7 @@ struct PlantTile: View {
                             
                             Button(action: {
                                 plant.waterThePlant(settings: settings)
-                                playWateringSound()
+                                AudioPlayer.instance.playSound(soundName: "water-sound")
                             }) {
                                 Image("TickSymbol")
                                     .resizable()
@@ -125,18 +124,6 @@ struct PlantTile: View {
             }
                 .hidden()
         )
-    }
-    
-    func playWateringSound() {
-        if let path = Bundle.main.path(forResource: "water-sound", ofType: "wav") {
-            let url = URL(fileURLWithPath: path)
-            do {
-                audioPlayer = try AVAudioPlayer(contentsOf: url)
-                audioPlayer?.play()
-            } catch {
-                print("Error: \(error.localizedDescription)")
-            }
-        }
     }
 }
 

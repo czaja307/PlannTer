@@ -18,8 +18,6 @@ class PlantModel: Identifiable, Codable {
     var dailySunExposure: Int?
     //var nextWateringDate: Date?
     var prevWateringDate: Date?
-    var prevPrevWateringDate: Date? // nowa zmienna przechowująca datę poprzedniego podlewania przed prevWateringDate potrzebna troche (moze to jest glupie nie wiem)
-    //var nextConditioningDate: Date?
     var prevConditioningDate: Date?
     var details: PlantDetails?
     
@@ -54,9 +52,7 @@ class PlantModel: Identifiable, Codable {
         self.conditioningFreq = plant.conditioningFreq
         self.dailySunExposure = plant.dailySunExposure
         self.prevWateringDate = plant.prevWateringDate
-        //self.nextWateringDate =  plant.nextWateringDate
         self.prevConditioningDate = plant.prevConditioningDate
-        //self.nextConditioningDate = plant.nextConditioningDate
     }
     
     init(details: PlantDetails, conditioniingFreq: Int? = nil) {
@@ -74,9 +70,8 @@ class PlantModel: Identifiable, Codable {
         self.conditioningFreq = conditioningFreq
         self.dailySunExposure = details.sunhours
         self.prevWateringDate = Calendar.current.date(byAdding: .day, value: -(details.wateringFreq), to: Date())
-        //self.nextWateringDate = Calendar.current.date(byAdding: .day, value: details.wateringFreq, to: Date())
         self.prevConditioningDate = conditioniingFreq == nil ? nil : Date()
-        //self.nextConditioningDate = conditioniingFreq == nil ? nil : Calendar.current.date(byAdding: .day, value: conditioniingFreq ?? 0, to: Date())
+       
     }
     
     init(id: UUID = UUID(), plantId: Int? = nil, room: RoomModel, name: String = "Unnamed Plant",
@@ -94,10 +89,8 @@ class PlantModel: Identifiable, Codable {
         self.species = species
         self.waterAmountInML = waterAmountInML
         self.dailySunExposure = dailySunExposure
-        //self.nextWateringDate = nextWateringDate
         self.prevWateringDate = Calendar.current.date(byAdding: .day, value: -(wateringFreq ?? 7), to: Date())
         self.wateringFreq = wateringFreq
-        //self.nextConditioningDate = nextWateringDate
         self.prevConditioningDate = prevWateringDate
         self.conditioningFreq = conditioningFreq
         self.details = details
@@ -139,10 +132,8 @@ class PlantModel: Identifiable, Codable {
         species = try container.decodeIfPresent(String.self, forKey: .species)
         waterAmountInML = try container.decodeIfPresent(Int.self, forKey: .waterAmountInML)
         dailySunExposure = try container.decodeIfPresent(Int.self, forKey: .dailySunExposure)
-        //nextWateringDate = try container.decodeIfPresent(Date.self, forKey: .nextWateringDate)
         prevWateringDate = try container.decodeIfPresent(Date.self, forKey: .prevWateringDate)
         wateringFreq = try container.decodeIfPresent(Int.self, forKey: .wateringFreq)
-        //nextConditioningDate = try container.decodeIfPresent(Date.self, forKey: .nextConditioningDate)
         prevConditioningDate = try container.decodeIfPresent(Date.self, forKey: .prevConditioningDate)
         conditioningFreq = try container.decodeIfPresent(Int.self, forKey: .conditioningFreq)
         details = try container.decodeIfPresent(PlantDetails.self, forKey: .details)
@@ -161,10 +152,8 @@ class PlantModel: Identifiable, Codable {
         try container.encodeIfPresent(species, forKey: .species)
         try container.encodeIfPresent(waterAmountInML, forKey: .waterAmountInML)
         try container.encodeIfPresent(dailySunExposure, forKey: .dailySunExposure)
-        //try container.encodeIfPresent(nextWateringDate, forKey: .nextWateringDate)
         try container.encodeIfPresent(prevWateringDate, forKey: .prevWateringDate)
         try container.encodeIfPresent(wateringFreq, forKey: .wateringFreq)
-        //try container.encodeIfPresent(nextConditioningDate, forKey: .nextConditioningDate)
         try container.encodeIfPresent(prevConditioningDate, forKey: .prevConditioningDate)
         try container.encodeIfPresent(conditioningFreq, forKey: .conditioningFreq)
         try container.encodeIfPresent(details, forKey: .details)
@@ -205,10 +194,15 @@ class PlantModel: Identifiable, Codable {
     
     // water the plant
     func waterThePlant(settings: SettingsModel) {
-        self.prevPrevWateringDate = self.prevWateringDate // zapisz poprzednią datę podlewania
         self.prevWateringDate = Date() // ustaw dzisiejszą datę jako prevWateringDate
         let username = settings.username.isEmpty ? "there" : settings.username
-        dispatchNotification(identifier: self.id.description, title: self.name + " is thirsty!", body: "Hey \(username) your plant needs to drink some water.", date: self.nextWateringDate)
+        dispatchNotification(identifier: self.id.description, title: self.name + " is thirsty!", body: "Hey \(username), your plant needs to drink some water.", date: self.nextWateringDate)
+    }
+    
+    func conditionThePlant(settings: SettingsModel) {
+        self.prevConditioningDate = Date() // ustaw dzisiejszą datę jako prevWateringDate
+        let username = settings.username.isEmpty ? "there" : settings.username
+        dispatchNotification(identifier: self.id.description, title: self.name + " needs some care!", body: "Hey \(username), your plant might be a bit hungry", date: self.nextConditioningDate)
     }
 
     
@@ -236,6 +230,11 @@ class PlantModel: Identifiable, Codable {
     var isWatered: Bool {
         // check if nextWateringDate is in the future
         return nextWateringDate > Date()
+    }
+    
+    var isConditioned: Bool {
+        // check if nextConditioningDate is in the future
+        return conditioningFreq == nil || nextConditioningDate > Date() || conditioningFreq == 0
     }
 
     func calculate_progress(prevWateringDate: Date?, wateringFreq: Int?) -> Double {
