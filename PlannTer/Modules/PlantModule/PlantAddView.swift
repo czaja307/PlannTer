@@ -18,7 +18,7 @@ struct PlantAddView: View {
     @State private var uiImg: UIImage? = nil
     
     @Environment(\.presentationMode) var presentationMode
-    
+    @Environment(SettingsModel.self) var settings
     
     var body: some View {
         ZStack {
@@ -69,7 +69,7 @@ struct PlantAddView: View {
                 )
                 SliderSection(
                     value: Binding(
-                        get: { createdPlant.waterAmountInML ?? 220 },
+                        get: { createdPlant.waterAmountInML ?? 200 },
                         set: { createdPlant.waterAmountInML = $0 }
                     ), title: "Water amount", unit: "ml", range: 50...1000, step: 50, sColor: .blue
                 )
@@ -132,7 +132,8 @@ struct PlantAddView: View {
             print("Failed to save plant: \(error)")
         }
         
-        dispatchNotification(identifier: newPlant.id.description, title: newPlant.name + " is thirsty!", body: "Your plant needs to drink some water.", date: newPlant.nextWateringDate)
+        let username = settings.username.isEmpty ? "there" : settings.username
+        dispatchNotification(identifier: newPlant.id.description, title: newPlant.name + " is thirsty!", body: "Hey \(username) your plant needs to drink some water.", date: newPlant.nextWateringDate)
         
         presentationMode.wrappedValue.dismiss()
     }
@@ -273,13 +274,41 @@ private struct SliderSection: View {
     var range: ClosedRange<Double>
     var step: Double
     let sColor: Color
+    @Environment(SettingsModel.self) private var settings
+    
+    private var displayValue: String {
+        switch title {
+        case "Water amount":
+            return settings.measurementUnitSystem == "Imperial" ? String(format: "%.1f oz", Double(value) * 0.033814) : "\(value) \(unit)"
+        default:
+            return "\(value) \(unit)"
+        }
+    }
+
+    private var minLabel: String {
+        switch title {
+        case "Water amount":
+            return settings.measurementUnitSystem == "Imperial" ? String(format: "%.1f oz", range.lowerBound * 0.033814) : "\(Int(range.lowerBound)) \(unit)"
+        default:
+            return "\(Int(range.lowerBound)) \(unit)"
+        }
+    }
+
+    private var maxLabel: String {
+        switch title {
+        case "Water amount":
+            return settings.measurementUnitSystem == "Imperial" ? String(format: "%.1f oz", range.upperBound * 0.033814) : "\(Int(range.upperBound)) \(unit)"
+        default:
+            return "\(Int(range.upperBound)) \(unit)"
+        }
+    }
     
     var body: some View {
         VStack {
             HStack {
                 Text("\(title):")
                 Spacer()
-                Text("\(value) \(unit)")
+                Text(displayValue)
             }
             .frame(width: 0.9 * UIScreen.main.bounds.width)
             .padding(.top, 20)
@@ -293,8 +322,8 @@ private struct SliderSection: View {
                 ),
                 in: range,
                 step: step,
-                minimumValueLabel: Text("\(Int(range.lowerBound)) \(unit)"),
-                maximumValueLabel: Text("\(Int(range.upperBound)) \(unit)"),
+                minimumValueLabel: Text(minLabel),
+                maximumValueLabel: Text(maxLabel),
                 label: {
                     Text(unit)
                 }

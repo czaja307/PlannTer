@@ -11,7 +11,7 @@ struct PlantDetailsView: View {
             VStack {
                 PlantImageSection(plant: plant)
                 WateringSection(date: plant.nextWateringDate ?? Date(), days: plant.wateringFreq ?? 7)
-                WaterAmountSection(waterAmount: plant.waterAmountInML ?? 200)
+                WaterAmountSection(waterAmountInML: plant.waterAmountInML ?? 200)
                 SunExposureSection(sunExposure: plant.dailySunExposure ?? 8)
                 ConditioningSection(date: plant.nextConditioningDate ?? Date(), days: plant.conditioningFreq ?? 30)
                 Spacer()
@@ -113,14 +113,32 @@ private struct WateringSection: View {
 }
 
 private struct WaterAmountSection: View {
-    var waterAmount: Int
+    @Environment(SettingsModel.self) private var settings
+    var waterAmountInML: Int
+    private var waterAmountText: String {
+        switch settings.measurementUnitSystem {
+        case "Imperial":
+            let amountInOunces = Double(waterAmountInML) * 0.033814
+            return String(format: "%.1f oz", amountInOunces)
+        default:
+            return "\(waterAmountInML)ml"
+        }
+    }
+    
+    private var minLabel: String {
+        settings.measurementUnitSystem == "Imperial" ? "1.7 oz" : "50 ml"
+    }
 
+    private var maxLabel: String {
+        settings.measurementUnitSystem == "Imperial" ? "33.8 oz" : "1000 ml"
+    }
+    
     var body: some View {
         VStack {
             HStack {
                 Text("Water amount:")
                 Spacer()
-                Text("\(waterAmount) ml")
+                Text(waterAmountText)
             }
         }
         .frame(width: 0.9 * UIScreen.main.bounds.width)
@@ -130,13 +148,13 @@ private struct WaterAmountSection: View {
 
         HStack {
             Slider(
-                value: .constant(Double(waterAmount)),
+                value: .constant(Double(waterAmountInML)),
                 in: 50...1000,
                 step: 50,
-                minimumValueLabel: Text("50"),
-                maximumValueLabel: Text("1000"),
+                minimumValueLabel: Text(minLabel),
+                maximumValueLabel: Text(maxLabel),
                 label: {
-                    Text("Milliliters")
+                    Text("Water")
                 }
             )
             .frame(width: 0.9 * UIScreen.main.bounds.width)

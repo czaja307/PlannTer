@@ -2,6 +2,7 @@ import SwiftUI
 import AVFoundation
 
 struct PlantTile: View {
+    @Environment(SettingsModel.self) private var settings
     @Environment(\.presentationMode) var presentationMode // To handle back navigation
     @State var plant: PlantModel
     @State private var isNavigatingToEditView = false
@@ -9,6 +10,17 @@ struct PlantTile: View {
     @State private var audioPlayer: AVAudioPlayer?
     
     let deleteAction: (PlantModel) -> ()
+    
+    private var waterAmountText: String {
+        let amountInML = plant.waterAmountInML ?? 0
+        switch settings.measurementUnitSystem {
+        case "Imperial":
+            let amountInOunces = Double(amountInML) * 0.033814
+            return String(format: "%.1f oz", amountInOunces)
+        default:
+            return "\(amountInML)ml"
+        }
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -40,12 +52,12 @@ struct PlantTile: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         if(!plant.isWatered){
-                            Text("\(plant.waterAmountInML!)ml")
+                            Text(waterAmountText)
                                 .font(.largeSlimText)
                                 .foregroundColor(Color.primaryText)
                             
                             Button(action: {
-                                plant.waterThePlant()
+                                plant.waterThePlant(settings: settings)
                                 playWateringSound()
                             }) {
                                 Image("TickSymbol")

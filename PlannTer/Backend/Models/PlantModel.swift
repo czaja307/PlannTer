@@ -204,10 +204,11 @@ class PlantModel: Identifiable, Codable {
     ]
     
     // water the plant
-    func waterThePlant() {
+    func waterThePlant(settings: SettingsModel) {
         self.prevPrevWateringDate = self.prevWateringDate // zapisz poprzednią datę podlewania
         self.prevWateringDate = Date() // ustaw dzisiejszą datę jako prevWateringDate
-        //self.nextWateringDate = Calendar.current.date(byAdding: .day, value: wateringFreq ?? 0, to: Date()) // ustaw nextWateringDate na podstawie wateringFreq
+        let username = settings.username.isEmpty ? "there" : settings.username
+        dispatchNotification(identifier: self.id.description, title: self.name + " is thirsty!", body: "Hey \(username) your plant needs to drink some water.", date: self.nextWateringDate)
     }
 
     
