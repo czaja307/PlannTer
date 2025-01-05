@@ -16,6 +16,44 @@ final class UITests: XCTestCase {
         continueAfterFailure = false
         app.launch()
     }
+    
+    func testSettingsViewInteractions() {
+        let app = XCUIApplication()
+        app.launch()
+
+        // przejście do ekranu ustawień
+        app.buttons["SettingsButton"].tap() // załóżmy, że przycisk ma taki identyfikator
+
+        // test zmiany nazwy użytkownika
+        let nameField = app.textFields["NameTextField"] // identyfikator pola tekstowego
+        nameField.tap()
+        nameField.typeText("New Username")
+
+        // test zmiany częstotliwości powiadomień
+        let notificationPicker = app.buttons["NotificationFrequencyPicker"]
+        notificationPicker.tap()
+        app.buttons["Moderate"].tap() // wybór opcji "Moderate"
+
+        // weryfikacja
+        XCTAssertEqual(nameField.value as? String, "New Username", "Username should be updated")
+        XCTAssertTrue(notificationPicker.label.contains("Moderate"), "Notification frequency should be updated")
+    }
+
+    
+    func testLoadPlantListPerformance() {
+        let expectation = self.expectation(description: "Plant list loads within acceptable time")
+        let timeLimit: TimeInterval = 3.0 // maksymalny czas oczekiwania w sekundach
+
+        let startTime = CFAbsoluteTimeGetCurrent()
+        PlantService.shared.loadPlantList { _ in
+            let endTime = CFAbsoluteTimeGetCurrent()
+            let executionTime = endTime - startTime
+
+            XCTAssertLessThanOrEqual(executionTime, timeLimit, "Plant list loading time \(executionTime)s exceeds limit \(timeLimit)s")
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: timeLimit + 1, handler: nil)
+    }
 
     //to be de-chatgpt-fied
     func testAddPlantAndCheckDetails() throws {
