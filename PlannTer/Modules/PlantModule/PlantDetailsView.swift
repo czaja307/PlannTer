@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 struct PlantDetailsView: View {
     @Bindable var plant: PlantModel
@@ -10,10 +11,12 @@ struct PlantDetailsView: View {
                 .edgesIgnoringSafeArea(.all)
             VStack {
                 PlantImageSection(plant: plant)
-                WateringSection(date: plant.nextWateringDate ?? Date(), days: plant.wateringFreq ?? 7)
-                WaterAmountSection(waterAmount: plant.waterAmountInML ?? 200)
+                WateringSection(plant: plant, date: plant.nextWateringDate ?? Date(), days: plant.wateringFreq ?? 7)
+                WaterAmountSection(waterAmountInML: plant.waterAmountInML ?? 200)
                 SunExposureSection(sunExposure: plant.dailySunExposure ?? 8)
-                ConditioningSection(date: plant.nextConditioningDate ?? Date(), days: plant.conditioningFreq ?? 30)
+                if(plant.conditioningFreq != 0) {
+                    ConditioningSection(plant: plant, date: plant.nextConditioningDate ?? Date(), days: plant.conditioningFreq ?? 0)
+                }
                 Spacer()
             }
         }
@@ -70,6 +73,8 @@ private struct PlantImageSection: View {
 }
 
 private struct WateringSection: View {
+    @Environment(SettingsModel.self) private var settings
+    var plant: PlantModel
     var date: Date
     var days: Int
 
@@ -87,6 +92,20 @@ private struct WateringSection: View {
                 .datePickerStyle(.compact)
                 .padding(.trailing, 20)
                 Text("\(days) days")
+                if(!plant.isWatered){
+                    Button(action: {
+                        plant.waterThePlant(settings: settings)
+                        AudioPlayer.instance.playSound(soundName: "water-sound")
+                    }) {
+                        Image("TickSymbol")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 30, height: 30)
+                    }
+                    .padding(3)
+                    .background(.white.opacity(0.6))
+                    .cornerRadius(25)
+                }
             }
         }
         .frame(width: 0.9 * UIScreen.main.bounds.width)
@@ -113,14 +132,32 @@ private struct WateringSection: View {
 }
 
 private struct WaterAmountSection: View {
-    var waterAmount: Int
+    @Environment(SettingsModel.self) private var settings
+    var waterAmountInML: Int
+    private var waterAmountText: String {
+        switch settings.measurementUnitSystem {
+        case "Imperial":
+            let amountInOunces = Double(waterAmountInML) * 0.033814
+            return String(format: "%.1f oz", amountInOunces)
+        default:
+            return "\(waterAmountInML)ml"
+        }
+    }
+    
+    private var minLabel: String {
+        settings.measurementUnitSystem == "Imperial" ? "1.7 oz" : "50 ml"
+    }
 
+    private var maxLabel: String {
+        settings.measurementUnitSystem == "Imperial" ? "33.8 oz" : "1000 ml"
+    }
+    
     var body: some View {
         VStack {
             HStack {
                 Text("Water amount:")
                 Spacer()
-                Text("\(waterAmount) ml")
+                Text(waterAmountText)
             }
         }
         .frame(width: 0.9 * UIScreen.main.bounds.width)
@@ -130,13 +167,13 @@ private struct WaterAmountSection: View {
 
         HStack {
             Slider(
-                value: .constant(Double(waterAmount)),
+                value: .constant(Double(waterAmountInML)),
                 in: 50...1000,
                 step: 50,
-                minimumValueLabel: Text("50"),
-                maximumValueLabel: Text("1000"),
+                minimumValueLabel: Text(minLabel),
+                maximumValueLabel: Text(maxLabel),
                 label: {
-                    Text("Milliliters")
+                    Text("Water")
                 }
             )
             .frame(width: 0.9 * UIScreen.main.bounds.width)
@@ -180,9 +217,11 @@ private struct SunExposureSection: View {
 }
 
 private struct ConditioningSection: View {
+    @Environment(SettingsModel.self) private var settings
+    var plant: PlantModel
     var date: Date
     var days: Int
-
+    
     var body: some View {
         VStack {
             HStack {
@@ -197,6 +236,20 @@ private struct ConditioningSection: View {
                 .datePickerStyle(.compact)
                 .padding(.trailing, 20)
                 Text("\(days) days")
+                if(!plant.isConditioned){
+                    Button(action: {
+                        plant.conditionThePlant(settings: settings)
+                        AudioPlayer.instance.playSound(soundName: "condition-sound")
+                    }) {
+                        Image("TickSymbol")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 30, height: 30)
+                    }
+                    .padding(3)
+                    .background(.white.opacity(0.6))
+                    .cornerRadius(25)
+                }
             }
         }
         .frame(width: 0.95 * UIScreen.main.bounds.width)

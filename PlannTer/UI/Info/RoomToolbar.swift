@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import WeatherKit
+import CoreLocation
 
 struct RoomToolbar: ViewModifier {
     let title: String
@@ -14,6 +16,9 @@ struct RoomToolbar: ViewModifier {
     let room: RoomModel
     @State private var isToolbarExpanded: Bool = false
     
+    @State private var sunBegin: Double = 0.3 // Default dawn value (optional fallback)
+    @State private var sunEnd: Double = 0.7
+    let sunCalculator = SunEventCalculator()
     
     func body(content: Content) -> some View {
         VStack(spacing: 20) {
@@ -59,7 +64,7 @@ struct RoomToolbar: ViewModifier {
                                     Text("\(sunHours)h")
                                         .font(.secondaryText)
                                         .foregroundColor(.secondaryText)
-                                    RoomBar(progressBarWidth: 230, progressBarHeight: 30, time: 0.6, sunBegin: 0.4, sunEnd: 0.7)
+                                    RoomBar(progressBarWidth: 230, progressBarHeight: 30, time: Double(Calendar.current.component(.hour, from: Date()))/24, sunBegin: sunBegin, sunEnd: sunEnd)
                                         .padding(15)
                                         .cornerRadius(2)
                                 }
@@ -84,7 +89,53 @@ struct RoomToolbar: ViewModifier {
                     .cornerRadius(15)
                     
                     content
-                }
+        }.onAppear{
+            fetchSunEvents()
+        }
+        
+    }
+    
+    func fetchSunEvents() {
+           Task {
+               if let dawn = await sunCalculator.getDawn(),
+                  let dusk = await sunCalculator.getDusk() {
+                   DispatchQueue.main.async {
+                       sunBegin = dawn
+                       sunEnd = dusk
+                   }
+               }
+           }
+       }
+    
+}
+
+class SunEventCalculator {
+    private let weatherService = WeatherService()
+
+    func getDusk() async -> Double? {
+        do {
+            let weather = try await weatherService.weather(for: CLLocation(latitude: 52, longitude: 20))
+            if let dusk = weather.dailyForecast.first?.sun.civilDusk {
+                let duskHour = Double(Calendar.current.component(.hour, from: dusk)) / 24
+                return duskHour
+            }
+        } catch {
+            print("Error fetching weather: \(error)")
+        }
+        return nil
+    }
+
+    func getDawn() async -> Double? {
+        do {
+            let weather = try await weatherService.weather(for: CLLocation(latitude: 52, longitude: 20))
+            if let dawn = weather.dailyForecast.first?.sun.civilDawn {
+                let dawnHour = Double(Calendar.current.component(.hour, from: dawn)) / 24
+                return dawnHour
+            }
+        } catch {
+            print("Error fetching weather: \(error)")
+        }
+        return nil
     }
 }
 
@@ -109,11 +160,11 @@ struct RoomBar: View {
                 .fill(Color.primaryText)
                 .frame(width: progressBarWidth * sunBegin, height: progressBarHeight)
             Rectangle()
-                .fill(Color.black)
-                .frame(width: 2, height: progressBarHeight)
+                .fill(Color.plantShadow)
+                .frame(width: 4, height: progressBarHeight)
                 .offset(x: CGFloat(time) * progressBarWidth)
         }
-        .border(Color.black, width: 1)
+        .border(Color.primaryText, width: 1)
         .cornerRadius(2)
     }
     

@@ -1,13 +1,26 @@
 import SwiftUI
+import AVFoundation
 
 struct PlantTile: View {
+    @Environment(SettingsModel.self) private var settings
     @Environment(\.presentationMode) var presentationMode // To handle back navigation
     @State var plant: PlantModel
-    let deleteAction: (PlantModel) -> ()
-    
     @State private var isNavigatingToEditView = false
     @State private var uiImg: UIImage? = nil
-
+    
+    let deleteAction: (PlantModel) -> ()
+    
+    private var waterAmountText: String {
+        let amountInML = plant.waterAmountInML ?? 0
+        switch settings.measurementUnitSystem {
+        case "Imperial":
+            let amountInOunces = Double(amountInML) * 0.033814
+            return String(format: "%.1f oz", amountInOunces)
+        default:
+            return "\(amountInML)ml"
+        }
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             HStack(spacing: 15) {
@@ -38,11 +51,14 @@ struct PlantTile: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         if(!plant.isWatered){
-                            Text("\(plant.waterAmountInML!)ml")
+                            Text(waterAmountText)
                                 .font(.largeSlimText)
                                 .foregroundColor(Color.primaryText)
                             
-                            Button(action: { plant.waterThePlant() }) {
+                            Button(action: {
+                                plant.waterThePlant(settings: settings)
+                                AudioPlayer.instance.playSound(soundName: "water-sound")
+                            }) {
                                 Image("TickSymbol")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
@@ -106,7 +122,7 @@ struct PlantTile: View {
             NavigationLink(destination: PlantEditView(plant: plant), isActive: $isNavigatingToEditView) {
                 EmptyView()
             }
-            .hidden()
+                .hidden()
         )
     }
 }
@@ -122,7 +138,7 @@ struct Bar: View {
             Rectangle()
                 .fill(Color.waterBackground)
                 .frame(width: progressBarWidth * 1.00, height: progressBarHeight)
-
+            
             Rectangle()
                 .fill(Color.primaryBackground)
                 .frame(width: progressBarWidth * 0.75, height: progressBarHeight)
@@ -137,8 +153,9 @@ struct Bar: View {
         .border(Color.black, width: 1)
         .cornerRadius(2)
     }
-    
 }
+
+
 
 #Preview {
     PlantTile(plant: PlantModel.examplePlant, deleteAction: {_ in})

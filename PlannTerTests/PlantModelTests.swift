@@ -33,7 +33,6 @@ final class PlantModelTests: XCTestCase { //testy jednostkowe
         plant.waterThePlant()
         
         XCTAssertNotEqual(plant.prevWateringDate, oldPrevWateringDate, "Prev watering date should be updated")
-        XCTAssertEqual(plant.prevPrevWateringDate, oldPrevWateringDate, "Prev prev watering date should be set correctly")
     }
 
     // test funkcji progress

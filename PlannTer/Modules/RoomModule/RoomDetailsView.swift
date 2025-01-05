@@ -21,7 +21,7 @@ struct RoomDetailsView: View {
         .padding(.horizontal,10)
         .padding(.vertical, 10)
         .navigationBarBackButtonHidden(true)
-        .roomToolbar(title: room.name, sunHours: 5, presentationMode: presentationMode, room: room)
+        .roomToolbar(title: room.name, sunHours: Int(room.getsunlight), presentationMode: presentationMode, room: room)
         .ignoresSafeArea()
         .background(Color.primaryBackground)
         .onAppear {
