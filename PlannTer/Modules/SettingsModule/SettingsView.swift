@@ -6,6 +6,7 @@ struct SettingsView: View {
     @FocusState private var isFocused: Bool
     @Environment(\.presentationMode) var presentationMode
     @Bindable var settings: SettingsModel
+    @State private var vidToggle: Bool = false
 
     var body: some View {
         ZStack {
@@ -65,8 +66,10 @@ struct SettingsView: View {
                 }
                 Spacer()
                 
+                LargeButton(title: "Play tutorial", action: playTutorial)
             }
             .padding(.horizontal, 20)
+            CustomVideoPlayer(sourceToPlay: "https://drive.google.com/file/d/1BjONQKRLSsWFEdbmqru24H0xcdupnR2i/preview", descriptionText: "Watch the Tutorial", videoToggle: $vidToggle)
         }
         .navigationBarBackButtonHidden(true)
         .customToolbar(title: "Settings", presentationMode: presentationMode)
@@ -86,5 +89,9 @@ struct SettingsView: View {
                 }
             }
         }
+    }
+    
+    private func playTutorial() {
+        vidToggle.toggle()
     }
 }
