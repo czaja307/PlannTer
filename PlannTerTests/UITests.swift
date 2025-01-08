@@ -55,26 +55,21 @@ final class UITests: XCTestCase {
         waitForExpectations(timeout: timeLimit + 1, handler: nil)
     }
 
-    //to be de-chatgpt-fied
-    func testAddPlantAndCheckDetails() throws {
-        // Załóżmy, że na głównym ekranie jest przycisk dodawania rośliny
-        app.buttons["AddPlantButton"].tap()
+    func testChangeUserNameInSettings() throws {
+        // tu trzeba jakoś wybrać settings przycisk (nie wiem jak)
+        app.buttons["SettingsButton"].tap()
         
-        // Wypełniamy formularz
-        let nameField = app.textFields["PlantNameTextField"]
+        // wypełniamy nasze imie (lub inne opcje też)
+        let nameField = app.textFields["NameTextField"]
         nameField.tap()
-        nameField.typeText("Test Plant")
+        nameField.typeText("Test Name")
         
-        app.buttons["SavePlantButton"].tap()
+	// zapisz ustawienia aplikacji
+        app.buttons["Save"].tap()
         
-        // Sprawdzamy, czy roślina została dodana
-        let plantCell = app.tables.cells.staticTexts["Test Plant"]
-        XCTAssertTrue(plantCell.exists, "The plant should appear in the list")
-        
-        // Klikamy w szczegóły rośliny
-        plantCell.tap()
-        
-        let detailsLabel = app.staticTexts["PlantDetailsLabel"]
-        XCTAssertTrue(detailsLabel.exists, "Details screen should be visible")
+        // sprawdzamy czy nazwa sie zmieniła (przez dostęp do zmiennej jakiejś)
+        let userName = app.tables.cells.staticTexts["UserName"]
+        XCTAssertTrue(userName.exists, "The username should exist")
+	XCTAssertEqual(userName, "Test Name", "username not changed")
     }
 }
