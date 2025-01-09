@@ -19,7 +19,7 @@ struct PlantDetails: Codable {
     let defaultImage: DefaultImage?
 
     var name: String{
-        commonName ?? ""
+        commonName ?? "flowering-maple"
     }
     
     // computed property: category (last word of commonName)

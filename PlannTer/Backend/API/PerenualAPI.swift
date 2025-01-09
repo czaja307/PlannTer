@@ -83,6 +83,7 @@ class PerenualAPI {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 let plantDetails = try decoder.decode(PlantDetails.self, from: data)
+                print("details api request suqcess")
                 completion(.success(plantDetails))
             } catch {
                 completion(.failure(error))
