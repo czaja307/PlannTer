@@ -19,18 +19,20 @@ struct PlantDetails: Codable {
     let defaultImage: DefaultImage?
 
     var name: String{
-        commonName ?? ""
+        commonName ?? "flowering-maple"
     }
     
+    // computed property: category (last word of commonName)
     var category: String? {
         guard let name = commonName else { return nil }
-        let components = name.split(separator: " ")
+        let components = name.split { $0 == " " || $0 == "-" }
         return components.last.map(String.init)
     }
+
     // computed property: species (all but the last word of commonName)
     var species: String? {
         guard let name = commonName else { return nil }
-        let components = name.split(separator: " ")
+        let components = name.split { $0 == " " || $0 == "-" }
         guard components.count > 1 else { return nil }
         return components.dropLast().joined(separator: " ")
     }

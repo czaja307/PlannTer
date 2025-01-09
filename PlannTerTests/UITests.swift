@@ -17,26 +17,25 @@ final class UITests: XCTestCase {
         app.launch()
     }
 
-    //to be de-chatgpt-fied
-    func testAddPlantAndCheckDetails() throws {
-        // Załóżmy, że na głównym ekranie jest przycisk dodawania rośliny
-        app.buttons["AddPlantButton"].tap()
-        
-        // Wypełniamy formularz
-        let nameField = app.textFields["PlantNameTextField"]
-        nameField.tap()
-        nameField.typeText("Test Plant")
-        
-        app.buttons["SavePlantButton"].tap()
-        
-        // Sprawdzamy, czy roślina została dodana
-        let plantCell = app.tables.cells.staticTexts["Test Plant"]
-        XCTAssertTrue(plantCell.exists, "The plant should appear in the list")
-        
-        // Klikamy w szczegóły rośliny
-        plantCell.tap()
-        
-        let detailsLabel = app.staticTexts["PlantDetailsLabel"]
-        XCTAssertTrue(detailsLabel.exists, "Details screen should be visible")
+    func testChangeUserNameInSettings() throws {
+        // przejście do ekranu ustawień
+        let settingsButton = app.buttons["gear"] //to chyba ten przycisk lol
+        XCTAssertTrue(settingsButton.exists, "Settings button should exist")
+        settingsButton.tap()
+
+        let textField = app.textFields.element(boundBy: 0) // zakładamy, że pierwszy text field od gory to jest
+        XCTAssertTrue(textField.exists, "Text field for username should exist")
+        textField.tap()
+
+        textField.typeText("New Name")
+
+        // zapisz zmiany
+        app.buttons["Save"].tap()
+
+        // weryfikacja - sprawdź czy imię się zmieniło
+        let userName = app.staticTexts["UserName"]
+        XCTAssertTrue(userName.exists, "User name label should exist")
+        XCTAssertEqual(userName.label, "New Name", "User name should be updated")
     }
+
 }

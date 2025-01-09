@@ -8,7 +8,7 @@
 import XCTest
 @testable import PlannTer
 
-final class PlantModelTests: XCTestCase { //testy jednostkowe
+final class UnitTests: XCTestCase { //testy jednostkowe
 
     // test inicjalizacji modelu
     func testInitialization() {
@@ -30,7 +30,7 @@ final class PlantModelTests: XCTestCase { //testy jednostkowe
         var plant = PlantModel.examplePlant
         let oldPrevWateringDate = plant.prevWateringDate
 
-        plant.waterThePlant()
+        plant.waterThePlant(settings: SettingsModel())
         
         XCTAssertNotEqual(plant.prevWateringDate, oldPrevWateringDate, "Prev watering date should be updated")
     }
@@ -51,7 +51,7 @@ final class PlantModelTests: XCTestCase { //testy jednostkowe
         plant.prevWateringDate = Calendar.current.date(byAdding: .day, value: -10, to: Date())
         plant.wateringFreq = 7
         plant.prevConditioningDate = Calendar.current.date(byAdding: .day, value: -10, to: Date())
-        plant.wateringFreq = 7
+        plant.conditioningFreq = 7
 
         XCTAssertEqual(plant.notificationsCount, 2, "Notifications count should indicate overdue watering")
     }
@@ -59,9 +59,43 @@ final class PlantModelTests: XCTestCase { //testy jednostkowe
     // test dynamicznie obliczanej daty podlewania
     func testNextWateringDate() {
         let plant = PlantModel.examplePlant
+        
+        plant.prevWateringDate = Calendar.current.date(byAdding: .minute, value: -10, to: Date())
+        plant.wateringFreq = 2
+        
         XCTAssertTrue(plant.nextWateringDate > Date(), "Next watering date should be in the future")
     }
     
-    
+    // test parsowania danych z api
+    func testPlantParsing() {
+        let json = """
+        {
+            "id" : 2137,
+            "common_name" : "pretty green cactus",
+            "family" : "cactusus pospolitus",
+            "watering" : "frequent"
+        }
+        """.data(using: .utf8)!
+        
+        let decoder = JSONDecoder()
+        
+        do {
+            let plant = try decoder.decode(PlantDetails.self, from: json)
+            print(plant)
+            print()
+            
+            XCTAssertEqual(plant.id, 2137)
+            XCTAssertEqual(plant.name, "pretty green cactus")
+            XCTAssertEqual(plant.family, "cactusus pospolitus")
+            XCTAssertEqual(plant.watering, "frequent")
+            XCTAssertEqual(plant.category, "cactus")
+            XCTAssertEqual(plant.species, "pretty green")
+            XCTAssertEqual(plant.wateringAmount, 900)
+        } catch {
+            print("Error decoding plant: \(error)")
+            XCTFail("Failed to decode plant")
+        }
+    }
+
     
 }

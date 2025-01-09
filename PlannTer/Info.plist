@@ -2,8 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Api-key</key>
+	<key>Api-key2</key>
 	<string>sk-Rh2g6740879d553357556</string>
+	<key>Api-key</key>
+	<string>sk-Wmnx677ac545b77bc8154</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Roboto-Regular.ttf</string>

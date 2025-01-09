@@ -71,7 +71,6 @@ class PlantModel: Identifiable, Codable {
         self.dailySunExposure = details.sunhours
         self.prevWateringDate = Calendar.current.date(byAdding: .day, value: -(details.wateringFreq), to: Date())
         self.prevConditioningDate = conditioniingFreq == nil ? nil : Date()
-       
     }
     
     init(id: UUID = UUID(), plantId: Int? = nil, room: RoomModel, name: String = "Unnamed Plant",
@@ -208,13 +207,6 @@ class PlantModel: Identifiable, Codable {
     
     // check for errors
     var notificationsCount: Int {
-        print(name)
-        print(wateringFreq)
-        print(nextWateringDate)
-        print(prevWateringDate)
-        print(conditioningFreq)
-        print(nextConditioningDate)
-        print(prevConditioningDate)
         var notifs = 0
         // check if nextWateringDate is overdue
         if nextWateringDate <= Date() {
