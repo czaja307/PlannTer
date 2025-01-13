@@ -41,6 +41,7 @@ struct RoomAddView: View {
                         nameExists = found != nil
                         savingEmpty = roomName == ""
                     }
+                    .accessibilityIdentifier("nameField")
                 if(nameExists) {
                     Text("A room with such a name already exists, choose a different name!")
                         .padding(.horizontal, 30)
@@ -86,6 +87,7 @@ struct RoomAddView: View {
                 Spacer()
                 LargeButton(title: "Save room", action: saveRoom)
                     .padding(20)
+                    .accessibilityIdentifier("saveRoomButton")
             }
         }
         .navigationBarBackButtonHidden(true)

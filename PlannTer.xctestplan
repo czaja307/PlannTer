@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "9DAE490E-81F1-4026-9CFD-0416B1C24A5C",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:PlannTer.xcodeproj",
+      "identifier" : "A5B229592CCA9B8A005C3D2F",
+      "name" : "PlannTer"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:PlannTer.xcodeproj",
+        "identifier" : "A126BB932D13426A00153522",
+        "name" : "PlannTerTests"
+      }
+    }
+  ],
+  "version" : 1
+}
