@@ -14,10 +14,19 @@
 			remoteGlobalIDString = A5B229592CCA9B8A005C3D2F;
 			remoteInfo = PlannTer;
 		};
+		A179B2572D3565CD006DB8CF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A5B229522CCA9B8A005C3D2F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A5B229592CCA9B8A005C3D2F;
+			remoteInfo = PlannTer;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		A126BB942D13426A00153522 /* PlannTerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlannTerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A155DBD02D355F24000B61C0 /* PlannTer.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = PlannTer.xctestplan; sourceTree = "<group>"; };
+		A179B2512D3565CD006DB8CF /* PlannTerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlannTerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5B2295A2CCA9B8A005C3D2F /* PlannTer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlannTer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -35,6 +44,11 @@
 		A126BB952D13426A00153522 /* PlannTerTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = PlannTerTests;
+			sourceTree = "<group>";
+		};
+		A179B2522D3565CD006DB8CF /* PlannTerUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PlannTerUITests;
 			sourceTree = "<group>";
 		};
 		A5B2295C2CCA9B8A005C3D2F /* PlannTer */ = {
@@ -55,6 +69,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A179B24E2D3565CD006DB8CF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A5B229572CCA9B8A005C3D2F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -68,8 +89,10 @@
 		A5B229512CCA9B8A005C3D2F = {
 			isa = PBXGroup;
 			children = (
+				A155DBD02D355F24000B61C0 /* PlannTer.xctestplan */,
 				A5B2295C2CCA9B8A005C3D2F /* PlannTer */,
 				A126BB952D13426A00153522 /* PlannTerTests */,
+				A179B2522D3565CD006DB8CF /* PlannTerUITests */,
 				A5B2295B2CCA9B8A005C3D2F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -79,6 +102,7 @@
 			children = (
 				A5B2295A2CCA9B8A005C3D2F /* PlannTer.app */,
 				A126BB942D13426A00153522 /* PlannTerTests.xctest */,
+				A179B2512D3565CD006DB8CF /* PlannTerUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,6 +132,29 @@
 			productName = PlannTerTests;
 			productReference = A126BB942D13426A00153522 /* PlannTerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A179B2502D3565CD006DB8CF /* PlannTerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A179B25B2D3565CD006DB8CF /* Build configuration list for PBXNativeTarget "PlannTerUITests" */;
+			buildPhases = (
+				A179B24D2D3565CD006DB8CF /* Sources */,
+				A179B24E2D3565CD006DB8CF /* Frameworks */,
+				A179B24F2D3565CD006DB8CF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A179B2582D3565CD006DB8CF /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A179B2522D3565CD006DB8CF /* PlannTerUITests */,
+			);
+			name = PlannTerUITests;
+			packageProductDependencies = (
+			);
+			productName = PlannTerUITests;
+			productReference = A179B2512D3565CD006DB8CF /* PlannTerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		A5B229592CCA9B8A005C3D2F /* PlannTer */ = {
 			isa = PBXNativeTarget;
@@ -145,6 +192,10 @@
 						CreatedOnToolsVersion = 16.0;
 						TestTargetID = A5B229592CCA9B8A005C3D2F;
 					};
+					A179B2502D3565CD006DB8CF = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = A5B229592CCA9B8A005C3D2F;
+					};
 					A5B229592CCA9B8A005C3D2F = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -168,12 +219,20 @@
 			targets = (
 				A5B229592CCA9B8A005C3D2F /* PlannTer */,
 				A126BB932D13426A00153522 /* PlannTerTests */,
+				A179B2502D3565CD006DB8CF /* PlannTerUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		A126BB922D13426A00153522 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A179B24F2D3565CD006DB8CF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -197,6 +256,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A179B24D2D3565CD006DB8CF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A5B229562CCA9B8A005C3D2F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -211,6 +277,11 @@
 			isa = PBXTargetDependency;
 			target = A5B229592CCA9B8A005C3D2F /* PlannTer */;
 			targetProxy = A126BB982D13426A00153522 /* PBXContainerItemProxy */;
+		};
+		A179B2582D3565CD006DB8CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A5B229592CCA9B8A005C3D2F /* PlannTer */;
+			targetProxy = A179B2572D3565CD006DB8CF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -246,6 +317,38 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PlannTer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PlannTer";
+			};
+			name = Release;
+		};
+		A179B2592D3565CD006DB8CF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.plannter.PlannTerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PlannTer;
+			};
+			name = Debug;
+		};
+		A179B25A2D3565CD006DB8CF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.plannter.PlannTerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PlannTer;
 			};
 			name = Release;
 		};
@@ -442,6 +545,15 @@
 			buildConfigurations = (
 				A126BB9B2D13426A00153522 /* Debug */,
 				A126BB9C2D13426A00153522 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A179B25B2D3565CD006DB8CF /* Build configuration list for PBXNativeTarget "PlannTerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A179B2592D3565CD006DB8CF /* Debug */,
+				A179B25A2D3565CD006DB8CF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

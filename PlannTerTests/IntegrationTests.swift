@@ -16,7 +16,6 @@ final class IntegrationTests: XCTestCase {
 
         PlantModel.createFromApi(plantId: testPlantID) { plant in
             XCTAssertNotNil(plant, "Plant object should not be nil")
-            print(plant?.name)
             
             // weryfikacja podstawowych danych
             XCTAssertEqual(plant?.plantId, testPlantID, "Fetched plant ID should match the requested ID")

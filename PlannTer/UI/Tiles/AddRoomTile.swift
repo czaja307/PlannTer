@@ -39,6 +39,7 @@ struct AddRoomTile: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: size/2)
                     .offset(x: 20, y: -size / 4)
+                    .accessibilityIdentifier("addRoomButton")
                 Spacer()
             }
         }

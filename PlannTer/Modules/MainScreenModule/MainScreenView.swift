@@ -27,6 +27,7 @@ struct MainScreenView: View {
                         NavigationLink(destination: SettingsView(settings: settings)) {
                             Image(systemName: "gear")
                                 .foregroundColor(.primaryText)
+                                .accessibilityIdentifier("settingsButton")
                         }
                         .frame(width: 70, height: 70)
                         .background(Color(.primaryBackground))

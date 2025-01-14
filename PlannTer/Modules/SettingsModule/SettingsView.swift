@@ -30,6 +30,7 @@ struct SettingsView: View {
                         inputText: $settings.username,
                         isActive: $isFocused
                     )
+                    .accessibilityIdentifier("nameField")
                     
                     // Dropdown for Notifications Frequency
                     DropdownPicker(

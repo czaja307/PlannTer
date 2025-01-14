@@ -9,7 +9,7 @@ import Foundation
 
 struct PlantDetails: Codable {
     let id: Int
-    let commonName: String?
+    let common_name: String?
     let family: String?
     let type: String?
     let watering: String?
@@ -19,19 +19,19 @@ struct PlantDetails: Codable {
     let defaultImage: DefaultImage?
 
     var name: String{
-        commonName ?? "flowering-maple"
+        common_name ?? " "
     }
     
     // computed property: category (last word of commonName)
     var category: String? {
-        guard let name = commonName else { return nil }
+        guard let name = common_name else { return nil }
         let components = name.split { $0 == " " || $0 == "-" }
         return components.last.map(String.init)
     }
 
     // computed property: species (all but the last word of commonName)
     var species: String? {
-        guard let name = commonName else { return nil }
+        guard let name = common_name else { return nil }
         let components = name.split { $0 == " " || $0 == "-" }
         guard components.count > 1 else { return nil }
         return components.dropLast().joined(separator: " ")
@@ -90,7 +90,7 @@ struct PlantDetails: Codable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, commonName = "common_name", family, type, watering, wateringGeneralBenchmark, sunlight, descriptionText = "description", defaultImage
+        case id, common_name, family, type, watering, wateringGeneralBenchmark, sunlight, descriptionText = "description", defaultImage
     }
 }
 
